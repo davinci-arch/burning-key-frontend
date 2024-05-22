@@ -40,7 +40,7 @@ const Keyboard = () => {
     );
 
     return (
-        <main>
+        <main className="main">
             <div className="keyboard">
                 <div className="row">
                     {createKey("Backquote", ["~", "`"], 'key-small col1')}

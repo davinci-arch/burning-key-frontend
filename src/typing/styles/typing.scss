@@ -1,0 +1,51 @@
+.text-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 43px;
+    user-select: none;
+
+    .text {
+        overflow: hidden;
+        height: 80px;
+        opacity: .25;
+        filter: blur(1px);
+    }
+
+}
+
+.nested-text-container {
+    width: 878px;
+    font-size: 24px;
+    position: relative;
+    display: flex;
+
+}
+
+
+.description {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    align-self: flex-end;
+
+    .cursor {
+        width: 25px;
+        height: 25px;
+    }
+
+    .img-container {
+        display: flex;
+        align-self: center;
+    }
+
+    .hint {
+        margin-left: 5px;
+    }
+}
