@@ -54,3 +54,57 @@
         margin-left: 5px;
     }
 }
+
+.text-input {
+    position: absolute;
+    z-index: -999;
+}
+
+.words {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    width: 100%;
+    user-select: none;
+    color: black;
+}
+
+.word {
+    margin: .25em;
+}
+
+.caret {
+    position: absolute;
+    height: 1.2em;
+    background-color: red;
+    width: .1em;
+    border-radius: 20px;
+    top: 4px;
+    left: 5px;
+    transition: all ease-in;
+    animation: blink-caret 1s step-end infinite;
+}
+
+@keyframes blink-caret {
+
+    0%,
+    100% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+.wrongLetter {
+    color: red;
+}
+
+.correctLetter {
+    color: grey;
+}

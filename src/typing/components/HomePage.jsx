@@ -4,6 +4,7 @@ import Footer from "./Footer"
 
 import "../styles/mainpage.scss"
 import Typing from "./Typing"
+import Typingv2 from "./Typingv2"
 import Keyboard from "./Keyboard"
 export default function HomePage() {
 
@@ -29,7 +30,8 @@ export default function HomePage() {
                     </div>
                 </div>
             </div>
-            <Typing />
+            {/* <Typing /> */}
+            <Typingv2 />
             <div className="reset-text">
                 <div className="reset-container">
                     <img src="src/assets/refresh-button.png" alt="refresh" className="reset-img" />
