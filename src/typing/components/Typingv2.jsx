@@ -1,5 +1,5 @@
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 
 const textAPI = "Walter White, an African American man from Albuquerque, New Mexico, lived a life marked by struggle and perseverance. Born into a community where opportunities were scarce, Walter worked tirelessly to carve out a path of success for himself and his family. A gifted chemist, he once harbored dreams of making groundbreaking contributions to science, hoping to uplift his community and provide a better future for his loved ones. Walter's academic brilliance led him to co-found a promising startup, Gray Matter Technologies. However, feeling marginalized and unappreciated by his co-founders, who often overlooked his contributions, he left the company early on. This decision, driven by a sense of injustice and pride, haunted him as Gray Matter grew into a billion-dollar enterprise without him. His departure from the company marked the beginning of a series of missed opportunities and unfulfilled dreams. Years later, Walter was working as an overqualified high school chemistry teacher, struggling to make ends meet. His wife, Skyler, worked as a bookkeeper, and they had two children: Walter Jr., who had cerebral palsy, and their infant daughter, Holly. The family’s financial situation was dire, and the burden weighed heavily on Walter. When he was diagnosed with terminal lung cancer, the prognosis was a death sentence that came with a final, crushing blow to his hopes and dreams."
 
@@ -11,12 +11,13 @@ export default function Typingv2() {
 
     const [wordIndex, setWordIndex] = useState(0);
     const [letterIndex, setLetterIndex] = useState(0);
-    const [cursorPosition, setCursorPosition] = useState(0);
     const [typingCount, setTypingCount] = useState(0);
     const [extraLetter, setExtraLetter] = useState([]);
     const [words, setWords] = useState(textAPI.split(' '));
 
+    const [isCursorVisible, setCursorVisible] = useState(false);
     const inputRef = useRef(null);
+    const textRef = useRef(null);
 
     const handleInput = (event) => {
         const value = event.target.value;
@@ -64,14 +65,18 @@ export default function Typingv2() {
         setInputText(value);
     }
 
+
     const focusedField = (event) => {
         setFocused(true);
         inputRef.current.focus();
         event.stopPropagation();
+        setCursorVisible(true);
     }
 
     const changeFocuse = () => {
         setFocused(false);
+        setCursorVisible(false);
+
     }
 
     let globalLetterIndex = 0;
@@ -83,16 +88,16 @@ export default function Typingv2() {
                     word.split('').map((letter, letterIndex) => {
                         const currentLetterIndex = globalLetterIndex;
                         globalLetterIndex++;
-                        let style = "hello";
+                        let style = "hello letter";
 
                         if (inputText[currentLetterIndex] == undefined) {
-                            style = "";
+                            style = "letter";
                         } else if (extraLetter.includes(letterIndex)) {
-                            style = "extraWord";
+                            style = "extraWord letter";
                         } else if (inputText[currentLetterIndex] != letter) {
-                            style = "wrongLetter";
+                            style = "wrongLetter letter";
                         } else {
-                            style = "correctLetter";
+                            style = "correctLetter letter";
                         }
                         return (
                             <span key={letterIndex} className={style}>
@@ -105,20 +110,25 @@ export default function Typingv2() {
         </div>
     ));
 
+   
     return (
         <div className="text-container">
             <div className="nested-text-container">
-                <div className={isFocused ? "text focused" : "text"}>
+                <div className={isFocused ? "text focused" : "text"} ref={textRef}>
                     <div className="words">
                         {letterComponents}
                     </div>
+                    {isCursorVisible ?
+                        <div className="cursor"></div>
+                        : <></>   
+                    }
                 </div>
                 {!isFocused ?
                     <div className="description"
                         onClick={focusedField}
                     >
                         <span className="img-container">
-                            <img src="src/assets/cursor.png" alt="cursor" className="cursor" />
+                            <img src="src/assets/cursor.png" alt="cursor" className="cursor-pointer" />
                         </span>
                         <span className="hint">Click to focus on field</span>
                     </div> : ""

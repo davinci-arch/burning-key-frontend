@@ -40,7 +40,7 @@
     align-self: flex-end;
     cursor: pointer;
 
-    .cursor {
+    .cursor-pointer {
         width: 25px;
         height: 25px;
     }
@@ -71,9 +71,10 @@
 
 .word {
     margin: .25em;
+    letter-spacing: .15em;
 }
 
-.caret {
+.cursor {
     position: absolute;
     height: 1.2em;
     background-color: red;
@@ -102,11 +103,13 @@
 }
 
 .wrongLetter {
-    color: red;
+    color: white;
+    background-color: red;
 }
 
 .extraWord {
-    color: #B20003;
+    color: white;
+    background-color: red;
 }
 .correctLetter {
     color: grey;
