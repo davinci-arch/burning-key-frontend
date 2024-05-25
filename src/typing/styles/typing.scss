@@ -3,12 +3,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 43px;
+    margin-top: 30px;
     user-select: none;
 
     .text {
         overflow: hidden;
-        height: 80px;
+        height: 120px;
         opacity: .25;
         filter: blur(2px);
         cursor: pointer;
@@ -71,6 +71,8 @@
 
 .word {
     margin: .25em;
+    margin-left: 0;
+    margin-right: 0;
     letter-spacing: .15em;
 }
 
@@ -78,10 +80,9 @@
     position: absolute;
     height: 1.2em;
     background-color: red;
-    width: .1em;
+    width: .05em;
     border-radius: 20px;
     top: 4px;
-    left: 5px;
     transition: all ease-in;
     animation: blink-caret 1s step-end infinite;
 }
@@ -113,4 +114,8 @@
 }
 .correctLetter {
     color: grey;
+}
+
+.activeLetter {
+    text-decoration: underline;
 }
