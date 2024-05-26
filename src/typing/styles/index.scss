@@ -15,12 +15,22 @@
         width: 258px;
         height: 61px;
         cursor: pointer;
+        padding-top: 9px;
     }
 
     .user-panel {
         margin-right: 30px;
         cursor: pointer;
         user-select: none;
+    }
+
+}
+
+.nav-link {
+    color: #000;
+    text-decoration: none;
+    &:hover {
+        text-decoration: underline;
     }
 }
 
