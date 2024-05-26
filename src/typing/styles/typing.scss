@@ -3,12 +3,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 43px;
+    margin-top: 30px;
     user-select: none;
 
     .text {
         overflow: hidden;
-        height: 80px;
+        height: 120px;
         opacity: .25;
         filter: blur(2px);
         cursor: pointer;
@@ -33,14 +33,14 @@
     top: 0;
     left: 0;
     width: 100%;
-    margin-top: 25px;
+    margin-top: 50px;
     display: flex;
     justify-content: center;
     align-items: end;
     align-self: flex-end;
     cursor: pointer;
 
-    .cursor {
+    .cursor-pointer {
         width: 25px;
         height: 25px;
     }
@@ -53,4 +53,74 @@
     .hint {
         margin-left: 5px;
     }
+}
+
+.text-input {
+    position: absolute;
+    z-index: -999;
+}
+
+.words {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    width: 100%;
+    user-select: none;
+    color: black;
+}
+
+.word {
+    margin: .25em;
+    margin-left: 0;
+    margin-right: 0;
+    letter-spacing: .15em;
+}
+
+.cursor {
+    position: absolute;
+    height: 1.2em;
+    background-color: red;
+    width: .05em;
+    border-radius: 20px;
+    top: 4px;
+    transition: all ease-in;
+}
+
+@keyframes blink-caret {
+
+    0%,
+    100% {
+        // opacity: 0;
+        text-decoration: none;
+    }
+
+    50% {
+        // opacity: 1;
+        text-decoration: underline;
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+.wrongLetter {
+    color: white;
+    background-color: red;
+}
+
+.extraWord {
+    color: white;
+    background-color: red;
+}
+.correctLetter {
+    color: grey;
+}
+
+.activeLetter {
+    text-decoration: underline;
+}
+
+.blink {
+    animation: blink-caret .8s step-end infinite;
 }
