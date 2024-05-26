@@ -1,12 +1,20 @@
 
 import Header from "./Header"
 import Footer from "./Footer"
-
+import { useRef, useState, useEffect } from "react"
 import "../styles/mainpage.scss"
 import Typing from "./Typing"
-import Typingv2 from "./Typingv2"
 import Keyboard from "./Keyboard"
 export default function HomePage() {
+
+    const typoRef = useRef(null);
+    const [isSoundOn, setSoundState] = useState(true);
+
+    const handleResetClick = () => {
+        if (typoRef.current) {
+            typoRef.current.resetText();
+        }
+    }
 
     return (
         <div className="home">
@@ -30,16 +38,15 @@ export default function HomePage() {
                     </div>
                 </div>
             </div>
-            {/* <Typing /> */}
-            <Typingv2 />
-            <div className="reset-text">
+            <Typing ref={typoRef} isSoundOn={isSoundOn} />
+            <div className="reset-text" onClick={handleResetClick}>
                 <div className="reset-container">
                     <img src="src/assets/refresh-button.png" alt="refresh" className="reset-img" />
                     <span>reset text</span>
                 </div>
             </div>
             <Keyboard />
-            <Footer />
+            <Footer isSoundOn={isSoundOn} setSoundState={setSoundState} />
         </div>
     )
 

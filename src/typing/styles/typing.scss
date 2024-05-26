@@ -33,7 +33,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    margin-top: 25px;
+    margin-top: 50px;
     display: flex;
     justify-content: center;
     align-items: end;
@@ -84,18 +84,19 @@
     border-radius: 20px;
     top: 4px;
     transition: all ease-in;
-    animation: blink-caret 1s step-end infinite;
 }
 
 @keyframes blink-caret {
 
     0%,
     100% {
-        opacity: 0;
+        // opacity: 0;
+        text-decoration: none;
     }
 
     50% {
-        opacity: 1;
+        // opacity: 1;
+        text-decoration: underline;
     }
 }
 
@@ -118,4 +119,8 @@
 
 .activeLetter {
     text-decoration: underline;
+}
+
+.blink {
+    animation: blink-caret .8s step-end infinite;
 }

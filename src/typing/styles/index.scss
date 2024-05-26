@@ -30,7 +30,7 @@
     background-color: #FEF9C7;
     box-shadow: inset 0 4px 4px rgba(0, 0, 0, .25);
     display: flex;
-    gap: 32px;
+    justify-content: space-between;
     margin-top: 32px;
 
     img {
@@ -42,6 +42,14 @@
         margin-left: 49px;
 
     }
+
+    
+
+}
+
+.link-container{
+    display: flex;
+    gap: 32px;
 
     .link {
         display: flex;
@@ -59,5 +67,16 @@
 
         }
     }
+}
 
+.sound-button {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img {
+        width: 24px;
+        height: 24px;
+    }
+    margin-right: 32px;
 }
