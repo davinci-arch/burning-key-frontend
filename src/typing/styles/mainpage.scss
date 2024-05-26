@@ -15,7 +15,7 @@ $toolbar-margin: 20px;
     .toolbar {
         background-color: #FEF9C7;
         height: 48px;
-        margin-top: 77px;
+        margin-top: 30px;
         padding: 0 20px;
         display: flex;
         align-items: center;
@@ -75,6 +75,7 @@ $toolbar-margin: 20px;
 
     p:hover {
         color: #1766FF;
+
     }
 
     p:first-child {
@@ -101,12 +102,10 @@ $toolbar-margin: 20px;
         .move {
             top: -34px;
             z-index: 0;
-            padding-right: 20px;
         }
     }
 
 }
-
 
 
 
@@ -195,5 +194,3 @@ $toolbar-margin: 20px;
 .negative {
     color: red;
 }
-
-

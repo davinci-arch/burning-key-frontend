@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import Header from './Header';
 import Footer from './Footer';
 import Typing from './Typing';
@@ -6,6 +6,9 @@ import Keyboard from './Keyboard';
 import '../styles/mainpage.scss';
 
 export default function HomePage() {
+
+    const typoRef = useRef(null);
+    const [isSoundOn, setSoundState] = useState(true);
     const [activeTab, setActiveTab] = useState('text');
 
     const [speed, setSpeed] = useState(0.0);
@@ -42,6 +45,13 @@ export default function HomePage() {
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
+
+    const handleResetClick = () => {
+        if (typoRef.current) {
+            typoRef.current.resetText();
+        }
+    }
+
 
     return (
         <div className="home">
@@ -95,21 +105,21 @@ export default function HomePage() {
             </div>
             <div className="animated-container">
                 <div className={`animated-component ${activeTab === 'text' ? 'active' : ''}`}>
-                    {activeTab === 'text' && <Typing/>}
+                    {activeTab === 'text' && <Typing ref={typoRef} isSoundOn={isSoundOn} />}
                 </div>
                 <div className={`animated-component ${activeTab === 'test' ? 'active' : ''}`}>
                     {activeTab === 'test' && <Typing/>}
                 </div>
             </div>
 
-            <div className="reset-text">
+            <div className="reset-text" onClick={handleResetClick}>
                 <div className="reset-container">
                     <img src="src/assets/refresh-button.png" alt="refresh" className="reset-img"/>
                     <span>reset text</span>
                 </div>
             </div>
             <Keyboard/>
-            <Footer/>
+            <Footer isSoundOn={isSoundOn} setSoundState={setSoundState} />
         </div>
     );
 }
