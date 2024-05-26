@@ -20,6 +20,7 @@ export default function HomePage() {
     //Просто перевірка роботи speed/accuracy
     useEffect(() => {
         const interval = setInterval(() => {
+            //rand
             const newSpeed = Math.random() * 100;
             const newAccuracy = Math.random() * 100;
 
