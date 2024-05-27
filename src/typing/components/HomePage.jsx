@@ -18,21 +18,31 @@ export default function HomePage() {
 
 
     //Просто перевірка роботи speed/accuracy
-    useEffect(() => {
-        const interval = setInterval(() => {
-            //rand
-            const newSpeed = Math.random() * 100;
-            const newAccuracy = Math.random() * 100;
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         //rand
+    //         const newSpeed = Math.random() * 100;
+    //         const newAccuracy = Math.random() * 100;
 
-            setPrevSpeed(speed);
-            setPrevAccuracy(accuracy);
+    //         setPrevSpeed(speed);
+    //         setPrevAccuracy(accuracy);
 
-            setSpeed(newSpeed);
-            setAccuracy(newAccuracy);
-        }, 2000);
+    //         setSpeed(newSpeed);
+    //         setAccuracy(newAccuracy);
+    //     }, 2000);
 
-        return () => clearInterval(interval);
-    }, [speed, accuracy]);
+    //     return () => clearInterval(interval);
+    // }, [speed, accuracy]);
+
+    const setNewSpeed = (wpm) => {
+        setSpeed(wpm);
+        setPrevSpeed(speed);
+    }
+
+    const newAccuracy = (newAccuracy) => {
+        setAccuracy(newAccuracy);
+        setPrevAccuracy(accuracy);
+    }
 
     const getColorClass = (current, previous) => {
         if (current > previous) {
@@ -106,7 +116,7 @@ export default function HomePage() {
             </div>
             <div className="animated-container">
                 <div className={`animated-component ${activeTab === 'text' ? 'active' : ''}`}>
-                    {activeTab === 'text' && <Typing ref={typoRef} isSoundOn={isSoundOn} />}
+                    {activeTab === 'text' && <Typing ref={typoRef} isSoundOn={isSoundOn} setNewSpeed={setNewSpeed} newAccuracy={newAccuracy} />}
                 </div>
                 <div className={`animated-component ${activeTab === 'test' ? 'active' : ''}`}>
                     {activeTab === 'test' && <Typing/>}

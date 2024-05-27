@@ -17,6 +17,11 @@ const Typing = forwardRef((props, ref) => {
     const [wordIndex, setWordIndex] = useState(0);
     const [letterIndex, setLetterIndex] = useState(0);
     const [lines, setLines] = useState([]);
+    const [countCorrectTypingKeys, setCountCorrectTypingKeys] = useState(0);
+    const [countTypingKeys, setCountTypingKeys] = useState(0);
+    const [elapsedTime, setElapsedTime] = useState(0);
+    const [isRunning, setIsRunning] = useState(false);
+
     const inputRef = useRef(null);
     const containerRef = useRef(null);
     const amountOfExtraLetters = 5;
@@ -32,17 +37,21 @@ const Typing = forwardRef((props, ref) => {
 
     useImperativeHandle(ref, () => ({
         resetText() {
-            setWords(textAPI.match(regex));
-            setInputText("");
-            setWordIndex(0);
-            setCounterExtraLetter(0);
-            setLetterIndex(0);
-            setExtraLetter([]);
-            setFocused(true);
-            setCursorVisible(true);
-            inputRef.current.focus();
+            resetAllData();
         }
     }));
+
+    const resetAllData = () => {
+        setWords(textAPI.match(regex));
+        setInputText("");
+        setWordIndex(0);
+        setCounterExtraLetter(0);
+        setLetterIndex(0);
+        setExtraLetter([]);
+        setFocused(true);
+        setCursorVisible(true);
+        inputRef.current.focus();
+    }
 
     const play = () => {
         if (props.isSoundOn) {
@@ -51,30 +60,53 @@ const Typing = forwardRef((props, ref) => {
         }
     }
 
+    useEffect(() => {
+        let timer;
+        if (isRunning) {
+            timer = setInterval(() => {
+                setElapsedTime((prevTime) => prevTime + 1);
+            }, 1000);
+        } else if (!isRunning && elapsedTime !== 0) {
+            clearInterval(timer);
+        }
+        return () => clearInterval(timer);
+    }, [isRunning]);
+
     const handleInput = (event) => {
         const value = event.target.value;
         const lastChar = value[value.length - 1];
 
- 
+        if (!isRunning) {
+            setIsRunning(true);
+        }
+
         if (lastChar == ' ' && extraLetter.length > 0) {
             return;
         }
         if (wordIndex == lines[1].endIndex && lastChar == ' ' && lines.length > 3) {
             setInputText(value);
             removeLineByIndex(0);
+            setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
+            setCountTypingKeys(countTypingKeys + 1);
             return;
         }
         if (inputText.length < value.length && extraLetter.length >= amountOfExtraLetters) {
             return;
         }
-        play();
 
+        if (words[wordIndex][letterIndex] == lastChar) {
+            setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
+            setCountTypingKeys(countTypingKeys + 1);
+        }
+        play();
         if (words[wordIndex].length - 1 == letterIndex && lastChar != ' ' && inputText.length < value.length && (wordIndex - 1) != lines[lines.length - 1].endIndex - 2) {
             setExtraLetter(prevExtraLetter => [...prevExtraLetter, letterIndex]);
             setCounterExtraLetter(counterExtraLetter + 1);
+            setCountTypingKeys(countTypingKeys + 1);
             words[wordIndex] = words[wordIndex].slice(0, letterIndex) + lastChar + words[wordIndex].slice(letterIndex);
         }
         if (inputText.length > value.length) {
+
             if (extraLetter.length > 0) {
                 const updateLetters = words[wordIndex].split('');
                 updateLetters[extraLetter[counterExtraLetter - 1]] = '';
@@ -96,8 +128,17 @@ const Typing = forwardRef((props, ref) => {
             } else {
                 setLetterIndex(letterIndex + 1);
             }
+            setCountTypingKeys(countTypingKeys + 1);
         }
         setInputText(value);
+        if ((wordIndex - 1) == lines[lines.length - 1].endIndex - 2 && letterIndex == words[wordIndex].length - 1) {
+            setIsRunning(false);
+            props.setNewSpeed((countCorrectTypingKeys / 5) / (elapsedTime / 60));
+            console.log("correct:" + countCorrectTypingKeys + " uncorrect:" + countTypingKeys + " accuracy:" + ((countCorrectTypingKeys / countTypingKeys) * 100))
+            props.newAccuracy((countCorrectTypingKeys / countTypingKeys) * 100)
+            resetAllData();
+            return;
+        }
         // moveCursor(value.length);
     }
     // const moveCursor = (position) => {
