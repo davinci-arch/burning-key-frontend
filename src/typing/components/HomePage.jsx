@@ -8,31 +8,13 @@ import '../styles/mainpage.scss';
 export default function HomePage() {
 
     const typoRef = useRef(null);
-    const [isSoundOn, setSoundState] = useState(true);
+    const [isSoundOn, setSoundState] = useState(false);
     const [activeTab, setActiveTab] = useState('text');
 
     const [speed, setSpeed] = useState(0.0);
     const [accuracy, setAccuracy] = useState(0);
     const [prevSpeed, setPrevSpeed] = useState(0.0);
     const [prevAccuracy, setPrevAccuracy] = useState(0);
-
-
-    //Просто перевірка роботи speed/accuracy
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         //rand
-    //         const newSpeed = Math.random() * 100;
-    //         const newAccuracy = Math.random() * 100;
-
-    //         setPrevSpeed(speed);
-    //         setPrevAccuracy(accuracy);
-
-    //         setSpeed(newSpeed);
-    //         setAccuracy(newAccuracy);
-    //     }, 2000);
-
-    //     return () => clearInterval(interval);
-    // }, [speed, accuracy]);
 
     const setNewSpeed = (wpm) => {
         setSpeed(wpm);
@@ -123,8 +105,8 @@ export default function HomePage() {
                 </div>
             </div>
 
-            <div className="reset-text" onClick={handleResetClick}>
-                <div className="reset-container">
+            <div className="reset-text">
+                <div className="reset-container" onClick={handleResetClick}>
                     <img src="src/assets/refresh-button.png" alt="refresh" className="reset-img"/>
                     <span>reset text</span>
                 </div>

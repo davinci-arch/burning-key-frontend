@@ -6,7 +6,7 @@ import { getText } from "../api/TextAPI"
 
 
 const Typing = forwardRef((props, ref) => {
-    const [textAPI, setTextAPI] = useState("");
+    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief prose narrative with an intense episodic or anecdotal effect'. Flannery O'Connor emphasized the need to consider what is exactly meant by the descriptor short.");
     const [isFocused, setFocused] = useState(false);
     const [inputText, setInputText] = useState("");
     const [counterExtraLetter, setCounterExtraLetter] = useState(0);
@@ -26,21 +26,21 @@ const Typing = forwardRef((props, ref) => {
     const containerRef = useRef(null);
     const amountOfExtraLetters = 5;
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const result = await getText();
-            setTextAPI(result);
-            setWords(result.match(regex));
-        }
-        fetchData();
-    }, []);
+    // (fetch data from server)
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         const result = await getText();
+    //         setTextAPI(result);
+    //         setWords(result.match(regex));
+    //     }
+    //     fetchData();
+    // }, []);
 
     useImperativeHandle(ref, () => ({
         resetText() {
             resetAllData();
         }
     }));
-
     const resetAllData = () => {
         setWords(textAPI.match(regex));
         setInputText("");
@@ -52,14 +52,12 @@ const Typing = forwardRef((props, ref) => {
         setCursorVisible(true);
         inputRef.current.focus();
     }
-
     const play = () => {
         if (props.isSoundOn) {
             var audio = new Audio(PressSound)
             audio.play();
         }
     }
-
     useEffect(() => {
         let timer;
         if (isRunning) {
@@ -75,15 +73,14 @@ const Typing = forwardRef((props, ref) => {
     const handleInput = (event) => {
         const value = event.target.value;
         const lastChar = value[value.length - 1];
-
         if (!isRunning) {
             setIsRunning(true);
         }
 
-        if (lastChar == ' ' && extraLetter.length > 0) {
+        if (lastChar == ' ' && counterExtraLetter > 0 && inputText.length < value.length) {
             return;
         }
-        if (wordIndex == lines[1].endIndex && lastChar == ' ' && lines.length > 3) {
+        if (wordIndex == lines[1].endIndex && (words[wordIndex].length - 1) == letterIndex && lastChar == ' ' && lines.length > 3) {
             setInputText(value);
             removeLineByIndex(0);
             setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
@@ -93,20 +90,24 @@ const Typing = forwardRef((props, ref) => {
         if (inputText.length < value.length && extraLetter.length >= amountOfExtraLetters) {
             return;
         }
+        
 
         if (words[wordIndex][letterIndex] == lastChar) {
             setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
             setCountTypingKeys(countTypingKeys + 1);
         }
         play();
-        if (words[wordIndex].length - 1 == letterIndex && lastChar != ' ' && inputText.length < value.length && (wordIndex - 1) != lines[lines.length - 1].endIndex - 2) {
+        if (words[wordIndex].length - 1 == letterIndex &&
+            lastChar != ' ' &&
+            inputText.length < value.length &&
+            (wordIndex - 1) != lines[lines.length - 1].endIndex - 2) {
+
             setExtraLetter(prevExtraLetter => [...prevExtraLetter, letterIndex]);
             setCounterExtraLetter(counterExtraLetter + 1);
             setCountTypingKeys(countTypingKeys + 1);
             words[wordIndex] = words[wordIndex].slice(0, letterIndex) + lastChar + words[wordIndex].slice(letterIndex);
         }
         if (inputText.length > value.length) {
-
             if (extraLetter.length > 0) {
                 const updateLetters = words[wordIndex].split('');
                 updateLetters[extraLetter[counterExtraLetter - 1]] = '';
@@ -134,7 +135,6 @@ const Typing = forwardRef((props, ref) => {
         if ((wordIndex - 1) == lines[lines.length - 1].endIndex - 2 && letterIndex == words[wordIndex].length - 1) {
             setIsRunning(false);
             props.setNewSpeed((countCorrectTypingKeys / 5) / (elapsedTime / 60));
-            console.log("correct:" + countCorrectTypingKeys + " uncorrect:" + countTypingKeys + " accuracy:" + ((countCorrectTypingKeys / countTypingKeys) * 100))
             props.newAccuracy((countCorrectTypingKeys / countTypingKeys) * 100)
             resetAllData();
             return;
@@ -182,14 +182,12 @@ const Typing = forwardRef((props, ref) => {
                 lines.push({ startIndex: i });
             }
         }
-
         if (lines.length > 0) {
             const lastLine = lines[lines.length - 1];
             lastLine.endIndex = items.length - 1;
             lastLine.length = calculateLineLength(lastLine.startIndex, lastLine.endIndex);
             lastLine.wordCount = countWords(lastLine.startIndex, lastLine.endIndex);
         }
-
         return lines;
     };
 
@@ -231,8 +229,6 @@ const Typing = forwardRef((props, ref) => {
             ...words.slice(0, startIndex),
             ...words.slice(endIndex + 1)
         ];
-
-
         setInputText(prevText => prevText.slice(lines[0].length));
         setWords(updatedWords);
         setWordIndex(wordIndex - (lines[0].wordCount - 1));
