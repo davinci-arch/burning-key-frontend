@@ -6,7 +6,7 @@ import { getText } from "../api/TextAPI"
 
 
 const Typing = forwardRef((props, ref) => {
-    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief prose narrative with an intense episodic or anecdotal effect'. Flannery O'Connor emphasized the need to consider what is exactly meant by the descriptor short.");
+    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief prose narrative with an");
     const [isFocused, setFocused] = useState(false);
     const [inputText, setInputText] = useState("");
     const [counterExtraLetter, setCounterExtraLetter] = useState(0);
@@ -46,6 +46,8 @@ const Typing = forwardRef((props, ref) => {
         setInputText("");
         setWordIndex(0);
         setCounterExtraLetter(0);
+        setCountCorrectTypingKeys(0);
+        setCountTypingKeys(0);
         setLetterIndex(0);
         setExtraLetter([]);
         setFocused(true);
@@ -132,7 +134,7 @@ const Typing = forwardRef((props, ref) => {
             setCountTypingKeys(countTypingKeys + 1);
         }
         setInputText(value);
-        if ((wordIndex - 1) == lines[lines.length - 1].endIndex - 2 && letterIndex == words[wordIndex].length - 1) {
+        if ((wordIndex - 1) == lines[lines.length - 1].endIndex - 2 && letterIndex == words[wordIndex].length - 1 && inputText.length < value.length) {
             setIsRunning(false);
             props.setNewSpeed((countCorrectTypingKeys / 5) / (elapsedTime / 60));
             props.newAccuracy((countCorrectTypingKeys / countTypingKeys) * 100)
@@ -212,11 +214,15 @@ const Typing = forwardRef((props, ref) => {
         inputRef.current.focus();
         event.stopPropagation();
         setCursorVisible(true);
+        if (!isRunning && elapsedTime != 0) {
+            console.log(elapsedTime);
+            setIsRunning(true);
+        }
     }
     const changeFocuse = () => {
         setFocused(false);
         setCursorVisible(false);
-
+        setIsRunning(false);
     }
     const removeLineByIndex = (lineIndex) => {
 
