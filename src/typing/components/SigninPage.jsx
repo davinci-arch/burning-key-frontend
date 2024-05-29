@@ -1,5 +1,3 @@
-import Header from "./Header";
-import Footer from "./Footer";
 import "../styles/signinpage.scss";
 import { useState } from "react";
 
@@ -12,7 +10,6 @@ export default function SigninPage() {
 
     return (
         <div className="signin">
-            <Header />
             <div className="signin-container">
                 <form onSubmit={handleSubmit} className="signin-form">
                     <label htmlFor="email">Sign-In with E-mail</label>
@@ -40,7 +37,6 @@ export default function SigninPage() {
                     To sign-in again later, enter the same e-mail address, and we will send a new link for the same account.
                 </p>
             </div>
-            <Footer />
         </div>
     );
 }

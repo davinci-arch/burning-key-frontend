@@ -1,12 +1,13 @@
 
 import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react"
-import PressSound from "../../assets/pressSound3.wav"
+import CorrectKey from "../../assets/pressSound3.wav"
+import WrongKey from "../../assets/wrong.mp3"
 import "../styles/typing.scss"
 import { getText } from "../api/TextAPI"
 
 
 const Typing = forwardRef((props, ref) => {
-    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief prose narrative with an");
+    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief story story as 'a brief story");
     const [isFocused, setFocused] = useState(false);
     const [inputText, setInputText] = useState("");
     const [counterExtraLetter, setCounterExtraLetter] = useState(0);
@@ -39,6 +40,11 @@ const Typing = forwardRef((props, ref) => {
     useImperativeHandle(ref, () => ({
         resetText() {
             resetAllData();
+        },
+        unfocused() {
+            setFocused(false);
+            setCursorVisible(false);
+            setIsRunning(false);
         }
     }));
     const resetAllData = () => {
@@ -54,9 +60,9 @@ const Typing = forwardRef((props, ref) => {
         setCursorVisible(true);
         inputRef.current.focus();
     }
-    const play = () => {
+    const play = (path) => {
         if (props.isSoundOn) {
-            var audio = new Audio(PressSound)
+            var audio = new Audio(path)
             audio.play();
         }
     }
@@ -82,7 +88,7 @@ const Typing = forwardRef((props, ref) => {
         if (lastChar == ' ' && counterExtraLetter > 0 && inputText.length < value.length) {
             return;
         }
-        if (wordIndex == lines[1].endIndex && (words[wordIndex].length - 1) == letterIndex && lastChar == ' ' && lines.length > 3) {
+        if (wordIndex == lines[lines.length == 1 ? 0 : 1].endIndex && (words[wordIndex].length - 1) == letterIndex && lastChar == ' ' && lines.length > 3) {
             setInputText(value);
             removeLineByIndex(0);
             setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
@@ -97,8 +103,10 @@ const Typing = forwardRef((props, ref) => {
         if (words[wordIndex][letterIndex] == lastChar) {
             setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
             setCountTypingKeys(countTypingKeys + 1);
+            play(CorrectKey);
+        } else if (inputText.length < value.length) {
+            play(WrongKey);
         }
-        play();
         if (words[wordIndex].length - 1 == letterIndex &&
             lastChar != ' ' &&
             inputText.length < value.length &&
@@ -215,7 +223,6 @@ const Typing = forwardRef((props, ref) => {
         event.stopPropagation();
         setCursorVisible(true);
         if (!isRunning && elapsedTime != 0) {
-            console.log(elapsedTime);
             setIsRunning(true);
         }
     }
