@@ -1,12 +1,21 @@
-
 import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react"
-import PressSound from "../../assets/pressSound3.wav"
+import PressSound from "../../assets/sfx/pressSound.wav"
+import EraseSound from "../../assets/sfx/eraseSound.wav"
+import ErrorSound from "../../assets/sfx/errorSound.mp3"
+import SpaceSound from "../../assets/sfx/spaceSound.wav"
 import "../styles/typing.scss"
 import { getText } from "../api/TextAPI"
 
-
 const Typing = forwardRef((props, ref) => {
-    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief prose narrative with an intense episodic or anecdotal effect'. Flannery O'Connor emphasized the need to consider what is exactly meant by the descriptor short.");
+    const [textAPI, setTextAPI] = useState("Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar " +
+        "Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode S" +
+        "ukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode" +
+        " Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode" +
+        " Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar" +
+        " Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode " +
+        "Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Azhikode Sukumar Azhikode Sukumar" +
+        "Azhikode Sukumar Azhikode defined a short story as 'a brief prose narrative with an intense episodic or anecdotal effect'." +
+        " Flannery O'Connor emphasized the need to consider what is exactly meant by the descriptor short.");
     const [isFocused, setFocused] = useState(false);
     const [inputText, setInputText] = useState("");
     const [counterExtraLetter, setCounterExtraLetter] = useState(0);
@@ -26,21 +35,12 @@ const Typing = forwardRef((props, ref) => {
     const containerRef = useRef(null);
     const amountOfExtraLetters = 5;
 
-    // (fetch data from server)
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         const result = await getText();
-    //         setTextAPI(result);
-    //         setWords(result.match(regex));
-    //     }
-    //     fetchData();
-    // }, []);
-
     useImperativeHandle(ref, () => ({
         resetText() {
             resetAllData();
         }
     }));
+
     const resetAllData = () => {
         setWords(textAPI.match(regex));
         setInputText("");
@@ -52,12 +52,14 @@ const Typing = forwardRef((props, ref) => {
         setCursorVisible(true);
         inputRef.current.focus();
     }
-    const play = () => {
+
+    const playSound = (sound) => {
         if (props.isSoundOn) {
-            var audio = new Audio(PressSound)
+            var audio = new Audio(sound);
             audio.play();
         }
     }
+
     useEffect(() => {
         let timer;
         if (isRunning) {
@@ -77,37 +79,23 @@ const Typing = forwardRef((props, ref) => {
             setIsRunning(true);
         }
 
-        if (lastChar == ' ' && counterExtraLetter > 0 && inputText.length < value.length) {
+        if (lastChar === ' ' && counterExtraLetter > 0 && inputText.length < value.length) {
             return;
         }
-        if (wordIndex == lines[1].endIndex && (words[wordIndex].length - 1) == letterIndex && lastChar == ' ' && lines.length > 3) {
+        if (wordIndex == lines[lines.length == 1 ? 0 : 1].endIndex && (words[wordIndex].length - 1) == letterIndex && lastChar == ' ' && lines.length > 3) {
             setInputText(value);
             removeLineByIndex(0);
             setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
             setCountTypingKeys(countTypingKeys + 1);
+            playSound(SpaceSound);
             return;
         }
         if (inputText.length < value.length && extraLetter.length >= amountOfExtraLetters) {
             return;
         }
-        
 
-        if (words[wordIndex][letterIndex] == lastChar) {
-            setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
-            setCountTypingKeys(countTypingKeys + 1);
-        }
-        play();
-        if (words[wordIndex].length - 1 == letterIndex &&
-            lastChar != ' ' &&
-            inputText.length < value.length &&
-            (wordIndex - 1) != lines[lines.length - 1].endIndex - 2) {
-
-            setExtraLetter(prevExtraLetter => [...prevExtraLetter, letterIndex]);
-            setCounterExtraLetter(counterExtraLetter + 1);
-            setCountTypingKeys(countTypingKeys + 1);
-            words[wordIndex] = words[wordIndex].slice(0, letterIndex) + lastChar + words[wordIndex].slice(letterIndex);
-        }
         if (inputText.length > value.length) {
+            playSound(EraseSound);
             if (extraLetter.length > 0) {
                 const updateLetters = words[wordIndex].split('');
                 updateLetters[extraLetter[counterExtraLetter - 1]] = '';
@@ -115,15 +103,41 @@ const Typing = forwardRef((props, ref) => {
                 setCounterExtraLetter(counterExtraLetter - 1);
                 setExtraLetter(extraLetter.slice(0, -1));
                 setLetterIndex(letterIndex - 1);
-            } else if (letterIndex == 0) {
+            } else if (letterIndex === 0) {
                 setWordIndex(wordIndex - 1);
-                setLetterIndex(words[wordIndex - 1].length - 1)
+                setLetterIndex(words[wordIndex - 1].length - 1);
                 setInputText(value);
             } else {
                 setLetterIndex(letterIndex - 1);
             }
         } else {
-            if (letterIndex == words[wordIndex].length - 1) {
+            if (words[wordIndex][letterIndex] === lastChar) {
+                if (lastChar === ' ') {
+                    playSound(SpaceSound);
+                } else {
+                    setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
+                    setCountTypingKeys(countTypingKeys + 1);
+                    playSound(PressSound);
+                }
+            } else {
+                playSound(ErrorSound);
+
+                const incorrectKeyElement = document.getElementById(`Key${lastChar.toUpperCase()}`);
+                if (incorrectKeyElement) {
+                    incorrectKeyElement.classList.add('pulsate');
+                    setTimeout(() => {
+                        incorrectKeyElement.classList.remove('pulsate');
+                    }, 500);
+                }
+            }
+
+            if (words[wordIndex].length - 1 == letterIndex && lastChar != ' ' && inputText.length < value.length && (wordIndex - 1) != lines[lines.length - 1].endIndex - 2) {
+                setExtraLetter(prevExtraLetter => [...prevExtraLetter, letterIndex]);
+                setCounterExtraLetter(counterExtraLetter + 1);
+                setCountTypingKeys(countTypingKeys + 1);
+                words[wordIndex] = words[wordIndex].slice(0, letterIndex) + lastChar + words[wordIndex].slice(letterIndex);
+            }
+            if (letterIndex === words[wordIndex].length - 1) {
                 setLetterIndex(0);
                 setWordIndex(wordIndex + 1);
             } else {
@@ -132,24 +146,16 @@ const Typing = forwardRef((props, ref) => {
             setCountTypingKeys(countTypingKeys + 1);
         }
         setInputText(value);
-        if ((wordIndex - 1) == lines[lines.length - 1].endIndex - 2 && letterIndex == words[wordIndex].length - 1) {
+        if ((wordIndex - 1) === lines[lines.length - 1].endIndex - 2 && letterIndex === words[wordIndex].length - 1) {
             setIsRunning(false);
             props.setNewSpeed((countCorrectTypingKeys / 5) / (elapsedTime / 60));
-            props.newAccuracy((countCorrectTypingKeys / countTypingKeys) * 100)
+            props.newAccuracy((countCorrectTypingKeys / countTypingKeys) * 100);
             resetAllData();
             return;
         }
-        // moveCursor(value.length);
     }
-    // const moveCursor = (position) => {
-    //     const letters = containerRef.current.querySelectorAll('.letter');
-    //     let leftOffset = 0;
-    //     for (let i = 0; i < position; i++) {
-    //         leftOffset += letters[i].offsetWidth;
-    //     }
-    //     const cursor = containerRef.current.querySelector('.cursor');
-    //     cursor.style.transform = `translateX(${leftOffset}px)`;
-    // }
+
+
     useEffect(() => {
         const container = containerRef.current;
         const updateLines = () => {
@@ -161,7 +167,8 @@ const Typing = forwardRef((props, ref) => {
         return () => {
             window.removeEventListener('resize', updateLines);
         };
-    }, [words]);
+    }, [words, props.selectedSize, props.selectedFont]);
+
     const getLineEndIndices = (container) => {
         const items = container.children;
         const lines = [];
@@ -198,6 +205,7 @@ const Typing = forwardRef((props, ref) => {
         }
         return length;
     };
+
     const countWords = (startIndex, endIndex) => {
         let count = 0;
         for (let i = startIndex; i <= endIndex; i++) {
@@ -207,19 +215,20 @@ const Typing = forwardRef((props, ref) => {
         }
         return count;
     };
+
     const focusedField = (event) => {
         setFocused(true);
         inputRef.current.focus();
         event.stopPropagation();
         setCursorVisible(true);
     }
-    const changeFocuse = () => {
+
+    const changeFocus = () => {
         setFocused(false);
         setCursorVisible(false);
-
     }
-    const removeLineByIndex = (lineIndex) => {
 
+    const removeLineByIndex = (lineIndex) => {
         if (lineIndex < 0 || lineIndex >= lines.length) {
             console.warn('Invalid line index');
             return;
@@ -258,7 +267,7 @@ const Typing = forwardRef((props, ref) => {
                                     style = "wrongLetter letter"
                                 }
                             }
-                            if (letter == ' ') {
+                            if (letter === ' ') {
                                 letter = '\u00a0';
                             }
                             if (letterIndex == letteri && wordIndex == wordI && isCursorVisible) {
@@ -277,32 +286,28 @@ const Typing = forwardRef((props, ref) => {
     });
     return (
         <div className="text-container">
-            <div className="nested-text-container">
+            <div className="nested-text-container" style={{fontSize: props.selectedSize, fontFamily: props.selectedFont}}>
                 <div className={isFocused ? "text focused" : "text"}>
-                    <div className="words" ref={containerRef}>
+                    <div className={`words ${props.isDarkTheme ? 'dark' : ''}`} ref={containerRef}>
                         {letterComponents}
                     </div>
-                    {/* {isCursorVisible ?
-                        <div className="cursor"></div>
-                        : <></>   
-                    } */}
                 </div>
                 {!isFocused ?
                     <div className="description"
-                        onClick={focusedField}
+                         onClick={focusedField}
                     >
                         <span className="img-container">
-                            <img src="src/assets/cursor.png" alt="cursor" className="cursor-pointer" />
+                               <img src="src/assets/cursor.png" alt="cursor" className={`cursor-pointer ${props.isDarkTheme ? 'dark' : ''}`}/>
                         </span>
                         <span className="hint">Click to focus on field</span>
                     </div> : ""
                 }
             </div>
             <input type="text" className="text-input"
-                ref={inputRef}
-                value={inputText}
-                onChange={handleInput}
-                onBlur={changeFocuse}
+                   ref={inputRef}
+                   value={inputText}
+                   onChange={handleInput}
+                   onBlur={changeFocus}
             />
         </div>
     )

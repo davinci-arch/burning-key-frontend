@@ -1,3 +1,5 @@
+//Світла тема
+
 .text-container {
     width: 100%;
     display: flex;
@@ -5,25 +7,31 @@
     align-items: center;
     margin-top: 30px;
     user-select: none;
+}
 
-    .text {
-        overflow: hidden;
-        height: 120px;
-        opacity: .25;
-        filter: blur(2px);
-        cursor: pointer;
-        transition: opacity 0.3s ease, filter 0.3s ease;
+.text-container.dark {
+    background-color: #727272;
+    color: #d6d2bc;
+}
 
-        &.focused {
-            opacity: 1;
-            filter: none;
-        }
+.text {
+    overflow: hidden;
+    height: 120px;
+    opacity: .25;
+    filter: blur(2px);
+    cursor: pointer;
+    transition: opacity 0.3s ease, filter 0.3s ease;
+
+    &.focused {
+        opacity: 1;
+        filter: none;
     }
 }
 
 .nested-text-container {
     width: 878px;
-    font-size: 24px;
+    font-size: 32px;
+    font-family: 'system-ui';
     position: relative;
     display: flex;
 }
@@ -51,6 +59,8 @@
     }
 
     .hint {
+        font-size: 22px;
+        font-family: system-ui;
         margin-left: 5px;
     }
 }
@@ -70,6 +80,10 @@
     color: black;
 }
 
+.words.dark {
+    color: #d6d2bc;
+}
+
 .word {
     margin: .25em;
     margin-left: 0;
@@ -85,18 +99,14 @@
     border-radius: 20px;
     top: 4px;
     transition: all ease-in;
+    color: #d6d2bc;
 }
 
 @keyframes blink-caret {
-
-    0%,
-    100% {
-        // opacity: 0;
+    0%, 100% {
         text-decoration: none;
     }
-
     50% {
-        // opacity: 1;
         text-decoration: underline;
     }
 }
@@ -114,6 +124,7 @@
     color: white;
     background-color: red;
 }
+
 .correctLetter {
     color: grey;
 }
@@ -124,4 +135,42 @@
 
 .blink {
     animation: blink-caret .8s step-end infinite;
+}
+
+
+//Темна тема
+
+.text-container.dark {
+    background-color: #727272;
+    color: #d6d2bc;
+}
+
+.text.dark {
+    opacity: .25;
+    filter: blur(2px);
+
+    &.focused {
+        opacity: 1;
+        filter: none;
+    }
+}
+
+.nested-text-container.dark {
+    font-size: 32px;
+
+    .hint.dark {
+        font-family: system-ui;
+    }
+}
+
+.cursor-pointer.dark {
+    filter: invert(95%) sepia(10%) saturate(400%) hue-rotate(7deg) brightness(90%) contrast(88%);
+}
+
+.words.dark {
+    color: #d6d2bc;
+}
+
+.cursor.dark {
+    color: #d6d2bc;
 }

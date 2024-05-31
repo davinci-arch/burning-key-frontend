@@ -11,7 +11,7 @@ const apiClient = axios.create({
 
 export const getText = async () => {
     try {
-      const response = await apiClient.get("/3");
+      const response = await apiClient.get("/2");
       return response.data.content;
     } catch (error) {
       console.error('Error fetching placeholder data:', error);

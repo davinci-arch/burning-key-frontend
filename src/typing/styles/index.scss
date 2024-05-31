@@ -1,3 +1,4 @@
+//Світла тема
 * {
     margin: 0;
     padding: 0;
@@ -10,6 +11,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-family: "Roboto Slab";
 
     .logo {
         width: 258px;
@@ -23,12 +25,12 @@
         cursor: pointer;
         user-select: none;
     }
-
 }
 
 .nav-link {
     color: #000;
     text-decoration: none;
+
     &:hover {
         text-decoration: underline;
     }
@@ -38,6 +40,7 @@
     width: 100%;
     height: 38px;
     background-color: #FEF9C7;
+    font-family: "Roboto Slab";
     box-shadow: inset 0 4px 4px rgba(0, 0, 0, .25);
     display: flex;
     justify-content: space-between;
@@ -50,14 +53,10 @@
 
     .link:first-child {
         margin-left: 49px;
-
     }
-
-    
-
 }
 
-.link-container{
+.link-container {
     display: flex;
     gap: 32px;
 
@@ -74,19 +73,42 @@
 
         &:hover {
             color: #1766FF;
-
         }
     }
 }
 
-.sound-button {
+.change-button {
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
+
     img {
         width: 24px;
         height: 24px;
     }
-    margin-right: 32px;
+}
+
+//Темна тема
+.main-header.dark {
+    background-color: #3a3c3d;
+    color: #d6d2bc;
+
+    .logo {
+        filter: invert(50%) sepia(98%) saturate(108%) hue-rotate(211deg) brightness(270%) contrast(600%);
+    }
+}
+
+.nav-link.dark {
+    background-color: #3a3c3d;
+    color: #d6d2bc;
+}
+
+.main-footer.dark {
+    background-color: #3a3c3d;
+    color: #d6d2bc;
+
+    img {
+        filter: invert(95%) sepia(10%) saturate(400%) hue-rotate(7deg) brightness(90%) contrast(88%);
+    }
 }
