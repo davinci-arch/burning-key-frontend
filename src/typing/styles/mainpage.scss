@@ -192,3 +192,16 @@ $toolbar-margin: 20px;
 .negative {
     color: red;
 }
+
+
+.time-options {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+    p{
+        cursor: pointer;
+
+    }
+    user-select: none;
+}

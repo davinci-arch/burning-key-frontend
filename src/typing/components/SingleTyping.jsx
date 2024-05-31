@@ -1,111 +1,76 @@
-import { useEffect, useRef, useState } from 'react';
-import Typing from './Typing';
-import Keyboard from './Keyboard';
-import '../styles/mainpage.scss';
+import { useState, useEffect } from "react";
+import SingleTyping from "./SingleTypingPage";
+import Typing from "./Typing";
+export default function SingleTyping1({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult }) {
+    const [timerDuration, setTimerDuration] = useState(5);
+    const [isRunning, setIsRunning] = useState(false);
+    const [elapsedTime, setElapsedTime] = useState(0);
+    const [correctKeys, setCorrectKeys] = useState(0);
+    const [countKeys, setCountKeys] = useState(0);
+    const [isFocused, setFocused] = useState(false);
+    const [isPause, setIsPause] = useState(false);
+    useEffect(() => {
+        let timer;
+        if (isRunning) {
+            console.log(isRunning)
+            timer = setInterval(() => {
+                if (!isPause) {
+                    setElapsedTime((prevTime) => prevTime + 1);
+                }
+            }, 1000);
+        } else if (!isRunning && elapsedTime !== 0 && !isPause) {
+            if (!isPause) {
+                setNewSpeed((correctKeys / 5) / (elapsedTime / 60));
+                newAccuracy((correctKeys / countKeys) * 100)
+                clearInterval(timer);
+                setResult(true);
+                if (typoRef.current) {
+                    typoRef.current.resetText();
+                }
+            }
 
-export default function SingleTyping({ isSoundOn }) {
-
-    const typoRef = useRef(null);
-    const [activeTab, setActiveTab] = useState('text');
-
-    const [speed, setSpeed] = useState(0.0);
-    const [accuracy, setAccuracy] = useState(0);
-    const [prevSpeed, setPrevSpeed] = useState(0.0);
-    const [prevAccuracy, setPrevAccuracy] = useState(0);
-
-    const setNewSpeed = (wpm) => {
-        setSpeed(wpm);
-        setPrevSpeed(speed);
-    }
-
-    const newAccuracy = (newAccuracy) => {
-        setAccuracy(newAccuracy);
-        setPrevAccuracy(accuracy);
-    }
-
-    const getColorClass = (current, previous) => {
-        if (current > previous) {
-            return 'positive';
-        } else if (current < previous) {
-            return 'negative';
         }
-        return '';
-    };
+        return () => clearInterval(timer);
+    }, [isRunning, isFocused]);
 
-    const handleTabClick = (tab) => {
-        setActiveTab(tab);
-    };
+    const changeFocuse = () => {
+        setFocused(false);
+        setIsPause(true);
+    }
 
-    const handleResetClick = () => {
+    const handleFocuse = () => {
         if (typoRef.current) {
-            typoRef.current.resetText();
+            typoRef.current.focusedField()
+            setFocused(true);
+            setIsPause(false);
         }
     }
-    return (
-        <>
-            <div className="toolbar-container">
-                <div className="toolbar">
-                    <div className="navigation">
-                        <p onClick={() => handleTabClick('multiplayer')}
-                            className={activeTab === 'multiplayer' ? 'active' : ''}>
-                            multiplayer
-                        </p>
-                        <p onClick={() => handleTabClick('test')} className={activeTab === 'test' ? 'active' : ''}>
-                            test
-                        </p>
-                        <p onClick={() => handleTabClick('text')} className={activeTab === 'text' ? 'active' : ''}>
-                            text
-                        </p>
-                        <p onClick={() => handleTabClick('single')} className={activeTab === 'single' ? 'active' : ''}>
-                            single
-                        </p>
-                        <div className="animation move">navigation</div>
-                    </div>
-                    <span className="separator"></span>
-                    <div className="empty-middle">
-                        <div className="speed-container">
-                            <span style={{ marginLeft: '25px', marginRight: '3px', color: 'indigo', fontSize: '17px' }}>
-                                Speed:
-                            </span>
-                            <span className="speed-value">{speed.toFixed(1)}wpm</span> (
-                            <span className={getColorClass(speed, prevSpeed)}>
-                                {speed - prevSpeed >= 0 ? '↑+' : '↓'}{(speed - prevSpeed).toFixed(1)}wpm
-                            </span>)
-                        </div>
-                        <div className="accuracy-container">
-                            <span style={{ marginLeft: '30px', marginRight: '3px', color: 'indigo', fontSize: '17px' }}>
-                                Accuracy:
-                            </span>
-                            <span className="accuracy-value">{accuracy.toFixed(1)}%</span> (
-                            <span className={getColorClass(accuracy, prevAccuracy)}>
-                                {accuracy - prevAccuracy >= 0 ? '↑+' : '↓'}{(accuracy - prevAccuracy).toFixed(1)}%
-                            </span>)
-                        </div>
-                    </div>
-                    <span className="separator"></span>
-                    <div className="text-config">
-                        <p>font</p>
-                        <p>size</p>
-                        <div className="animation move">style</div>
-                    </div>
-                </div>
-            </div>
-            <div className="animated-container">
-                <div className={`animated-component ${activeTab === 'text' ? 'active' : ''}`}>
-                    {activeTab === 'text' && <Typing ref={typoRef} isSoundOn={isSoundOn} setNewSpeed={setNewSpeed} newAccuracy={newAccuracy} />}
-                </div>
-                <div className={`animated-component ${activeTab === 'test' ? 'active' : ''}`}>
-                    {activeTab === 'test' && <Typing />}
-                </div>
-            </div>
 
-            <div className="reset-text">
-                <div className="reset-container" onClick={handleResetClick}>
-                    <img src="src/assets/refresh-button.png" alt="refresh" className="reset-img" />
-                    <span>reset text</span>
-                </div>
-            </div>
-            <Keyboard />
-        </>
+    return (
+        <div>
+            <Typing
+                ref={typoRef}
+                type={"default"}
+                isSoundOn={isSoundOn}
+                setCorrectKeys={setCorrectKeys}
+                setCountKeys={setCountKeys}
+                setIsRunning={setIsRunning}
+                isRunning={isRunning}
+                changeFocuse={changeFocuse}
+                isFocused={isFocused}>
+
+                {!isFocused ?
+                    <div className="description"
+                        onClick={handleFocuse}
+                    >
+                        <span className="img-container">
+                            <img src="src/assets/cursor.png" alt="cursor" className="cursor-pointer" />
+                        </span>
+                        <span className="hint">Click to focus on field</span>
+                    </div> : ""
+                }
+            </Typing>
+        </div>
     )
+
 }

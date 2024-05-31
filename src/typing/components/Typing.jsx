@@ -8,7 +8,6 @@ import { getText } from "../api/TextAPI"
 
 const Typing = forwardRef((props, ref) => {
     const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief story story as 'a brief story");
-    const [isFocused, setFocused] = useState(false);
     const [inputText, setInputText] = useState("");
     const [counterExtraLetter, setCounterExtraLetter] = useState(0);
     let regex = /.*?\s|.*?$/g;
@@ -20,8 +19,7 @@ const Typing = forwardRef((props, ref) => {
     const [lines, setLines] = useState([]);
     const [countCorrectTypingKeys, setCountCorrectTypingKeys] = useState(0);
     const [countTypingKeys, setCountTypingKeys] = useState(0);
-    const [elapsedTime, setElapsedTime] = useState(0);
-    const [isRunning, setIsRunning] = useState(false);
+    // const [isRunning, setIsRunning] = useState(false);
 
     const inputRef = useRef(null);
     const containerRef = useRef(null);
@@ -41,10 +39,12 @@ const Typing = forwardRef((props, ref) => {
         resetText() {
             resetAllData();
         },
-        unfocused() {
-            setFocused(false);
-            setCursorVisible(false);
-            setIsRunning(false);
+        timer() {
+            results();
+        },
+        focusedField() {
+            inputRef.current.focus();
+            setCursorVisible(true);
         }
     }));
     const resetAllData = () => {
@@ -56,7 +56,6 @@ const Typing = forwardRef((props, ref) => {
         setCountTypingKeys(0);
         setLetterIndex(0);
         setExtraLetter([]);
-        setFocused(true);
         setCursorVisible(true);
         inputRef.current.focus();
     }
@@ -66,23 +65,13 @@ const Typing = forwardRef((props, ref) => {
             audio.play();
         }
     }
-    useEffect(() => {
-        let timer;
-        if (isRunning) {
-            timer = setInterval(() => {
-                setElapsedTime((prevTime) => prevTime + 1);
-            }, 1000);
-        } else if (!isRunning && elapsedTime !== 0) {
-            clearInterval(timer);
-        }
-        return () => clearInterval(timer);
-    }, [isRunning]);
+    
 
     const handleInput = (event) => {
         const value = event.target.value;
         const lastChar = value[value.length - 1];
-        if (!isRunning) {
-            setIsRunning(true);
+        if (!props.isRunning) {
+            props.setIsRunning(true);
         }
 
         if (lastChar == ' ' && counterExtraLetter > 0 && inputText.length < value.length) {
@@ -98,7 +87,7 @@ const Typing = forwardRef((props, ref) => {
         if (inputText.length < value.length && extraLetter.length >= amountOfExtraLetters) {
             return;
         }
-        
+
 
         if (words[wordIndex][letterIndex] == lastChar) {
             setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
@@ -143,10 +132,7 @@ const Typing = forwardRef((props, ref) => {
         }
         setInputText(value);
         if ((wordIndex - 1) == lines[lines.length - 1].endIndex - 2 && letterIndex == words[wordIndex].length - 1 && inputText.length < value.length) {
-            setIsRunning(false);
-            props.setNewSpeed((countCorrectTypingKeys / 5) / (elapsedTime / 60));
-            props.newAccuracy((countCorrectTypingKeys / countTypingKeys) * 100)
-            resetAllData();
+            results();
             return;
         }
         // moveCursor(value.length);
@@ -160,6 +146,11 @@ const Typing = forwardRef((props, ref) => {
     //     const cursor = containerRef.current.querySelector('.cursor');
     //     cursor.style.transform = `translateX(${leftOffset}px)`;
     // }
+    const results = () => {
+        props.setIsRunning(false);
+        props.setCountKeys(countTypingKeys);
+        props.setCorrectKeys(countCorrectTypingKeys);
+    }
     useEffect(() => {
         const container = containerRef.current;
         const updateLines = () => {
@@ -217,20 +208,7 @@ const Typing = forwardRef((props, ref) => {
         }
         return count;
     };
-    const focusedField = (event) => {
-        setFocused(true);
-        inputRef.current.focus();
-        event.stopPropagation();
-        setCursorVisible(true);
-        if (!isRunning && elapsedTime != 0) {
-            setIsRunning(true);
-        }
-    }
-    const changeFocuse = () => {
-        setFocused(false);
-        setCursorVisible(false);
-        setIsRunning(false);
-    }
+    
     const removeLineByIndex = (lineIndex) => {
 
         if (lineIndex < 0 || lineIndex >= lines.length) {
@@ -288,10 +266,11 @@ const Typing = forwardRef((props, ref) => {
             </div>
         )
     });
+    
     return (
         <div className="text-container">
             <div className="nested-text-container">
-                <div className={isFocused ? "text focused" : "text"}>
+                <div className={props.isFocused ? "text focused" : "text"}>
                     <div className="words" ref={containerRef}>
                         {letterComponents}
                     </div>
@@ -300,22 +279,16 @@ const Typing = forwardRef((props, ref) => {
                         : <></>   
                     } */}
                 </div>
-                {!isFocused ?
-                    <div className="description"
-                        onClick={focusedField}
-                    >
-                        <span className="img-container">
-                            <img src="src/assets/cursor.png" alt="cursor" className="cursor-pointer" />
-                        </span>
-                        <span className="hint">Click to focus on field</span>
-                    </div> : ""
-                }
+                {props.children}
             </div>
             <input type="text" className="text-input"
                 ref={inputRef}
                 value={inputText}
                 onChange={handleInput}
-                onBlur={changeFocuse}
+                onBlur={() => {
+                    props.changeFocuse();
+                    setCursorVisible(false);
+                }}
             />
         </div>
     )
