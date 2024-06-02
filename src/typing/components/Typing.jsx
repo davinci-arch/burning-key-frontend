@@ -19,7 +19,6 @@ const Typing = forwardRef((props, ref) => {
     const [lines, setLines] = useState([]);
     const [countCorrectTypingKeys, setCountCorrectTypingKeys] = useState(0);
     const [countTypingKeys, setCountTypingKeys] = useState(0);
-    // const [isRunning, setIsRunning] = useState(false);
 
     const inputRef = useRef(null);
     const containerRef = useRef(null);
@@ -40,12 +39,13 @@ const Typing = forwardRef((props, ref) => {
             resetAllData();
         },
         timer() {
+            resetAllData();
             results();
         },
         focusedField() {
             inputRef.current.focus();
             setCursorVisible(true);
-        }
+        },
     }));
     const resetAllData = () => {
         setWords(textAPI.match(regex));

@@ -12,7 +12,6 @@ export default function SingleTyping1({ typoRef, isSoundOn, setNewSpeed, newAccu
     useEffect(() => {
         let timer;
         if (isRunning) {
-            console.log(isRunning)
             timer = setInterval(() => {
                 if (!isPause) {
                     setElapsedTime((prevTime) => prevTime + 1);
@@ -47,7 +46,7 @@ export default function SingleTyping1({ typoRef, isSoundOn, setNewSpeed, newAccu
     }
 
     return (
-        <div>
+        <div className="typing-wrapper">
             <Typing
                 ref={typoRef}
                 type={"default"}

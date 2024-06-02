@@ -1,8 +1,8 @@
 
 import Typing from "./Typing";
-import { useState, useEffect } from "react";
-export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult }) {
-    const [choosenTime, setTime] = useState(15);
+import { useState, useEffect, useRef } from "react";
+export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, choosenTime }) {
+
     const [timerDuration, setTimerDuration] = useState(choosenTime);
     const [isRunning, setIsRunning] = useState(false);
     const [correctKeys, setCorrectKeys] = useState(0);
@@ -10,9 +10,19 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isFocused, setFocused] = useState(false);
 
+    const handleClick = useRef(null);
+
+    useEffect(() => {
+        handleClick.current = function (event) {
+            event.stopPropagation();
+        };
+    }, []);
+
     useEffect(() => {
         let timer;
         if (isRunning) {
+            document.getElementsByClassName("time-options")[0].addEventListener('click', handleClick.current, true);
+
             timer = setInterval(() => {
                 setTimerDuration((prevTime) => {
                     if (prevTime <= 1) {
@@ -28,17 +38,23 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
             clearInterval(timer);
             finishTest();
         }
-        return () => { clearInterval(timer) };
+        return () => { 
+            clearInterval(timer);
+            document.getElementsByClassName("time-options")[0].removeEventListener('click', handleClick.current, true);
+        };
     }, [isRunning]);
+
+    useEffect(() => {
+        setTimerDuration(choosenTime);
+    }, [choosenTime]);
 
     useEffect(() => {
         if (!isRunning && elapsedTime != 0) {
             setNewSpeed((correctKeys / 5) / (elapsedTime / 60));
-            newAccuracy((correctKeys / countKeys) * 100)
+            newAccuracy((correctKeys / countKeys) * 100);
             setResult(true);
             setTimerDuration(choosenTime);
         }
-
     }, [isRunning]);
 
     const finishTest = () => {
@@ -47,23 +63,25 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
                 typoRef.current.timer();
             }, 0);
         }
-    }
+    };
+
     const changeFocuse = () => {
         setFocused(false);
-    }
+    };
+
     const handleFocuse = () => {
         if (typoRef.current) {
             typoRef.current.focusedField();
             setFocused(true);
         }
-    }
+    };
 
     return (
-        <div className="timer">
-            <div className="time-options">
-                <p onClick={() => setTime(15)}>15</p>
-                <p onClick={() => setTime(30)}>30</p>
-                <p onClick={() => setTime(60)}>60</p>
+        <div>
+            <div className="timer-container" style={{ opacity: isRunning ? 1 : 0 }}>
+                <div className="timer">
+                    <p>{timerDuration}</p>
+                </div>
             </div>
 
             <Typing
@@ -76,12 +94,10 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
                 setIsRunning={setIsRunning}
                 isRunning={isRunning}
                 changeFocuse={changeFocuse}
-                isFocused={isFocused} >
-
+                isFocused={isFocused}
+            >
                 {!isFocused ?
-                    <div className="description"
-                        onClick={handleFocuse}
-                    >
+                    <div className="description" onClick={handleFocuse}>
                         <span className="img-container">
                             <img src="src/assets/cursor.png" alt="cursor" className="cursor-pointer" />
                         </span>
@@ -90,5 +106,5 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
                 }
             </Typing>
         </div>
-    )
+    );
 }

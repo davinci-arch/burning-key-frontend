@@ -23,7 +23,7 @@ $toolbar-margin: 20px;
         font-size: 15px;
         color: #000;
 
-        .empty-middle {
+        .toolbar-middle {
             flex: 1;
             display: flex;
             align-items: center;
@@ -166,6 +166,7 @@ $toolbar-margin: 20px;
         align-items: center;
         cursor: pointer;
         user-select: none;
+
         .reset-img {
             width: 18px;
             height: 18px;
@@ -186,9 +187,11 @@ $toolbar-margin: 20px;
     opacity: 1;
     transform: translateX(0);
 }
+
 .positive {
     color: green;
 }
+
 .negative {
     color: red;
 }
@@ -199,9 +202,32 @@ $toolbar-margin: 20px;
     flex-direction: row;
     justify-content: center;
     gap: 20px;
-    p{
+    margin-left: 10px;
+
+    p {
         cursor: pointer;
 
+        &.active {
+            color: #1766ff;
+        }
+
     }
+
     user-select: none;
+}
+
+.timer-container {
+    display: flex;
+    justify-content: center;
+
+
+    .timer {
+        width: 870px;
+        font-size: 25px;
+        color: #FFB710;
+    }
+}
+
+.typing-wrapper {
+    margin-top: 30px;
 }

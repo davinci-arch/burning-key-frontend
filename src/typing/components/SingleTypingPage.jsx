@@ -4,17 +4,17 @@ import Keyboard from './Keyboard';
 import '../styles/mainpage.scss';
 import TestTyping from './TestTyping';
 import TypingResult from './TypingResult';
-import SingleTyping1 from './SingleTyping';
-export default function SingleTyping({ isSoundOn }) {
+import SingleTyping from './SingleTyping';
+export default function SingleTypingPage({ isSoundOn }) {
 
     const typoRef = useRef(null);
-    const [activeTab, setActiveTab] = useState('text');
 
     const [speed, setSpeed] = useState(0.0);
     const [accuracy, setAccuracy] = useState(0);
     const [prevSpeed, setPrevSpeed] = useState(0.0);
     const [prevAccuracy, setPrevAccuracy] = useState(0);
-
+    const [activeTab, setActiveTab] = useState('text');
+    const [choosenTime, setTime] = useState(15);
     const [result, setResult] = useState(false);
 
     const setNewSpeed = (wpm) => {
@@ -27,11 +27,14 @@ export default function SingleTyping({ isSoundOn }) {
         setPrevAccuracy(accuracy);
     }
 
-
-
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
+
+
+    const changeTime = (value) => {
+        setTime(value);
+    }
 
     const handleResetClick = () => {
         if (typoRef.current) {
@@ -66,7 +69,14 @@ export default function SingleTyping({ isSoundOn }) {
                         <div className="animation move">navigation</div>
                     </div>
                     <span className="separator"></span>
-                    <div className="empty-middle">
+                    <div className="toolbar-middle">
+                        {activeTab === "test" ?
+                            <div className="time-options">
+                                <p onClick={() => changeTime(15)} className={choosenTime === 15 ? 'active' : ''}>15</p>
+                                <p onClick={() => changeTime(30)} className={choosenTime === 30 ? 'active' : ''}>30</p>
+                                <p onClick={() => changeTime(60)} className={choosenTime === 60 ? 'active' : ''}>60</p>
+                            </div> : null
+                        }
                     </div>
                     <span className="separator"></span>
                     <div className="text-config">
@@ -78,10 +88,21 @@ export default function SingleTyping({ isSoundOn }) {
             </div>
             <div className="animated-container">
                 <div className={`animated-component ${activeTab === 'text' ? 'active' : ''}`}>
-                    {activeTab === 'text' && <SingleTyping1 typoRef={typoRef} isSoundOn={isSoundOn} setNewSpeed={setNewSpeed} newAccuracy={newAccuracy} setResult={setResult}/>}
+                    {activeTab === 'text' && <SingleTyping
+                        typoRef={typoRef}
+                        isSoundOn={isSoundOn}
+                        setNewSpeed={setNewSpeed}
+                        newAccuracy={newAccuracy}
+                        setResult={setResult} />}
                 </div>
                 <div className={`animated-component ${activeTab === 'test' ? 'active' : ''}`}>
-                    {activeTab === 'test' && <TestTyping typoRef={typoRef} isSoundOn={isSoundOn} setNewSpeed={setNewSpeed} newAccuracy={newAccuracy} setResult={setResult} />}
+                    {activeTab === 'test' && <TestTyping
+                        typoRef={typoRef}
+                        isSoundOn={isSoundOn}
+                        setNewSpeed={setNewSpeed}
+                        newAccuracy={newAccuracy}
+                        setResult={setResult}
+                        choosenTime={choosenTime} />}
                 </div>
             </div>
 
