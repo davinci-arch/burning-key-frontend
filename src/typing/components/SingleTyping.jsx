@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import SingleTyping from "./SingleTypingPage";
 import Typing from "./Typing";
-export default function SingleTyping1({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult }) {
+export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult }) {
     const [timerDuration, setTimerDuration] = useState(5);
     const [isRunning, setIsRunning] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
@@ -63,7 +62,7 @@ export default function SingleTyping1({ typoRef, isSoundOn, setNewSpeed, newAccu
                         onClick={handleFocuse}
                     >
                         <span className="img-container">
-                            <img src="src/assets/cursor.png" alt="cursor" className="cursor-pointer" />
+                            <img src="/src/assets/cursor.png" alt="cursor" className="cursor-pointer" />
                         </span>
                         <span className="hint">Click to focus on field</span>
                     </div> : ""

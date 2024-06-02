@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import Typing from './Typing';
 import Keyboard from './Keyboard';
 import '../styles/mainpage.scss';
 import TestTyping from './TestTyping';
 import TypingResult from './TypingResult';
 import SingleTyping from './SingleTyping';
+import { Link } from 'react-router-dom';
 export default function SingleTypingPage({ isSoundOn }) {
 
     const typoRef = useRef(null);
@@ -53,10 +53,13 @@ export default function SingleTypingPage({ isSoundOn }) {
             <div className="toolbar-container">
                 <div className="toolbar">
                     <div className="navigation">
-                        <p onClick={() => handleTabClick('multiplayer')}
-                            className={activeTab === 'multiplayer' ? 'active' : ''}>
-                            multiplayer
-                        </p>
+                        <Link to="/multiplayer/rooms" className='link'>
+                            <p onClick={() => handleTabClick('multiplayer')}
+                                className={activeTab === 'multiplayer' ? 'active' : ''}>
+                                multiplayer
+                            </p>
+                        </Link>
+
                         <p onClick={() => handleTabClick('test')} className={activeTab === 'test' ? 'active' : ''}>
                             test
                         </p>
@@ -108,7 +111,7 @@ export default function SingleTypingPage({ isSoundOn }) {
 
             <div className="reset-text">
                 <div className="reset-container" onClick={handleResetClick}>
-                    <img src="src/assets/refresh-button.png" alt="refresh" className="reset-img" />
+                    <img src="/src/assets/refresh-button.png" alt="refresh" className="reset-img" />
                     <span>reset text</span>
                 </div>
             </div>

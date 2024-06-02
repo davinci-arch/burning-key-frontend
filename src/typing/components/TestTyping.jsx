@@ -99,7 +99,7 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
                 {!isFocused ?
                     <div className="description" onClick={handleFocuse}>
                         <span className="img-container">
-                            <img src="src/assets/cursor.png" alt="cursor" className="cursor-pointer" />
+                            <img src="/src/assets/cursor.png" alt="cursor" className="cursor-pointer" />
                         </span>
                         <span className="hint">Click to focus on field</span>
                     </div> : ""

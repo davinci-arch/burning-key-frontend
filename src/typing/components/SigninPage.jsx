@@ -22,12 +22,12 @@ export default function SigninPage() {
                         required
                     />
                     <button type="submit" className="submit-button">
-                        <img src="src/assets/inputcursor.png" alt="donation" />
+                        <img src="/src/assets/inputcursor.png" alt="donation" />
                         Sign-In with E-mail
                     </button>
                 </form>
                 <div className="info-label">
-                    <img src="src/assets/question.png" alt="Info" className="info-icon" />
+                    <img src="/src/assets/question.png" alt="Info" className="info-icon" />
                     <span className="info-text">Info</span>
                 </div>
                 <p className="info-description">

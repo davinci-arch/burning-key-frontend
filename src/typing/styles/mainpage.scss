@@ -23,6 +23,12 @@ $toolbar-margin: 20px;
         font-size: 15px;
         color: #000;
 
+        a {
+            text-decoration: none;
+            color: #000;
+
+        }
+
         .toolbar-middle {
             flex: 1;
             display: flex;
@@ -64,6 +70,7 @@ $toolbar-margin: 20px;
     transition: color ease-in-out 300ms;
     position: relative;
 
+
     p {
         cursor: pointer;
         z-index: 1;
@@ -72,6 +79,7 @@ $toolbar-margin: 20px;
             color: #1766ff;
         }
     }
+
 
     p:hover {
         color: #1766FF;
