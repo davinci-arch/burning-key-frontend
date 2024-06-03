@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './typing/styles/index.scss';
-import HomePage from './typing/components/HomePage';
 import SignPage from './typing/components/SigninPage';
-
+import SingleTypingPage from './typing/components/SingleTypingPage';
 function App() {
     const [isSoundOn, setSoundState] = useState(() => {
         const savedSound = localStorage.getItem('sound');
@@ -59,7 +58,7 @@ function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<HomePage
+                <Route path="/" element={<SingleTypingPage
                     isDarkTheme={isDarkTheme}
                     toggleTheme={toggleTheme}
                     isSoundOn={isSoundOn}
