@@ -19,7 +19,7 @@ const Typing = forwardRef((props, ref) => {
     const [lines, setLines] = useState([]);
     const [countCorrectTypingKeys, setCountCorrectTypingKeys] = useState(0);
     const [countTypingKeys, setCountTypingKeys] = useState(0);
-
+    const [isLoaded, setLoaded] = useState(false);
     const inputRef = useRef(null);
     const containerRef = useRef(null);
     const amountOfExtraLetters = 5;
@@ -34,6 +34,14 @@ const Typing = forwardRef((props, ref) => {
     //     fetchData();
     // }, []);
 
+    useEffect(() => {
+        if (props.type == "multiplayer") {
+            setLoaded(true);
+            if (isLoaded) {
+                props.amountOfWords(words.length);
+            }
+        }
+    }, [isLoaded]);
     useImperativeHandle(ref, () => ({
         resetText() {
             resetAllData();
@@ -65,13 +73,16 @@ const Typing = forwardRef((props, ref) => {
             audio.play();
         }
     }
-    
+
 
     const handleInput = (event) => {
         const value = event.target.value;
         const lastChar = value[value.length - 1];
         if (!props.isRunning) {
             props.setIsRunning(true);
+            if (props.type == "multiplayer") {
+                props.setNewData(wordIndex, words[wordIndex])
+            }
         }
 
         if (lastChar == ' ' && counterExtraLetter > 0 && inputText.length < value.length) {
@@ -116,6 +127,10 @@ const Typing = forwardRef((props, ref) => {
                 setLetterIndex(letterIndex - 1);
             } else if (letterIndex == 0) {
                 setWordIndex(wordIndex - 1);
+                if (props.type == "multiplayer") {
+                    props.setNewData(wordIndex - 1, words[wordIndex - 1])
+
+                }
                 setLetterIndex(words[wordIndex - 1].length - 1)
                 setInputText(value);
             } else {
@@ -125,6 +140,10 @@ const Typing = forwardRef((props, ref) => {
             if (letterIndex == words[wordIndex].length - 1) {
                 setLetterIndex(0);
                 setWordIndex(wordIndex + 1);
+                if (props.type == "multiplayer") {
+                    props.setNewData(wordIndex + 1, words[wordIndex + 1])
+
+                }
             } else {
                 setLetterIndex(letterIndex + 1);
             }
@@ -208,7 +227,7 @@ const Typing = forwardRef((props, ref) => {
         }
         return count;
     };
-    
+
     const removeLineByIndex = (lineIndex) => {
 
         if (lineIndex < 0 || lineIndex >= lines.length) {
@@ -266,7 +285,7 @@ const Typing = forwardRef((props, ref) => {
             </div>
         )
     });
-    
+
     return (
         <div className="text-container">
             <div className="nested-text-container">
