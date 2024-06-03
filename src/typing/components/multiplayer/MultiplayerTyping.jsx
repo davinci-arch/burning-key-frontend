@@ -22,10 +22,11 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
         return () => clearInterval(timer);
     }, [isRunning]);
 
-    useEffect(() => {
-        setTimer(true);
-        if (timerIsEnd && timerToStart == 0) {
+    useEffect(() => {  
+        setTimer(true);      
+        if (timerIsEnd && timerToStart == 1) {
             startRace();
+            
         }
     }, [timerToStart])
 

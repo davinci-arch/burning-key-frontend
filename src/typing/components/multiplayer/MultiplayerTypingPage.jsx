@@ -57,15 +57,15 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
 
     }
 
-    useEffect(() => {
-        let timer;
-        if (timerToStart > 0) {
-            timer = setInterval(() => {
-                setTimerToStart(timerToStart - 1);
-            }, 1000);
-        }
-        return () => clearInterval(timer);
-    }, [timerToStart])
+    // useEffect(() => {
+    //     let timer;
+    //     if (timerToStart > 0) {
+    //         timer = setInterval(() => {
+    //             setTimerToStart(timerToStart - 1);
+    //         }, 1000);
+    //     }
+    //     return () => clearInterval(timer);
+    // }, [timerToStart])
 
     const setNewSpeed = (wpm) => {
         setSpeed(wpm);
@@ -113,7 +113,6 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                 setUsers(prevUsers => prevUsers.filter(user => user.sessionId !== data.data.sessionId));
             } else if (data.type === "DATA") {
                 updateCurrentUserWord(data.currentWord, data.sessionId, data.currentWordPosition, data.newSpeed);
-                console.log("word: " + data.currentWord)
             } else if (data.type === "TIMER") {
                 setTimerToStart(data.duration);
             } 
@@ -161,7 +160,7 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                     accuracy={accuracy}
                     prevAccuracy={prevAccuracy} /> : null
             } */}
-            {timerToStart > 0 ?
+            {timerToStart > 1 ?
                 <div className="start-race-timer-container">
                     <div className="start-race-timer">
                         {timerToStart}
