@@ -17,13 +17,16 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
     const [isLoaded, setLoaded] = useState(false);
     const [isConnected, setConnected] = useState(false);
     const [sessionId, setSessionId] = useState("");
+    const [timerToStart, setTimerToStart] = useState(0);
+    const [amountOfPlayers, setAmountOfPlayers] = useState(0);
     const socket = useRef();
     const usersRef = useRef(users);
     const sessionIdRef = useRef(sessionId);
     const amountWords = useRef(words);
-    
+
     useEffect(() => {
         usersRef.current = users;
+        setAmountOfPlayers(usersRef.current.length);
     }, [users]);
     useEffect(() => {
         sessionIdRef.current = sessionId;
@@ -43,6 +46,26 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
             }
         };
     }, [isLoaded]);
+
+    // useEffect(() => {
+    //     if (timerToStart > 0) {
+    //         handleStartRace();
+    //     }
+    // }, [timerToStart])
+
+    const handleStartRace = () => {
+
+    }
+
+    useEffect(() => {
+        let timer;
+        if (timerToStart > 0) {
+            timer = setInterval(() => {
+                setTimerToStart(timerToStart - 1);
+            }, 1000);
+        }
+        return () => clearInterval(timer);
+    }, [timerToStart])
 
     const setNewSpeed = (wpm) => {
         setSpeed(wpm);
@@ -89,8 +112,11 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
             } else if (data.type === "DISCONNECT") {
                 setUsers(prevUsers => prevUsers.filter(user => user.sessionId !== data.data.sessionId));
             } else if (data.type === "DATA") {
-                updateCurrentUserWord(data.currentWord, data.sessionId, data.currentWordPosition);
-            }
+                updateCurrentUserWord(data.currentWord, data.sessionId, data.currentWordPosition, data.newSpeed);
+                console.log("word: " + data.currentWord)
+            } else if (data.type === "TIMER") {
+                setTimerToStart(data.duration);
+            } 
         }
 
         socket.current.onclose = () => {
@@ -102,11 +128,11 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
         }
     }
 
-    const updateCurrentUserWord = (currentWord, id, position) => {
+    const updateCurrentUserWord = (currentWord, id, position, speed) => {
         setUsers(prevUsers => {
             const updatedUsers = prevUsers.map(user => {
                 if (user.sessionId === id) {
-                    return { ...user, currentWord: currentWord, completeText: calculateProgress(position) };
+                    return { ...user, currentWord: currentWord, completeText: calculateProgress(position), currentSpeed: speed};
                 }
                 return user;
             });
@@ -125,7 +151,7 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
         socket.current.send(JSON.stringify(message));
     }
 
-    
+
     return (
         <>
             {/* {result ?
@@ -135,6 +161,14 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                     accuracy={accuracy}
                     prevAccuracy={prevAccuracy} /> : null
             } */}
+            {timerToStart > 0 ?
+                <div className="start-race-timer-container">
+                    <div className="start-race-timer">
+                        {timerToStart}
+                    </div>
+                </div> : null
+            }
+
             <div className="toolbar-container">
                 <div className="toolbar">
                     <div className="navigation">
@@ -184,7 +218,9 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                         sendMessage={sendMessage}
                         sessionId={sessionId}
                         uuid={uuid}
-                        setWords={setWords} />}
+                        setWords={setWords}
+                        timerToStart={timerToStart}
+                        amountOfPlayers={amountOfPlayers} />}
                 </div>
             </div>
             <div className="players" >
@@ -204,7 +240,7 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                         </div>
                         <div className="data">
                             <img src="/src/assets/fireBlue.png" className="fire" alt="" />
-                            <p>WPM:XXX</p>
+                            <p>WPM:{user.currentSpeed ? user.currentSpeed : 0.0}</p>
                         </div>
                     </div>
                 ))}

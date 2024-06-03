@@ -54,6 +54,12 @@ const Typing = forwardRef((props, ref) => {
             inputRef.current.focus();
             setCursorVisible(true);
         },
+        getCorrectLetter() {
+            return countCorrectTypingKeys;
+        },
+        getAllLetter() {
+            return countTypingKeys;
+        }
     }));
     const resetAllData = () => {
         setWords(textAPI.match(regex));
@@ -78,9 +84,13 @@ const Typing = forwardRef((props, ref) => {
     const handleInput = (event) => {
         const value = event.target.value;
         const lastChar = value[value.length - 1];
+
         if (!props.isRunning) {
-            props.setIsRunning(true);
-            if (props.type == "multiplayer") {
+            if (props.type != "multiplayer") {
+                props.setIsRunning(true);
+            }
+        } else {
+            if (props.type == "multiplayer" && wordIndex == 0 && letterIndex == 0) {
                 props.setNewData(wordIndex, words[wordIndex])
             }
         }
@@ -166,7 +176,9 @@ const Typing = forwardRef((props, ref) => {
     //     cursor.style.transform = `translateX(${leftOffset}px)`;
     // }
     const results = () => {
-        props.setIsRunning(false);
+        if (props.type != "multiplayer") {
+            props.setIsRunning(false);
+        }
         props.setCountKeys(countTypingKeys);
         props.setCorrectKeys(countCorrectTypingKeys);
     }

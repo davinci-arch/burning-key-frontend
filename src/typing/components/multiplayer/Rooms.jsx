@@ -36,8 +36,6 @@ export default function Rooms({ isSoundOn }) {
                 addListData(data.data);
             } else if (data.type == "DATA") {
                 addRoom(data.data)
-                console.log(data.data);
-
             }
         }
 
@@ -65,7 +63,7 @@ export default function Rooms({ isSoundOn }) {
     const handleNewRoom = () => {
         const message = {
             type: "CREATE",
-            username: "Alex",
+            username: "Room",
         };
 
         sendMessage(message);
