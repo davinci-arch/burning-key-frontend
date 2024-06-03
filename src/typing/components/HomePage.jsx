@@ -1,10 +1,8 @@
+
 import { useEffect, useRef, useState } from 'react';
 import Header from './Header';
 import Footer from './Footer';
-import Typing from './Typing';
-import Keyboard from './Keyboard';
 import '../styles/mainpage.scss';
-
 
 export default function HomePage({isDarkTheme, toggleTheme, isSoundOn, toggleSound,
                                      selectedFont, handleFontClick, selectedSize, handleSizeClick}) {

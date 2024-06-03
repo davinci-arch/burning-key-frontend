@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react"
+
 import PressSound from "../../assets/sfx/pressSound.wav"
 import EraseSound from "../../assets/sfx/eraseSound.wav"
 import ErrorSound from "../../assets/sfx/errorSound.mp3"
@@ -7,16 +8,7 @@ import "../styles/typing.scss"
 import { getText } from "../api/TextAPI"
 
 const Typing = forwardRef((props, ref) => {
-    const [textAPI, setTextAPI] = useState("Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar " +
-        "Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode S" +
-        "ukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode" +
-        " Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode" +
-        " Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar" +
-        " Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode " +
-        "Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Sukumar Sukumar Azhikode Sukumar Azhikode Sukumar Azhikode Azhikode Sukumar Azhikode Sukumar" +
-        "Azhikode Sukumar Azhikode defined a short story as 'a brief prose narrative with an intense episodic or anecdotal effect'." +
-        " Flannery O'Connor emphasized the need to consider what is exactly meant by the descriptor short.");
-    const [isFocused, setFocused] = useState(false);
+    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief story story as 'a brief story");
     const [inputText, setInputText] = useState("");
     const [counterExtraLetter, setCounterExtraLetter] = useState(0);
     let regex = /.*?\s|.*?$/g;
@@ -28,16 +20,47 @@ const Typing = forwardRef((props, ref) => {
     const [lines, setLines] = useState([]);
     const [countCorrectTypingKeys, setCountCorrectTypingKeys] = useState(0);
     const [countTypingKeys, setCountTypingKeys] = useState(0);
-    const [elapsedTime, setElapsedTime] = useState(0);
-    const [isRunning, setIsRunning] = useState(false);
-
+    const [isLoaded, setLoaded] = useState(false);
     const inputRef = useRef(null);
     const containerRef = useRef(null);
     const amountOfExtraLetters = 5;
 
+
+    // (fetch data from server)
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         const result = await getText();
+    //         setTextAPI(result);
+    //         setWords(result.match(regex));
+    //     }
+    //     fetchData();
+    // }, []);
+    useEffect(() => {
+        if (props.type == "multiplayer") {
+            setLoaded(true);
+            if (isLoaded) {
+                props.amountOfWords(words.length);
+            }
+        }
+    }, [isLoaded]);
+
     useImperativeHandle(ref, () => ({
         resetText() {
             resetAllData();
+        },
+        timer() {
+            resetAllData();
+            results();
+        },
+        focusedField() {
+            inputRef.current.focus();
+            setCursorVisible(true);
+        },
+        getCorrectLetter() {
+            return countCorrectTypingKeys;
+        },
+        getAllLetter() {
+            return countTypingKeys;
         }
     }));
 
@@ -46,9 +69,10 @@ const Typing = forwardRef((props, ref) => {
         setInputText("");
         setWordIndex(0);
         setCounterExtraLetter(0);
+        setCountCorrectTypingKeys(0);
+        setCountTypingKeys(0);
         setLetterIndex(0);
         setExtraLetter([]);
-        setFocused(true);
         setCursorVisible(true);
         inputRef.current.focus();
     }
@@ -60,23 +84,18 @@ const Typing = forwardRef((props, ref) => {
         }
     }
 
-    useEffect(() => {
-        let timer;
-        if (isRunning) {
-            timer = setInterval(() => {
-                setElapsedTime((prevTime) => prevTime + 1);
-            }, 1000);
-        } else if (!isRunning && elapsedTime !== 0) {
-            clearInterval(timer);
-        }
-        return () => clearInterval(timer);
-    }, [isRunning]);
-
     const handleInput = (event) => {
         const value = event.target.value;
         const lastChar = value[value.length - 1];
-        if (!isRunning) {
-            setIsRunning(true);
+
+        if (!props.isRunning) {
+            if (props.type != "multiplayer") {
+                props.setIsRunning(true);
+            }
+        } else {
+            if (props.type == "multiplayer" && wordIndex == 0 && letterIndex == 0) {
+                props.setNewData(wordIndex, words[wordIndex])
+            }
         }
 
         if (lastChar === ' ' && counterExtraLetter > 0 && inputText.length < value.length) {
@@ -94,6 +113,36 @@ const Typing = forwardRef((props, ref) => {
             return;
         }
 
+        if (words[wordIndex][letterIndex] == lastChar) {
+            if (lastChar === ' ') {
+                    playSound(SpaceSound);
+                } else {
+                    setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
+                    setCountTypingKeys(countTypingKeys + 1);
+                    playSound(PressSound);
+                }
+        } else if (inputText.length < value.length) {
+             playSound(ErrorSound);
+
+                const incorrectKeyElement = document.getElementById(`Key${lastChar.toUpperCase()}`);
+                if (incorrectKeyElement) {
+                    incorrectKeyElement.classList.add('pulsate');
+                    setTimeout(() => {
+                        incorrectKeyElement.classList.remove('pulsate');
+                    }, 500);
+                }
+        }
+        if (words[wordIndex].length - 1 == letterIndex &&
+            lastChar != ' ' &&
+            inputText.length < value.length &&
+            (wordIndex - 1) != lines[lines.length - 1].endIndex - 2) {
+
+          setExtraLetter(prevExtraLetter => [...prevExtraLetter, letterIndex]);
+            setCounterExtraLetter(counterExtraLetter + 1);
+            setCountTypingKeys(countTypingKeys + 1);
+            words[wordIndex] = words[wordIndex].slice(0, letterIndex) + lastChar + words[wordIndex].slice(letterIndex);
+        }
+
         if (inputText.length > value.length) {
             playSound(EraseSound);
             if (extraLetter.length > 0) {
@@ -105,57 +154,51 @@ const Typing = forwardRef((props, ref) => {
                 setLetterIndex(letterIndex - 1);
             } else if (letterIndex === 0) {
                 setWordIndex(wordIndex - 1);
-                setLetterIndex(words[wordIndex - 1].length - 1);
+                if (props.type == "multiplayer") {
+                    props.setNewData(wordIndex - 1, words[wordIndex - 1])
+                }
+                setLetterIndex(words[wordIndex - 1].length - 1)
                 setInputText(value);
             } else {
                 setLetterIndex(letterIndex - 1);
             }
         } else {
-            if (words[wordIndex][letterIndex] === lastChar) {
-                if (lastChar === ' ') {
-                    playSound(SpaceSound);
-                } else {
-                    setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
-                    setCountTypingKeys(countTypingKeys + 1);
-                    playSound(PressSound);
-                }
-            } else {
-                playSound(ErrorSound);
-
-                const incorrectKeyElement = document.getElementById(`Key${lastChar.toUpperCase()}`);
-                if (incorrectKeyElement) {
-                    incorrectKeyElement.classList.add('pulsate');
-                    setTimeout(() => {
-                        incorrectKeyElement.classList.remove('pulsate');
-                    }, 500);
-                }
-            }
-
-            if (words[wordIndex].length - 1 == letterIndex && lastChar != ' ' && inputText.length < value.length && (wordIndex - 1) != lines[lines.length - 1].endIndex - 2) {
-                setExtraLetter(prevExtraLetter => [...prevExtraLetter, letterIndex]);
-                setCounterExtraLetter(counterExtraLetter + 1);
-                setCountTypingKeys(countTypingKeys + 1);
-                words[wordIndex] = words[wordIndex].slice(0, letterIndex) + lastChar + words[wordIndex].slice(letterIndex);
-            }
             if (letterIndex === words[wordIndex].length - 1) {
                 setLetterIndex(0);
                 setWordIndex(wordIndex + 1);
+                if (props.type == "multiplayer") {
+                    props.setNewData(wordIndex + 1, words[wordIndex + 1])
+
+                }
             } else {
                 setLetterIndex(letterIndex + 1);
             }
             setCountTypingKeys(countTypingKeys + 1);
         }
         setInputText(value);
-        if ((wordIndex - 1) === lines[lines.length - 1].endIndex - 2 && letterIndex === words[wordIndex].length - 1) {
-            setIsRunning(false);
-            props.setNewSpeed((countCorrectTypingKeys / 5) / (elapsedTime / 60));
-            props.newAccuracy((countCorrectTypingKeys / countTypingKeys) * 100);
-            resetAllData();
+
+        if ((wordIndex - 1) == lines[lines.length - 1].endIndex - 2 && letterIndex == words[wordIndex].length - 1 && inputText.length < value.length) {
+            results();
             return;
         }
     }
 
-
+    // const moveCursor = (position) => {
+    //     const letters = containerRef.current.querySelectorAll('.letter');
+    //     let leftOffset = 0;
+    //     for (let i = 0; i < position; i++) {
+    //         leftOffset += letters[i].offsetWidth;
+    //     }
+    //     const cursor = containerRef.current.querySelector('.cursor');
+    //     cursor.style.transform = `translateX(${leftOffset}px)`;
+    // }
+    const results = () => {
+        if (props.type != "multiplayer") {
+            props.setIsRunning(false);
+        }
+        props.setCountKeys(countTypingKeys);
+        props.setCorrectKeys(countCorrectTypingKeys);
+    }
     useEffect(() => {
         const container = containerRef.current;
         const updateLines = () => {
@@ -216,18 +259,6 @@ const Typing = forwardRef((props, ref) => {
         return count;
     };
 
-    const focusedField = (event) => {
-        setFocused(true);
-        inputRef.current.focus();
-        event.stopPropagation();
-        setCursorVisible(true);
-    }
-
-    const changeFocus = () => {
-        setFocused(false);
-        setCursorVisible(false);
-    }
-
     const removeLineByIndex = (lineIndex) => {
         if (lineIndex < 0 || lineIndex >= lines.length) {
             console.warn('Invalid line index');
@@ -284,30 +315,29 @@ const Typing = forwardRef((props, ref) => {
             </div>
         )
     });
+
     return (
         <div className="text-container">
             <div className="nested-text-container" style={{fontSize: props.selectedSize, fontFamily: props.selectedFont}}>
-                <div className={isFocused ? "text focused" : "text"}>
+                <div className={props.isFocused ? "text focused" : "text"}>
                     <div className={`words ${props.isDarkTheme ? 'dark' : ''}`} ref={containerRef}>
                         {letterComponents}
                     </div>
+                    {/* {isCursorVisible ?
+                        <div className="cursor"></div>
+                        : <></>   
+                    } */}
                 </div>
-                {!isFocused ?
-                    <div className="description"
-                         onClick={focusedField}
-                    >
-                        <span className="img-container">
-                               <img src="src/assets/cursor.png" alt="cursor" className={`cursor-pointer ${props.isDarkTheme ? 'dark' : ''}`}/>
-                        </span>
-                        <span className="hint">Click to focus on field</span>
-                    </div> : ""
-                }
+                {props.children}
             </div>
             <input type="text" className="text-input"
-                   ref={inputRef}
-                   value={inputText}
-                   onChange={handleInput}
-                   onBlur={changeFocus}
+                ref={inputRef}
+                value={inputText}
+                onChange={handleInput}
+                onBlur={() => {
+                    props.changeFocuse();
+                    setCursorVisible(false);
+                }}
             />
         </div>
     )

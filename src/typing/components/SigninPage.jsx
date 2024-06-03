@@ -1,5 +1,3 @@
-import Header from "./Header";
-import Footer from "./Footer";
 import "../styles/signinpage.scss";
 import { useState } from "react";
 
@@ -11,6 +9,7 @@ export default function SigninPage({ isDarkTheme, toggleTheme, isSoundOn, toggle
     };
 
     return (
+
         <div className={`signin ${isDarkTheme ? 'dark' : ''}`}>
             <Header isDarkTheme={isDarkTheme} />
             <div className="signin-container">

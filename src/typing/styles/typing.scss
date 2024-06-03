@@ -5,7 +5,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 30px;
+    // margin-top: 30px;
     user-select: none;
 }
 
@@ -41,10 +41,10 @@
     top: 0;
     left: 0;
     width: 100%;
-    margin-top: 50px;
+    height: 100%;
     display: flex;
     justify-content: center;
-    align-items: end;
+    align-items: center;
     align-self: flex-end;
     cursor: pointer;
 
