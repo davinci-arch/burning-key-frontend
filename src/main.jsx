@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './typing/styles/index.scss';
 import SignPage from './typing/components/SigninPage';
 import SingleTypingPage from './typing/components/SingleTypingPage';
+import Rooms from './typing/components/multiplayer/Rooms';
+import MultiplayerTypingPage from './typing/components/multiplayer/MultiplayerTypingPage';
 function App() {
     const [isSoundOn, setSoundState] = useState(() => {
         const savedSound = localStorage.getItem('sound');
@@ -78,6 +80,8 @@ function App() {
                     selectedSize={selectedSize}
                     handleSizeClick={handleSizeClick}
                 />} />
+                <Route path="/multiplayer/rooms" element={<Rooms />} />
+                <Route path="/multiplayer/rooms/room/:uuid" element={<MultiplayerTypingPage />} />
             </Routes>
         </Router>
     );

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Typing from "./Typing";
-export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult }) {
+export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, isDarkTheme, selectedFont, selectedSize }) {
     const [timerDuration, setTimerDuration] = useState(5);
     const [isRunning, setIsRunning] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
@@ -55,7 +55,11 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
                 setIsRunning={setIsRunning}
                 isRunning={isRunning}
                 changeFocuse={changeFocuse}
-                isFocused={isFocused}>
+                isFocused={isFocused}
+                isDarkTheme={isDarkTheme}
+                selectedFont={selectedFont}
+                selectedSize={selectedSize}
+            >
 
                 {!isFocused ?
                     <div className="description"

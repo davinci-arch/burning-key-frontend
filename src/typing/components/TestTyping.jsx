@@ -1,7 +1,7 @@
 
 import Typing from "./Typing";
 import { useState, useEffect, useRef } from "react";
-export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, choosenTime }) {
+export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, choosenTime, isDarkTheme, selectedFont, selectedSize }) {
 
     const [timerDuration, setTimerDuration] = useState(choosenTime);
     const [isRunning, setIsRunning] = useState(false);
@@ -38,7 +38,7 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
             clearInterval(timer);
             finishTest();
         }
-        return () => { 
+        return () => {
             clearInterval(timer);
             document.getElementsByClassName("time-options")[0].removeEventListener('click', handleClick.current, true);
         };
@@ -95,6 +95,9 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
                 isRunning={isRunning}
                 changeFocuse={changeFocuse}
                 isFocused={isFocused}
+                isDarkTheme={isDarkTheme}
+                selectedFont={selectedFont}
+                selectedSize={selectedSize}
             >
                 {!isFocused ?
                     <div className="description" onClick={handleFocuse}>
