@@ -13,9 +13,11 @@
     "axios": "^1.7.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.23.1"
+    "react-router-dom": "^6.23.1",
+    "react-svg": "^16.1.34"
   },
   "devDependencies": {
+    "@svgr/core": "^8.1.0",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",
@@ -23,6 +25,7 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "file-loader": "^6.2.0",
     "sass": "^1.77.2",
     "scss": "^0.2.4",
     "vite": "^5.2.0"

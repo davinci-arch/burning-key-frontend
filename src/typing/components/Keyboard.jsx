@@ -1,16 +1,22 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useEffect } from 'react';
-import '../styles/keyboard.css';
+import React, {useEffect, useState} from 'react';
+import '../styles/keyboard.scss';
 
-const Keyboard = () => {
+export default  function Keyboard({isDarkTheme }) {
+
+    const [inputText, setInputText] = useState('');
+    const [isShiftPressed, setIsShiftPressed] = useState(false);
+
     const handleKeyDown = (event) => {
-        //щоб воно не гуляло по елементах браузера
         if (event.key === 'Tab' || event.key === 'Alt') {
             event.preventDefault();
         }
 
         const keyElement = document.getElementById(event.code);
         if (keyElement) {
+            keyElement.classList.add('active');
+        }
+        if (isShiftPressed) {
             keyElement.classList.add('active');
         }
     };
@@ -20,6 +26,53 @@ const Keyboard = () => {
         if (keyElement) {
             keyElement.classList.remove('active');
         }
+    };
+
+
+    const handleMouseClick = (code) => {
+        const keyElement = document.getElementById(code);
+        if (keyElement) {
+            keyElement.classList.add('active');
+            const keyLabel = keyElement.textContent.trim();
+
+            switch (keyLabel) {
+                case 'Space':
+                    handleSpace();
+                    break;
+                case "Backspace":
+                    handleBackspace();
+                    break;
+                case 'Shift':
+                    toggleShift();
+                    break;
+                default:
+                    handleKeyInput(keyLabel);
+                    break;
+            }
+            // Simulate keyup event after a short delay to remove 'active' class
+            setTimeout(() => {
+                keyElement.classList.remove('active');
+            }, 150);
+        }
+    };
+
+    const toggleShift = () => {
+        setIsShiftPressed((prevShift) => !prevShift);
+    };
+
+    const handleKeyInput = (keyLabel) => {
+        const adjustedLabel = isShiftPressed ? keyLabel.toUpperCase() : keyLabel.toLowerCase();
+        setInputText(prevInputText => prevInputText + adjustedLabel);
+    };
+
+    const handleSpace = () => {
+        // Perform action for Space key
+        setInputText(prevInputText => prevInputText + ' ');
+    };
+
+    const handleBackspace = () => {
+        // Perform action for Backspace key
+        setInputText(prevInputText => prevInputText.slice(0, -1));
     };
 
     useEffect(() => {
@@ -32,7 +85,11 @@ const Keyboard = () => {
     }, []);
 
     const createKey = (id, labels, extraClass = '') => (
-        <button id={id} className={`key ${extraClass}`}>
+        <button
+            id={id}
+            className={`key ${extraClass} ${isDarkTheme ? 'dark' : ''}`}
+            onClick={() => handleMouseClick(id)}
+        >
             {Array.isArray(labels) ? labels.map((label, index) => (
                 <span key={index} className="key-label">{label}</span>
             )) : labels}
@@ -41,78 +98,79 @@ const Keyboard = () => {
 
     return (
         <main className="main">
-            <div className="keyboard">
+            <div className={`keyboard ${isDarkTheme ? 'dark' : ''}`}>
                 <div className="row">
-                    {createKey("Backquote", ["~", "`"], 'key-small col1')}
-                    {createKey("Digit1", ["!", "1"], 'key-small col1')}
-                    {createKey("Digit2", ["@", "2"], 'key-small col2')}
-                    {createKey("Digit3", ["#", "3"], 'key-small col3')}
-                    {createKey("Digit4", ["$", "4"], 'key-small col4')}
-                    {createKey("Digit5", ["%", "5"], 'key-small col4')}
-                    {createKey("Digit6", ["^", "6"], 'key-small col5')}
-                    {createKey("Digit7", ["&", "7"], 'key-small col5')}
-                    {createKey("Digit8", ["*", "8"], 'key-small col3')}
-                    {createKey("Digit9", ["(", "9"], 'key-small col2')}
-                    {createKey("Digit0", [")", "0"], 'key-small col1')}
-                    {createKey("Minus", ["_", "-"], 'key-small col1')}
-                    {createKey("Equal", ["+", "="], 'key-small col1')}
-                    {createKey("Backspace", "Backspace", 'key-large col1')}
+                    {createKey("Backquote", ["~", "`"], 'key-small col1', isDarkTheme)}
+                    {createKey("Digit1", ["!", "1"], 'key-small col1', isDarkTheme)}
+                    {createKey("Digit2", ["@", "2"], 'key-small col2', isDarkTheme)}
+                    {createKey("Digit3", ["#", "3"], 'key-small col3', isDarkTheme)}
+                    {createKey("Digit4", ["$", "4"], 'key-small col4', isDarkTheme)}
+                    {createKey("Digit5", ["%", "5"], 'key-small col4', isDarkTheme)}
+                    {createKey("Digit6", ["^", "6"], 'key-small col5', isDarkTheme)}
+                    {createKey("Digit7", ["&", "7"], 'key-small col5', isDarkTheme)}
+                    {createKey("Digit8", ["*", "8"], 'key-small col3', isDarkTheme)}
+                    {createKey("Digit9", ["(", "9"], 'key-small col2', isDarkTheme)}
+                    {createKey("Digit0", [")", "0"], 'key-small col1', isDarkTheme)}
+                    {createKey("Minus", ["_", "-"], 'key-small col1', isDarkTheme)}
+                    {createKey("Equal", ["+", "="], 'key-small col1', isDarkTheme)}
+                    {createKey("Backspace", "Backspace", 'key-large col1', isDarkTheme)}
                 </div>
                 <div className="row">
-                    {createKey("Tab", "Tab", 'key-medium col1')}
-                    {createKey("KeyQ", "Q", 'key-small col1')}
-                    {createKey("KeyW", "W", 'key-small col2')}
-                    {createKey("KeyE", "E", 'key-small col3')}
-                    {createKey("KeyR", "R", 'key-small col4')}
-                    {createKey("KeyT", "T", 'key-small col4')}
-                    {createKey("KeyY", "Y", 'key-small col5')}
-                    {createKey("KeyU", "U", 'key-small col5')}
-                    {createKey("KeyI", "I", 'key-small col3')}
-                    {createKey("KeyO", "O", 'key-small col2')}
-                    {createKey("KeyP", "P", 'key-small col1')}
-                    {createKey("BracketLeft", ["{", "["], 'key-small col1')}
-                    {createKey("BracketRight", ["}", "]"], 'key-small col1')}
-                    {createKey("Backslash", ["|", "\\"], 'key-medium col1')}
+                    {createKey("Tab", "Tab", 'key-medium col1', isDarkTheme)}
+                    {createKey("KeyQ", "Q", 'key-small col1', isDarkTheme)}
+                    {createKey("KeyW", "W", 'key-small col2', isDarkTheme)}
+                    {createKey("KeyE", "E", 'key-small col3', isDarkTheme)}
+                    {createKey("KeyR", "R", 'key-small col4', isDarkTheme)}
+                    {createKey("KeyT", "T", 'key-small col4', isDarkTheme)}
+                    {createKey("KeyY", "Y", 'key-small col5', isDarkTheme)}
+                    {createKey("KeyU", "U", 'key-small col5', isDarkTheme)}
+                    {createKey("KeyI", "I", 'key-small col3', isDarkTheme)}
+                    {createKey("KeyO", "O", 'key-small col2', isDarkTheme)}
+                    {createKey("KeyP", "P", 'key-small col1', isDarkTheme)}
+                    {createKey("BracketLeft", ["{", "["], 'key-small col1', isDarkTheme)}
+                    {createKey("BracketRight", ["}", "]"], 'key-small col1', isDarkTheme)}
+                    {createKey("Backslash", ["|", "\\"], 'key-medium col1', isDarkTheme)}
                 </div>
                 <div className="row">
-                    {createKey("CapsLock", "Caps Lock", 'key-large col1')}
-                    {createKey("KeyA", "A", 'key-small col1')}
-                    {createKey("KeyS", "S", 'key-small col2')}
-                    {createKey("KeyD", "D", 'key-small col3')}
-                    {createKey("KeyF", "F", 'key-small col4')}
-                    {createKey("KeyG", "G", 'key-small col4')}
-                    {createKey("KeyH", "H", 'key-small col5')}
-                    {createKey("KeyJ", "J", 'key-small col5')}
-                    {createKey("KeyK", "K", 'key-small col3')}
-                    {createKey("KeyL", "L", 'key-small col2')}
-                    {createKey("Semicolon", [":", ";"], 'key-small col1')}
-                    {createKey("Quote", ['"', "'"], 'key-small col1')}
-                    {createKey("Enter", "Enter", 'key-large col1')}
+                    {createKey("CapsLock", "Caps Lock", 'key-large col1', isDarkTheme)}
+                    {createKey("KeyA", "A", 'key-small col1', isDarkTheme)}
+                    {createKey("KeyS", "S", 'key-small col2', isDarkTheme)}
+                    {createKey("KeyD", "D", 'key-small col3', isDarkTheme)}
+                    {createKey("KeyF", "F", 'key-small col4', isDarkTheme)}
+                    {createKey("KeyG", "G", 'key-small col4', isDarkTheme)}
+                    {createKey("KeyH", "H", 'key-small col5', isDarkTheme)}
+                    {createKey("KeyJ", "J", 'key-small col5', isDarkTheme)}
+                    {createKey("KeyK", "K", 'key-small col3', isDarkTheme)}
+                    {createKey("KeyL", "L", 'key-small col2', isDarkTheme)}
+                    {createKey("Semicolon", [":", ";"], 'key-small col1', isDarkTheme)}
+                    {createKey("Quote", ['"', "'"], 'key-small col1', isDarkTheme)}
+                    {createKey("Enter", "Enter", 'key-large col1', isDarkTheme)}
                 </div>
                 <div className="row">
-                    {createKey("ShiftLeft", "Shift", 'key-xlarge col1')}
-                    {createKey("KeyZ", "Z", 'key-small col1')}
-                    {createKey("KeyX", "X", 'key-small col2')}
-                    {createKey("KeyC", "C", 'key-small col3')}
-                    {createKey("KeyV", "V", 'key-small col4')}
-                    {createKey("KeyB", "B", 'key-small col4')}
-                    {createKey("KeyN", "N", 'key-small col5')}
-                    {createKey("KeyM", "M", 'key-small col5')}
-                    {createKey("Comma", ["<", ","], 'key-small col3')}
-                    {createKey("Period", [">", "."], 'key-small col2')}
-                    {createKey("Slash", ["?", "/"], 'key-small col1')}
-                    {createKey("ShiftRight", "Shift", 'key-xlarge col1')}
+                    {createKey("ShiftLeft", "Shift", 'key-xlarge col1', isDarkTheme)}
+                    {createKey("KeyZ", "Z", 'key-small col1', isDarkTheme)}
+                    {createKey("KeyX", "X", 'key-small col2', isDarkTheme)}
+                    {createKey("KeyC", "C", 'key-small col3', isDarkTheme)}
+                    {createKey("KeyV", "V", 'key-small col4', isDarkTheme)}
+                    {createKey("KeyB", "B", 'key-small col4', isDarkTheme)}
+                    {createKey("KeyN", "N", 'key-small col5', isDarkTheme)}
+                    {createKey("KeyM", "M", 'key-small col5', isDarkTheme)}
+                    {createKey("Comma", ["<", ","], 'key-small col3', isDarkTheme)}
+                    {createKey("Period", [">", "."], 'key-small col2', isDarkTheme)}
+                    {createKey("Slash", ["?", "/"], 'key-small col1', isDarkTheme)}
+                    {createKey("ShiftRight", "Shift", 'key-xlarge col1', isDarkTheme)}
                 </div>
                 <div className="row">
-                    {createKey("ControlLeft", "Ctrl", 'key-medium col1')}
-                    {createKey("AltLeft", "Alt", 'key-medium col1')}
-                    {createKey("Space", "Space", 'key-space col6')}
-                    {createKey("AltRight", "Alt", 'key-medium col1')}
-                    {createKey("ControlRight", "Ctrl", 'key-medium col1')}
+                    {createKey("ControlLeft", "Ctrl", 'key-medium col1', isDarkTheme)}
+                    {createKey("AltLeft", "Alt", 'key-medium col1', isDarkTheme)}
+                    {createKey("Space", "Space", 'key-space col6', isDarkTheme)}
+                    {createKey("AltRight", "Alt", 'key-medium col1', isDarkTheme)}
+                    {createKey("ControlRight", "Ctrl", 'key-medium col1', isDarkTheme)}
                 </div>
             </div>
         </main>
-    );
-};
+    )
 
-export default Keyboard;
+}
+
+

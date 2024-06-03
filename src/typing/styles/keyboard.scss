@@ -1,3 +1,4 @@
+//Світла тема
 
 .main {
     display: flex;
@@ -5,7 +6,6 @@
     align-items: center;
     margin-top: 14px;
 }
-
 
 .key {
     height: 45px;
@@ -21,6 +21,13 @@
     align-items: center;
     justify-content: center;
     min-width: 30px;
+    transition: background-color 0.3s ease;
+    font-family: "Roboto Slab";
+
+    &:hover {
+        background-color: #333;
+        color: white;
+    }
 }
 
 .key-small {
@@ -99,3 +106,66 @@
     background-color: #e51d3b;
 }
 
+@keyframes pulsate {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.5);
+        background-color: red;
+        color: white;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.pulsate {
+    animation: pulsate 0.5s ease-in-out;
+}
+
+//Темна тема
+
+.key.dark {
+    background-color: #333;
+    color: #d6d2bc;
+
+    &:hover {
+        background-color: #d6d2bc;
+        color: #333;
+    }
+}
+
+.key.active.dark {
+    background-color: #d6d2bc;
+    color: #42403e;
+}
+
+.keyboard.dark {
+    background-color: #3a3c3d;
+    color: #fff;
+}
+
+.col1.dark {
+    background-color: #4f6b49;
+}
+
+.col2.dark {
+    background-color: #747a19;
+}
+
+.col3.dark {
+    background-color: #9f7d1d;
+}
+
+.col4.dark {
+    background-color: #495b54;
+}
+
+.col5.dark {
+    background-color: #7c4d5a;
+}
+
+.col6.dark {
+    background-color: #700e1b;
+}
