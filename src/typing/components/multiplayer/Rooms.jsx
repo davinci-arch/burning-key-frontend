@@ -36,6 +36,8 @@ export default function Rooms({ isSoundOn }) {
                 addListData(data.data);
             } else if (data.type == "DATA") {
                 addRoom(data.data)
+            } else if (data.type == "REMOVE_ROOM") {
+                setRooms(prevRoom => prevRoom.filter(room => room.uid !== data.data.uid));
             }
         }
 

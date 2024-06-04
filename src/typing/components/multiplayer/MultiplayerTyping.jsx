@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Typing from "../Typing";
-export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, sendMessage, sessionId, uuid, setWords, timerToStart, amountOfPlayers }) {
+export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, sendMessage, sessionId, uuid, setWords, timerToStart, amountOfPlayers, setFirstWord }) {
     const [isRunning, setIsRunning] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [correctKeys, setCorrectKeys] = useState(0);
@@ -8,8 +8,14 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
     const [isFocused, setFocused] = useState(false);
     const [wordCount, setWordCount] = useState(0);
     const [currentWord, setCurrentWord] = useState("");
+    let regex = /.*?\s|.*?$/g;
+    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief story story as 'a brief story");
+    const [words, setSplitWords] = useState(textAPI.match(regex));
+
 
     const [timerIsEnd, setTimer] = useState(false);
+
+    
     useEffect(() => {
         let timer;
         if (isRunning) {
@@ -22,11 +28,11 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
         return () => clearInterval(timer);
     }, [isRunning]);
 
-    useEffect(() => {  
-        setTimer(true);      
+    useEffect(() => {
+        setTimer(true);
         if (timerIsEnd && timerToStart == 1) {
+            setWords(words.length);
             startRace();
-            
         }
     }, [timerToStart])
 
@@ -37,7 +43,7 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
         const all = typoRef.current.getAllLetter();
         setCorrectKeys(correct);
         setCountKeys(all);
-        
+
         const message = {
             type: "DATA",
             sessionId: sessionId,
@@ -57,13 +63,13 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
 
 
     const changeFocuse = () => {
-        if (amountOfPlayers >= 2) {
+        if (amountOfPlayers >= 2 || isRunning) {
             setFocused(false);
         }
     }
 
     const handleFocuse = () => {
-        if (amountOfPlayers >= 2) {
+        if (amountOfPlayers >= 2 || isRunning) {
             if (typoRef.current) {
                 typoRef.current.focusedField()
                 setFocused(true);
@@ -85,7 +91,8 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
                 changeFocuse={changeFocuse}
                 isFocused={isFocused}
                 setNewData={setNewData}
-                amountOfWords={setWords}
+                // amountOfWords={setWords}
+                textAPI={words}
             >
                 {!isFocused ?
                     <div className="description"

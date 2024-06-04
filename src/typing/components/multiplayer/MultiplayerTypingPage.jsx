@@ -23,7 +23,7 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
     const usersRef = useRef(users);
     const sessionIdRef = useRef(sessionId);
     const amountWords = useRef(words);
-
+    const [firstWord, setFirstWord] = useState("");
     useEffect(() => {
         usersRef.current = users;
         setAmountOfPlayers(usersRef.current.length);
@@ -39,33 +39,12 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
         if (isLoaded) {
             connect();
         }
-
         return () => {
             if (socket.current) {
                 socket.current.close();
             }
         };
     }, [isLoaded]);
-
-    // useEffect(() => {
-    //     if (timerToStart > 0) {
-    //         handleStartRace();
-    //     }
-    // }, [timerToStart])
-
-    const handleStartRace = () => {
-
-    }
-
-    // useEffect(() => {
-    //     let timer;
-    //     if (timerToStart > 0) {
-    //         timer = setInterval(() => {
-    //             setTimerToStart(timerToStart - 1);
-    //         }, 1000);
-    //     }
-    //     return () => clearInterval(timer);
-    // }, [timerToStart])
 
     const setNewSpeed = (wpm) => {
         setSpeed(wpm);
@@ -131,6 +110,7 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
         setUsers(prevUsers => {
             const updatedUsers = prevUsers.map(user => {
                 if (user.sessionId === id) {
+                    const progress = calculateProgress(position);
                     return { ...user, currentWord: currentWord, completeText: calculateProgress(position), currentSpeed: speed};
                 }
                 return user;
@@ -219,7 +199,8 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                         uuid={uuid}
                         setWords={setWords}
                         timerToStart={timerToStart}
-                        amountOfPlayers={amountOfPlayers} />}
+                        amountOfPlayers={amountOfPlayers}
+                        setFirstWord={setFirstWord} />}
                 </div>
             </div>
             <div className="players" >

@@ -22,6 +22,14 @@
             align-items: center;
             gap: 10px;
 
+            &:first-child {
+                width: 200px;
+                justify-content: start;
+            }
+            &:last-child {
+                width: 200px;
+                justify-content: center;
+            }
             .user-avatar {
                 width: 21px;
                 height: 21px;

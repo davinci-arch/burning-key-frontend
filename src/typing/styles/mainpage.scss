@@ -28,7 +28,10 @@ $toolbar-margin: 20px;
         align-items: center;
         border-radius: 7px;
         font-size: 15px;
-
+        a {
+            text-decoration: none;
+            color: black;
+        }
         .empty-middle {
             transition: color ease-in-out 300ms;
 
@@ -270,6 +273,7 @@ $toolbar-margin: 20px;
 
     color: #d6d2bc;
 
+    
 }
 
 .dark .toolbar-container {
@@ -285,6 +289,11 @@ $toolbar-margin: 20px;
             .span-name {
                 color: #f8c869;
             }
+        }
+        
+        a {
+            color: #d6d2bc;
+
         }
 
         .separator {

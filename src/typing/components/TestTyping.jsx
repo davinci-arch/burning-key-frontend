@@ -9,7 +9,9 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
     const [countKeys, setCountKeys] = useState(0);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isFocused, setFocused] = useState(false);
-
+    let regex = /.*?\s|.*?$/g;
+    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief story story as 'a brief story");
+    const [words, setWords] = useState(textAPI.match(regex));
     const handleClick = useRef(null);
 
     useEffect(() => {
@@ -98,6 +100,7 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
                 isDarkTheme={isDarkTheme}
                 selectedFont={selectedFont}
                 selectedSize={selectedSize}
+                textAPI={words}
             >
                 {!isFocused ?
                     <div className="description" onClick={handleFocuse}>
