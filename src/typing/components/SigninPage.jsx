@@ -1,5 +1,7 @@
 import "../styles/signinpage.scss";
 import { useState } from "react";
+import Header from "./Header.jsx";
+import Footer from "./Footer.jsx";
 
 export default function SigninPage({ isDarkTheme, toggleTheme, isSoundOn, toggleSound }) {
     const [email, setEmail] = useState("");

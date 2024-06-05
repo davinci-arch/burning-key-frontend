@@ -9,9 +9,7 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
     const [countKeys, setCountKeys] = useState(0);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isFocused, setFocused] = useState(false);
-    let regex = /.*?\s|.*?$/g;
-    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief story story as 'a brief story");
-    const [words, setWords] = useState(textAPI.match(regex));
+
     const handleClick = useRef(null);
 
     useEffect(() => {
@@ -37,12 +35,13 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
                 });
             }, 1000);
         } else if (!isRunning && elapsedTime !== 0) {
+            document.getElementsByClassName("time-options")[0].removeEventListener('click', handleClick.current, true);
             clearInterval(timer);
             finishTest();
         }
         return () => {
             clearInterval(timer);
-            document.getElementsByClassName("time-options")[0].removeEventListener('click', handleClick.current, true);
+            // document.getElementsByClassName("time-options")[0].removeEventListener('click', handleClick.current, true);
         };
     }, [isRunning]);
 
@@ -100,11 +99,11 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
                 isDarkTheme={isDarkTheme}
                 selectedFont={selectedFont}
                 selectedSize={selectedSize}
-                textAPI={words}
             >
+
                 {!isFocused ?
-                    <div className="description" onClick={handleFocuse}>
-                        <span className="img-container">
+                    <div className={`description ${isDarkTheme ? 'dark' : ''}`} onClick={handleFocuse}>
+                        <span className={`img-container ${isDarkTheme ? 'dark' : ''}`}>
                             <img src="/src/assets/cursor.png" alt="cursor" className="cursor-pointer" />
                         </span>
                         <span className="hint">Click to focus on field</span>
