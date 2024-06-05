@@ -8,10 +8,8 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
     const [countKeys, setCountKeys] = useState(0);
     const [isFocused, setFocused] = useState(false);
     const [isPause, setIsPause] = useState(false);
-    const [startTime, setStartTime] = useState();
-    const [pauseTime, setPauseTime] = useState(0);
     let regex = /.*?\s|.*?$/g;
-    const [textAPI, setTextAPI] = useState("By the aid of this, every little warp thread or cluster of threads can be lifted by its own hooked wire without interfering with any other thread.");
+    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief story story as 'a brief story");
     const [words, setWords] = useState(textAPI.match(regex));
     useEffect(() => {
         let timer;
@@ -68,14 +66,13 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
                 isDarkTheme={isDarkTheme}
                 selectedFont={selectedFont}
                 selectedSize={selectedSize}
-                textAPI={words}
             >
 
                 {!isFocused ?
-                    <div className="description"
-                        onClick={handleFocuse}
+                    <div className={`description ${isDarkTheme ? 'dark' : ''}`}
+                         onClick={handleFocuse}
                     >
-                        <span className="img-container">
+                        <span className={`img-container ${isDarkTheme ? 'dark' : ''}`}>
                             <img src="/src/assets/cursor.png" alt="cursor" className="cursor-pointer" />
                         </span>
                         <span className="hint">Click to focus on field</span>

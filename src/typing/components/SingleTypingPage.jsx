@@ -7,8 +7,9 @@ import SingleTyping from './SingleTyping';
 import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+
 export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, toggleSound,
-    selectedFont, handleFontClick, selectedSize, handleSizeClick }) {
+                                             selectedFont, handleFontClick, selectedSize, handleSizeClick }) {
 
     const typoRef = useRef(null);
 
@@ -16,9 +17,26 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
     const [accuracy, setAccuracy] = useState(0);
     const [prevSpeed, setPrevSpeed] = useState(0.0);
     const [prevAccuracy, setPrevAccuracy] = useState(0);
-    const [activeTab, setActiveTab] = useState('text');
+    const [activeTab, setActiveTab] = useState(() => {
+        return  localStorage.getItem('activeTab');
+    });
+
+
     const [choosenTime, setTime] = useState(15);
     const [result, setResult] = useState(false);
+
+    // Retrieve the activeTab from localStorage when the component mounts
+    useEffect(() => {
+        const savedActiveTab = localStorage.getItem('activeTab');
+        if (savedActiveTab) {
+            setActiveTab(savedActiveTab);
+        }
+    }, []);
+
+    // Save the activeTab to localStorage whenever it changes
+    useEffect(() => {
+        localStorage.setItem('activeTab', activeTab);
+    }, [activeTab]);
 
     const setNewSpeed = (wpm) => {
         setSpeed(wpm);
@@ -34,7 +52,6 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
         setActiveTab(tab);
     };
 
-
     const changeTime = (value) => {
         setTime(value);
     }
@@ -44,24 +61,18 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
             typoRef.current.resetText();
         }
     }
+
     return (
         <div className="single-typing">
             <Header isDarkTheme={isDarkTheme} />
 
             <div className={`home ${isDarkTheme ? 'dark' : ''}`}>
-                {result ?
-                    <TypingResult
-                        speed={speed}
-                        prevSpeed={prevSpeed}
-                        accuracy={accuracy}
-                        prevAccuracy={prevAccuracy} /> : null
-                }
                 <div className="toolbar-container">
                     <div className="toolbar">
                         <div className="navigation">
                             <Link to="/multiplayer/rooms" className='link'>
                                 <p onClick={() => handleTabClick('multiplayer')}
-                                    className={activeTab === 'multiplayer' ? 'active' : ''}>
+                                   className={activeTab === 'multiplayer' ? 'active' : ''}>
                                     multiplayer
                                 </p>
                             </Link>
@@ -79,13 +90,21 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                         </div>
                         <span className="separator"></span>
                         <div className="toolbar-middle">
-                            {activeTab === "test" ?
-                                <div className="time-options">
-                                    <p onClick={() => changeTime(15)} className={choosenTime === 15 ? 'active' : ''}>15</p>
-                                    <p onClick={() => changeTime(30)} className={choosenTime === 30 ? 'active' : ''}>30</p>
-                                    <p onClick={() => changeTime(60)} className={choosenTime === 60 ? 'active' : ''}>60</p>
-                                </div> : null
-                            }
+                            <TypingResult
+                                speed={speed}
+                                prevSpeed={prevSpeed}
+                                accuracy={accuracy}
+                                prevAccuracy={prevAccuracy}/>
+                            <div className={`time-options ${activeTab === "test" ? 'expanded' : ''}`}>
+                                <p onClick={() => changeTime(15)}
+                                   className={choosenTime === 15 ? 'active' : ''}>15</p>
+                                <p onClick={() => changeTime(30)}
+                                   className={choosenTime === 30 ? 'active' : ''}>30</p>
+                                <p onClick={() => changeTime(60)}
+                                   className={choosenTime === 60 ? 'active' : ''}>60</p>
+                                <p onClick={() => changeTime(120)}
+                                   className={choosenTime === 120 ? 'active' : ''}>120</p>
+                            </div>
                         </div>
                         <span className="separator"></span>
                         <div className="text-config">
@@ -173,7 +192,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
 
             </div>
             <Footer isDarkTheme={isDarkTheme} toggleTheme={toggleTheme} isSoundOn={isSoundOn}
-                toggleSound={toggleSound} />
+                    toggleSound={toggleSound} />
         </div>
     )
 }

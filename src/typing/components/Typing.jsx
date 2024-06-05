@@ -8,9 +8,11 @@ import "../styles/typing.scss"
 import { getText } from "../api/TextAPI"
 
 const Typing = forwardRef((props, ref) => {
+    const [textAPI, setTextAPI] = useState("Sukumar Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode defined a short story as 'a brief story story as 'a brief story");
     const [inputText, setInputText] = useState("");
     const [counterExtraLetter, setCounterExtraLetter] = useState(0);
-    const [words, setWords] = useState(props.textAPI);
+    let regex = /.*?\s|.*?$/g;
+    const [words, setWords] = useState(textAPI.match(regex));
     const [isCursorVisible, setCursorVisible] = useState(false);
     const [extraLetter, setExtraLetter] = useState([]);
     const [wordIndex, setWordIndex] = useState(0);
@@ -19,9 +21,29 @@ const Typing = forwardRef((props, ref) => {
     const [lines, setLines] = useState([]);
     const [countCorrectTypingKeys, setCountCorrectTypingKeys] = useState(0);
     const [countTypingKeys, setCountTypingKeys] = useState(0);
+    const [isLoaded, setLoaded] = useState(false);
     const inputRef = useRef(null);
     const containerRef = useRef(null);
     const amountOfExtraLetters = 5;
+
+
+    // (fetch data from server)
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         const result = await getText();
+    //         setTextAPI(result);
+    //         setWords(result.match(regex));
+    //     }
+    //     fetchData();
+    // }, []);
+    useEffect(() => {
+        if (props.type == "multiplayer") {
+            setLoaded(true);
+            if (isLoaded) {
+                props.amountOfWords(words.length);
+            }
+        }
+    }, [isLoaded]);
 
     useImperativeHandle(ref, () => ({
         resetText() {
@@ -44,7 +66,7 @@ const Typing = forwardRef((props, ref) => {
     }));
 
     const resetAllData = () => {
-        setWords(props.textAPI);
+        setWords(textAPI.match(regex));
         setInputText("");
         setWordIndex(0);
         setWordTyping(0);
@@ -311,13 +333,13 @@ const Typing = forwardRef((props, ref) => {
                 {props.children}
             </div>
             <input type="text" className="text-input"
-                ref={inputRef}
-                value={inputText}
-                onChange={handleInput}
-                onBlur={() => {
-                    props.changeFocuse();
-                    setCursorVisible(false);
-                }}
+                   ref={inputRef}
+                   value={inputText}
+                   onChange={handleInput}
+                   onBlur={() => {
+                       props.changeFocuse();
+                       setCursorVisible(false);
+                   }}
             />
         </div>
     )

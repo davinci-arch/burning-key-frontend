@@ -163,6 +163,11 @@
     }
 }
 
+.description.dark
+.img-container.dark{
+    filter: invert(95%) sepia(10%) saturate(400%) hue-rotate(7deg) brightness(90%) contrast(88%);
+}
+
 .cursor-pointer.dark {
     filter: invert(95%) sepia(10%) saturate(400%) hue-rotate(7deg) brightness(90%) contrast(88%);
 }

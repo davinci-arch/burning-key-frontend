@@ -29,7 +29,6 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
                 setStartTime(new Date().getTime());
             }
             document.getElementsByClassName("time-options")[0].addEventListener('click', handleClick.current, true);
-
             timer = setInterval(() => {
                 setTimerDuration((prevTime) => {
                     if (prevTime <= 1) {
@@ -45,7 +44,6 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
             clearInterval(timer);
             finishTest();
             document.getElementsByClassName("time-options")[0].removeEventListener('click', handleClick.current, true);
-
         }
         return () => {
             clearInterval(timer);
@@ -110,8 +108,8 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
                 textAPI={words}
             >
                 {!isFocused ?
-                    <div className="description" onClick={handleFocuse}>
-                        <span className="img-container">
+                    <div className={`description ${isDarkTheme ? 'dark' : ''}`} onClick={handleFocuse}>
+                        <span className={`img-container ${isDarkTheme ? 'dark' : ''}`}>
                             <img src="/src/assets/cursor.png" alt="cursor" className="cursor-pointer" />
                         </span>
                         <span className="hint">Click to focus on field</span>
