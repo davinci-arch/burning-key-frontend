@@ -12,6 +12,8 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
     let regex = /.*?\s|.*?$/g;
     const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief story story as 'a brief story");
     const [words, setWords] = useState(textAPI.match(regex));
+    const [startTime, setStartTime] = useState(0);
+
     const handleClick = useRef(null);
 
     useEffect(() => {
@@ -23,6 +25,9 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
     useEffect(() => {
         let timer;
         if (isRunning) {
+            if (startTime == 0) {
+                setStartTime(new Date().getTime());
+            }
             document.getElementsByClassName("time-options")[0].addEventListener('click', handleClick.current, true);
 
             timer = setInterval(() => {
@@ -39,10 +44,11 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
         } else if (!isRunning && elapsedTime !== 0) {
             clearInterval(timer);
             finishTest();
+            document.getElementsByClassName("time-options")[0].removeEventListener('click', handleClick.current, true);
+
         }
         return () => {
             clearInterval(timer);
-            document.getElementsByClassName("time-options")[0].removeEventListener('click', handleClick.current, true);
         };
     }, [isRunning]);
 
@@ -52,7 +58,8 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
 
     useEffect(() => {
         if (!isRunning && elapsedTime != 0) {
-            setNewSpeed((correctKeys / 5) / (elapsedTime / 60));
+            console.log(startTime)
+            setNewSpeed((correctKeys / 5) / (((new Date().getTime() - startTime) / 1000) / 60));
             newAccuracy((correctKeys / countKeys) * 100);
             setResult(true);
             setTimerDuration(choosenTime);

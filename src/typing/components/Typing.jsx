@@ -14,6 +14,7 @@ const Typing = forwardRef((props, ref) => {
     const [isCursorVisible, setCursorVisible] = useState(false);
     const [extraLetter, setExtraLetter] = useState([]);
     const [wordIndex, setWordIndex] = useState(0);
+    const [wordTyping, setWordTyping] = useState(0);
     const [letterIndex, setLetterIndex] = useState(0);
     const [lines, setLines] = useState([]);
     const [countCorrectTypingKeys, setCountCorrectTypingKeys] = useState(0);
@@ -46,13 +47,14 @@ const Typing = forwardRef((props, ref) => {
         setWords(props.textAPI);
         setInputText("");
         setWordIndex(0);
+        setWordTyping(0);
         setCounterExtraLetter(0);
         setCountCorrectTypingKeys(0);
         setCountTypingKeys(0);
         setLetterIndex(0);
         setExtraLetter([]);
         setCursorVisible(true);
-        inputRef.current.focus();
+        inputRef.current.blur();
     }
 
     const playSound = (sound) => {
@@ -72,7 +74,7 @@ const Typing = forwardRef((props, ref) => {
             }
         } else {
             if (props.type == "multiplayer" && wordIndex == 0 && letterIndex == 0) {
-                props.setNewData(wordIndex, words[wordIndex])
+                props.setNewData(wordTyping, words[wordTyping])
             }
         }
 
@@ -93,29 +95,29 @@ const Typing = forwardRef((props, ref) => {
 
         if (words[wordIndex][letterIndex] == lastChar) {
             if (lastChar === ' ') {
-                    playSound(SpaceSound);
-                } else {
-                    setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
-                    setCountTypingKeys(countTypingKeys + 1);
-                    playSound(PressSound);
-                }
+                playSound(SpaceSound);
+            } else {
+                setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
+                setCountTypingKeys(countTypingKeys + 1);
+                playSound(PressSound);
+            }
         } else if (inputText.length < value.length) {
-             playSound(ErrorSound);
+            playSound(ErrorSound);
 
-                const incorrectKeyElement = document.getElementById(`Key${lastChar.toUpperCase()}`);
-                if (incorrectKeyElement) {
-                    incorrectKeyElement.classList.add('pulsate');
-                    setTimeout(() => {
-                        incorrectKeyElement.classList.remove('pulsate');
-                    }, 500);
-                }
+            const incorrectKeyElement = document.getElementById(`Key${lastChar.toUpperCase()}`);
+            if (incorrectKeyElement) {
+                incorrectKeyElement.classList.add('pulsate');
+                setTimeout(() => {
+                    incorrectKeyElement.classList.remove('pulsate');
+                }, 500);
+            }
         }
         if (words[wordIndex].length - 1 == letterIndex &&
             lastChar != ' ' &&
             inputText.length < value.length &&
             (wordIndex - 1) != lines[lines.length - 1].endIndex - 2) {
 
-          setExtraLetter(prevExtraLetter => [...prevExtraLetter, letterIndex]);
+            setExtraLetter(prevExtraLetter => [...prevExtraLetter, letterIndex]);
             setCounterExtraLetter(counterExtraLetter + 1);
             setCountTypingKeys(countTypingKeys + 1);
             words[wordIndex] = words[wordIndex].slice(0, letterIndex) + lastChar + words[wordIndex].slice(letterIndex);
@@ -132,8 +134,9 @@ const Typing = forwardRef((props, ref) => {
                 setLetterIndex(letterIndex - 1);
             } else if (letterIndex === 0) {
                 setWordIndex(wordIndex - 1);
+                setWordTyping(wordTyping - 1);
                 if (props.type == "multiplayer") {
-                    props.setNewData(wordIndex - 1, words[wordIndex - 1])
+                    props.setNewData(wordTyping - 1, words[wordTyping - 1])
                 }
                 setLetterIndex(words[wordIndex - 1].length - 1)
                 setInputText(value);
@@ -144,8 +147,9 @@ const Typing = forwardRef((props, ref) => {
             if (letterIndex === words[wordIndex].length - 1) {
                 setLetterIndex(0);
                 setWordIndex(wordIndex + 1);
+                setWordTyping(wordTyping + 1);
                 if (props.type == "multiplayer") {
-                    props.setNewData(wordIndex + 1, words[wordIndex + 1])
+                    props.setNewData(wordTyping + 1, words[wordTyping + 1])
 
                 }
             } else {
@@ -171,9 +175,7 @@ const Typing = forwardRef((props, ref) => {
     //     cursor.style.transform = `translateX(${leftOffset}px)`;
     // }
     const results = () => {
-        if (props.type != "multiplayer") {
-            props.setIsRunning(false);
-        }
+        props.setIsRunning(false);
         props.setCountKeys(countTypingKeys);
         props.setCorrectKeys(countCorrectTypingKeys);
     }
@@ -296,7 +298,7 @@ const Typing = forwardRef((props, ref) => {
 
     return (
         <div className="text-container">
-            <div className="nested-text-container" style={{fontSize: props.selectedSize, fontFamily: props.selectedFont}}>
+            <div className="nested-text-container" style={{ fontSize: props.selectedSize, fontFamily: props.selectedFont }}>
                 <div className={props.isFocused ? "text focused" : "text"}>
                     <div className={`words ${props.isDarkTheme ? 'dark' : ''}`} ref={containerRef}>
                         {letterComponents}

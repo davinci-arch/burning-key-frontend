@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Typing from "../Typing";
-export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, sendMessage, sessionId, uuid, setWords, timerToStart, amountOfPlayers, setFirstWord }) {
+import CountDown from "/src/assets/startRace.mp3"
+export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, sendMessage, sessionId, uuid, setWords, timerToStart, amountOfPlayers}) {
     const [isRunning, setIsRunning] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [correctKeys, setCorrectKeys] = useState(0);
@@ -8,8 +9,9 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
     const [isFocused, setFocused] = useState(false);
     const [wordCount, setWordCount] = useState(0);
     const [currentWord, setCurrentWord] = useState("");
+    const [startTime, setStartTime] = useState();
     let regex = /.*?\s|.*?$/g;
-    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief story story as 'a brief story");
+    const [textAPI, setTextAPI] = useState("By the aid of this, every little warp thread or cluster of threads can be lifted by its own");
     const [words, setSplitWords] = useState(textAPI.match(regex));
 
 
@@ -24,18 +26,34 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
             }, 10);
         } else if (!isRunning && elapsedTime !== 0) {
             clearInterval(timer);
+            const message = {
+                type: "END_RACE",
+                uid: uuid
+            }
+            sendMessage(message);
         }
         return () => clearInterval(timer);
     }, [isRunning]);
 
     useEffect(() => {
         setTimer(true);
-        if (timerIsEnd && timerToStart == 1) {
+        if (timerToStart == 3) {
+            playSound(CountDown)
+        }
+        if (timerIsEnd && timerToStart == 0) {
             setWords(words.length);
             startRace();
+            setStartTime(new Date().getTime());
         }
     }, [timerToStart])
 
+    const playSound = (sound) => {
+        if (isSoundOn) {
+            var audio = new Audio(sound);
+            audio.play();
+        }
+    }
+    
     const setNewData = (wordCount, word) => {
         setWordCount(wordCount + 1);
         setCurrentWord(word)
@@ -43,14 +61,14 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
         const all = typoRef.current.getAllLetter();
         setCorrectKeys(correct);
         setCountKeys(all);
-
+        const timeElapsed = ((new Date().getTime() - startTime) / 1000) / 60;
         const message = {
             type: "DATA",
             sessionId: sessionId,
             wordCount: wordCount + 1,
             currentWord: word,
             uid: uuid,
-            newSpeed: (correctKeys / 5) / ((elapsedTime / 1000) / 60) + ""
+            newSpeed: (correctKeys / 5) / timeElapsed + ""
         }
 
         sendMessage(message);
@@ -88,6 +106,7 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
                 setCorrectKeys={setCorrectKeys}
                 setCountKeys={setCountKeys}
                 isRunning={isRunning}
+                setIsRunning={setIsRunning}
                 changeFocuse={changeFocuse}
                 isFocused={isFocused}
                 setNewData={setNewData}

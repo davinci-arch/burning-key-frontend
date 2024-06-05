@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import MultiplayerTyping from "./MultiplayerTyping";
 import "../../styles/multiplayer.scss"
 export default function MultiplayerTypingPage({ isSoundOn }) {
@@ -17,13 +17,18 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
     const [isLoaded, setLoaded] = useState(false);
     const [isConnected, setConnected] = useState(false);
     const [sessionId, setSessionId] = useState("");
-    const [timerToStart, setTimerToStart] = useState(0);
+    const [timerToStart, setTimerToStart] = useState();
+    const [isStart, setStart] = useState(false);
     const [amountOfPlayers, setAmountOfPlayers] = useState(0);
     const socket = useRef();
     const usersRef = useRef(users);
     const sessionIdRef = useRef(sessionId);
     const amountWords = useRef(words);
-    const [firstWord, setFirstWord] = useState("");
+    const navigate = useNavigate();
+    const [isRedirect, setIsRedirect] = useState(false);
+    const [redirectTime, setRedirectTime] = useState(10);
+    const [playersPosition, setPlayersPosition] = useState([]);
+
     useEffect(() => {
         usersRef.current = users;
         setAmountOfPlayers(usersRef.current.length);
@@ -45,6 +50,20 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
             }
         };
     }, [isLoaded]);
+
+    useEffect(() => {
+        let timer;
+        if (isRedirect && redirectTime > 0) {
+            timer = setInterval(() => {
+                setRedirectTime((prevTime) => prevTime - 1);
+            }, 1000);
+        } else if (isRedirect && redirectTime <= 0) {
+            clearInterval(timer);
+            navigate("/multiplayer/rooms");
+        }
+
+        return () => clearInterval(timer);
+    }, [isRedirect, redirectTime]);
 
     const setNewSpeed = (wpm) => {
         setSpeed(wpm);
@@ -78,12 +97,17 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
             }
             sendMessage(message);
         }
-
         socket.current.onmessage = (event) => {
             const message = event.data;
             const data = JSON.parse(message);
 
-            if (data.type === "CONNECT") {
+            if (data.type == "STARTED") {
+                console.log("The match already started, you will be redirected");
+                setIsRedirect(true);
+            } else if (data.type == "EXPIRED_ROOM") {
+                console.log("This room already closed, you will be redirected");
+                setIsRedirect(true);
+            } else if (data.type === "CONNECT") {
                 addUsers(data.data);
             } else if (data.type === "CONNECT_USER") {
                 addUser(data.data);
@@ -94,7 +118,9 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                 updateCurrentUserWord(data.currentWord, data.sessionId, data.currentWordPosition, data.newSpeed);
             } else if (data.type === "TIMER") {
                 setTimerToStart(data.duration);
-            } 
+            } else if (data.type === "END_RACE") {
+                handleEndRace(data);
+            }
         }
 
         socket.current.onclose = () => {
@@ -110,8 +136,7 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
         setUsers(prevUsers => {
             const updatedUsers = prevUsers.map(user => {
                 if (user.sessionId === id) {
-                    const progress = calculateProgress(position);
-                    return { ...user, currentWord: currentWord, completeText: calculateProgress(position), currentSpeed: speed};
+                    return { ...user, currentWord: currentWord, completeText: calculateProgress(position), currentSpeed: speed };
                 }
                 return user;
             });
@@ -119,6 +144,25 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
             return updatedUsers;
         });
     };
+    const handleEndRace = (data) => {
+        setPlayersPosition(prev => {
+            const newPositions = [...prev, data.userId];
+
+            const userPosition = newPositions.length - 1;
+            const updatedUsers = usersRef.current.map(user => {
+                if (user.sessionId === data.userId) {
+                    return { ...user, finished: userPosition };
+                }
+                return user;
+            });
+
+            console.log(updatedUsers)
+            setUsers(updatedUsers);
+
+            return newPositions;
+        });
+    };
+
     const addUser = (user) => {
         setUsers(user);
     }
@@ -140,7 +184,13 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                     accuracy={accuracy}
                     prevAccuracy={prevAccuracy} /> : null
             } */}
-            {timerToStart > 1 ?
+            {isRedirect > 0 ?
+                <div>
+                    You will be redirected after {redirectTime}
+                </div>
+                : null
+            }
+            {timerToStart > 0 ?
                 <div className="start-race-timer-container">
                     <div className="start-race-timer">
                         {timerToStart}
@@ -200,7 +250,7 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                         setWords={setWords}
                         timerToStart={timerToStart}
                         amountOfPlayers={amountOfPlayers}
-                        setFirstWord={setFirstWord} />}
+                    />}
                 </div>
             </div>
             <div className="players" >
@@ -219,7 +269,13 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                             </div>
                         </div>
                         <div className="data">
-                            <img src="/src/assets/fireBlue.png" className="fire" alt="" />
+                            {user.finished !== undefined && (
+                                user.finished === 0 ? (
+                                    <img src="/src/assets/fireBlue.png" className="fire" alt="" />
+                                ) : (
+                                    <span>{(user.finished + 1)}nd</span>
+                                )
+                            )}
                             <p>WPM:{user.currentSpeed ? user.currentSpeed : 0.0}</p>
                         </div>
                     </div>

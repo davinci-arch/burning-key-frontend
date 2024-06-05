@@ -8,20 +8,22 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
     const [countKeys, setCountKeys] = useState(0);
     const [isFocused, setFocused] = useState(false);
     const [isPause, setIsPause] = useState(false);
+    const [startTime, setStartTime] = useState();
+    const [pauseTime, setPauseTime] = useState(0);
     let regex = /.*?\s|.*?$/g;
-    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief story story as 'a brief story");
+    const [textAPI, setTextAPI] = useState("By the aid of this, every little warp thread or cluster of threads can be lifted by its own hooked wire without interfering with any other thread.");
     const [words, setWords] = useState(textAPI.match(regex));
     useEffect(() => {
         let timer;
-        if (isRunning) {
-            timer = setInterval(() => {
-                if (!isPause) {
-                    setElapsedTime((prevTime) => prevTime + 1);
-                }
-            }, 1000);
-        } else if (!isRunning && elapsedTime !== 0 && !isPause) {
+        if (isRunning && !isPause) {
+            setStartTime(new Date().getTime());
+        } else if (!isRunning && startTime !== undefined && !isPause) {
             if (!isPause) {
-                setNewSpeed((correctKeys / 5) / (elapsedTime / 60));
+                if (pauseTime > 0) {
+                    setNewSpeed((correctKeys / 5) / (((((new Date().getTime() - startTime) - pauseTime)) / 1000) / 60));
+                } else {
+                    setNewSpeed((correctKeys / 5) / (((new Date().getTime() - startTime) / 1000) / 60));
+                }
                 newAccuracy((correctKeys / countKeys) * 100)
                 clearInterval(timer);
                 setResult(true);
@@ -32,11 +34,12 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
 
         }
         return () => clearInterval(timer);
-    }, [isRunning, isFocused]);
+    }, [isRunning]);
 
     const changeFocuse = () => {
         setFocused(false);
         setIsPause(true);
+        setPauseTime(new Date().getTime());
     }
 
     const handleFocuse = () => {
@@ -44,6 +47,9 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
             typoRef.current.focusedField()
             setFocused(true);
             setIsPause(false);
+            if (isRunning) {
+                setPauseTime(new Date().getTime() - pauseTime);
+            }
         }
     }
 
