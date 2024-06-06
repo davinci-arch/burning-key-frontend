@@ -8,11 +8,9 @@ import "../styles/typing.scss"
 import { getText } from "../api/TextAPI"
 
 const Typing = forwardRef((props, ref) => {
-    const [textAPI, setTextAPI] = useState("Sukumar Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode Azhikode defined a short story as 'a brief story story as 'a brief story");
     const [inputText, setInputText] = useState("");
     const [counterExtraLetter, setCounterExtraLetter] = useState(0);
-    let regex = /.*?\s|.*?$/g;
-    const [words, setWords] = useState(textAPI.match(regex));
+    const [words, setWords] = useState(props.textAPI);
     const [isCursorVisible, setCursorVisible] = useState(false);
     const [extraLetter, setExtraLetter] = useState([]);
     const [wordIndex, setWordIndex] = useState(0);
@@ -21,11 +19,9 @@ const Typing = forwardRef((props, ref) => {
     const [lines, setLines] = useState([]);
     const [countCorrectTypingKeys, setCountCorrectTypingKeys] = useState(0);
     const [countTypingKeys, setCountTypingKeys] = useState(0);
-    const [isLoaded, setLoaded] = useState(false);
     const inputRef = useRef(null);
     const containerRef = useRef(null);
     const amountOfExtraLetters = 5;
-
 
     // (fetch data from server)
     // useEffect(() => {
@@ -36,14 +32,6 @@ const Typing = forwardRef((props, ref) => {
     //     }
     //     fetchData();
     // }, []);
-    useEffect(() => {
-        if (props.type == "multiplayer") {
-            setLoaded(true);
-            if (isLoaded) {
-                props.amountOfWords(words.length);
-            }
-        }
-    }, [isLoaded]);
 
     useImperativeHandle(ref, () => ({
         resetText() {
@@ -66,7 +54,7 @@ const Typing = forwardRef((props, ref) => {
     }));
 
     const resetAllData = () => {
-        setWords(textAPI.match(regex));
+        setWords(props.textAPI);
         setInputText("");
         setWordIndex(0);
         setWordTyping(0);

@@ -11,6 +11,9 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
     let regex = /.*?\s|.*?$/g;
     const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief story story as 'a brief story");
     const [words, setWords] = useState(textAPI.match(regex));
+    const [startTime, setStartTime] = useState();
+    const [pauseTime, setPauseTime] = useState(0);
+
     useEffect(() => {
         let timer;
         if (isRunning && !isPause) {
@@ -66,6 +69,8 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
                 isDarkTheme={isDarkTheme}
                 selectedFont={selectedFont}
                 selectedSize={selectedSize}
+                textAPI={words}
+
             >
 
                 {!isFocused ?

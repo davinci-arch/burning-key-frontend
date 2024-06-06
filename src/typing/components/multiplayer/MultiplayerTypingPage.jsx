@@ -155,8 +155,6 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                 }
                 return user;
             });
-
-            console.log(updatedUsers)
             setUsers(updatedUsers);
 
             return newPositions;
@@ -281,6 +279,7 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                     </div>
                 ))}
             </div>
+            <button className="saveRoom">Save room</button>
         </>
     )
 }

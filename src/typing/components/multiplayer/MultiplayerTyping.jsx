@@ -11,7 +11,7 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
     const [currentWord, setCurrentWord] = useState("");
     const [startTime, setStartTime] = useState();
     let regex = /.*?\s|.*?$/g;
-    const [textAPI, setTextAPI] = useState("By the aid of this, every little warp thread or cluster of threads can be lifted by its own");
+    const [textAPI, setTextAPI] = useState("By the aid of this, every little warp thread or cluster of threads can be lifted by its");
     const [words, setSplitWords] = useState(textAPI.match(regex));
 
 
@@ -110,7 +110,6 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
                 changeFocuse={changeFocuse}
                 isFocused={isFocused}
                 setNewData={setNewData}
-                // amountOfWords={setWords}
                 textAPI={words}
             >
                 {!isFocused ?

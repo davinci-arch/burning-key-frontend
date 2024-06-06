@@ -6,6 +6,7 @@ import SignPage from './typing/components/SigninPage';
 import SingleTypingPage from './typing/components/SingleTypingPage';
 import Rooms from './typing/components/multiplayer/Rooms';
 import MultiplayerTypingPage from './typing/components/multiplayer/MultiplayerTypingPage';
+import RoomSettings from './typing/components/multiplayer/RoomSettings';
 function App() {
     const [isSoundOn, setSoundState] = useState(() => {
         const savedSound = localStorage.getItem('sound');
@@ -82,6 +83,7 @@ function App() {
                 />} />
                 <Route path="/multiplayer/rooms" element={<Rooms />} />
                 <Route path="/multiplayer/rooms/room/:uuid" element={<MultiplayerTypingPage />} />
+                <Route path="/multiplayer/rooms/room-settings" element={<RoomSettings />} />
             </Routes>
         </Router>
     );

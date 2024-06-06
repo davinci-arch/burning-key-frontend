@@ -1,13 +1,13 @@
 import { useRef } from "react";
 import { useState, useEffect } from "react"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import "../../styles/rooms.scss"
 export default function Rooms({ isSoundOn }) {
 
     const [connected, setConnected] = useState(false);
     const [isLoaded, setLoaded] = useState(false);
     const [rooms, setRooms] = useState([]);
-
+    const navigate = useNavigate();
     const socket = useRef();
 
     useEffect(() => {
@@ -63,12 +63,13 @@ export default function Rooms({ isSoundOn }) {
     }
 
     const handleNewRoom = () => {
-        const message = {
-            type: "CREATE",
-            username: "Room",
-        };
+        // const message = {
+        //     type: "CREATE",
+        //     username: "Room",
+        // };
 
-        sendMessage(message);
+        // sendMessage(message);
+        navigate("/multiplayer/rooms/room-settings")
     }
 
     return (
