@@ -4,10 +4,8 @@ import { getWordSets, generateRandomWords } from "../api/WordsAPI.jsx";
 import { getRandomText } from "../api/TextAPI.jsx";
 
 export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, isDarkTheme, selectedFont, selectedSize,
-                                         textAPI,setIsReserted,isReseted,setSavedSettings,setSelectedOption,setTextDifficulty }) {
-    const [timerDuration, setTimerDuration] = useState(5);
+    textAPI, setIsReserted, isReseted, setSavedSettings, setSelectedOption, setTextDifficulty }) {
     const [isRunning, setIsRunning] = useState(false);
-    const [elapsedTime, setElapsedTime] = useState(0);
     const [correctKeys, setCorrectKeys] = useState(0);
     const [countKeys, setCountKeys] = useState(0);
     const [isFocused, setFocused] = useState(false);
@@ -30,19 +28,31 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
                 newAccuracy((correctKeys / countKeys) * 100)
                 clearInterval(timer);
                 setResult(true);
-                if (typoRef.current) {
-                    typoRef.current.resetText();
-                }
+                setIsReserted(!isReseted);
+                setTextDifficulty(localStorage.getItem('textDifficulty'));
+                setSelectedOption(localStorage.getItem('selectedTextType'));
+                setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
+                resetVariables()
             }
 
         }
         return () => clearInterval(timer);
     }, [isRunning]);
 
+    const resetVariables = () => {
+        setCountKeys(0)
+        setCorrectKeys(0)
+        if (typoRef.current) {
+            typoRef.current.resetText();
+        }
+    }
+
     const changeFocuse = () => {
         setFocused(false);
-        setIsPause(true);
-        setPauseTime(new Date().getTime());
+        if (isRunning) {
+            setIsPause(true);
+            setPauseTime(new Date().getTime());
+        }
     }
 
     const handleFocuse = () => {
@@ -73,14 +83,10 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
                 selectedSize={selectedSize}
                 textAPI={textAPI}
                 setIsReserted={setIsReserted}
-                isReseted={isReseted}
-                setSavedSettings={setSavedSettings}
-                setSelectedOption={setSelectedOption}
-                setTextDifficulty={setTextDifficulty}
             >
                 {!isFocused ?
                     <div className={`description ${isDarkTheme ? 'dark' : ''}`}
-                         onClick={handleFocuse}
+                        onClick={handleFocuse}
                     >
                         <span className={`img-container ${isDarkTheme ? 'dark' : ''}`}>
                             <img src="/src/assets/cursor.png" alt="cursor" className="cursor-pointer" />
