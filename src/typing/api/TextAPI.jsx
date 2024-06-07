@@ -18,3 +18,15 @@ export const getText = async () => {
       throw error;
     }
   };
+
+export const getRandomText = async (difficulty) => {
+    try {
+        const response = await apiClient.get("/text", {
+            params: { difficulty: difficulty }
+        });
+        return response.data.content;
+    } catch (error) {
+        console.error('Error fetching placeholder data:', error);
+        throw error;
+    }
+};

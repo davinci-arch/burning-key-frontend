@@ -7,6 +7,7 @@ import SingleTyping from './SingleTyping';
 import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
+import Settings from './TextChoice.jsx';
 
 export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, toggleSound,
                                              selectedFont, handleFontClick, selectedSize, handleSizeClick }) {
@@ -18,14 +19,13 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
     const [prevSpeed, setPrevSpeed] = useState(0.0);
     const [prevAccuracy, setPrevAccuracy] = useState(0);
     const [activeTab, setActiveTab] = useState(() => {
-        return  localStorage.getItem('activeTab');
+        return  localStorage.getItem('activeTab') || "text";
     });
 
 
     const [choosenTime, setTime] = useState(15);
     const [result, setResult] = useState(false);
 
-    // Retrieve the activeTab from localStorage when the component mounts
     useEffect(() => {
         const savedActiveTab = localStorage.getItem('activeTab');
         if (savedActiveTab) {
@@ -33,7 +33,6 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
         }
     }, []);
 
-    // Save the activeTab to localStorage whenever it changes
     useEffect(() => {
         localStorage.setItem('activeTab', activeTab);
     }, [activeTab]);
@@ -157,6 +156,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                     </div>
                 </div>
                 <div className="animated-container">
+                    <Settings></Settings>
                     <div className={`animated-component ${activeTab === 'text' ? 'active' : ''}`}>
                         {activeTab === 'text' && <SingleTyping
                             typoRef={typoRef}
