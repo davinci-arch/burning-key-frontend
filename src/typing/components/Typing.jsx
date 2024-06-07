@@ -5,12 +5,15 @@ import EraseSound from "../../assets/sfx/eraseSound.wav"
 import ErrorSound from "../../assets/sfx/errorSound.mp3"
 import SpaceSound from "../../assets/sfx/spaceSound.wav"
 import "../styles/typing.scss"
-import { getText } from "../api/TextAPI"
+import { getWordSets, generateRandomWords } from "../api/WordsAPI.jsx";
+import { getRandomText } from "../api/TextAPI.jsx";
 
 const Typing = forwardRef((props, ref) => {
+    const [textAPI, setTextAPI] = useState("");
     const [inputText, setInputText] = useState("");
     const [counterExtraLetter, setCounterExtraLetter] = useState(0);
-    const [words, setWords] = useState(props.textAPI);
+    const regex = /.*?\s|.*?$/g;
+    const [words, setWords] = useState([]);
     const [isCursorVisible, setCursorVisible] = useState(false);
     const [extraLetter, setExtraLetter] = useState([]);
     const [wordIndex, setWordIndex] = useState(0);
@@ -19,19 +22,69 @@ const Typing = forwardRef((props, ref) => {
     const [lines, setLines] = useState([]);
     const [countCorrectTypingKeys, setCountCorrectTypingKeys] = useState(0);
     const [countTypingKeys, setCountTypingKeys] = useState(0);
+    const [isLoaded, setLoaded] = useState(false);
+    const [reseted, isReseted] = useState(false);
     const inputRef = useRef(null);
     const containerRef = useRef(null);
     const amountOfExtraLetters = 5;
 
-    // (fetch data from server)
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         const result = await getText();
-    //         setTextAPI(result);
-    //         setWords(result.match(regex));
-    //     }
-    //     fetchData();
-    // }, []);
+    const [savedSettings, setSavedSettings] = useState(() => {
+        const saved = localStorage.getItem('wordChoiceSettings');
+        return saved ? JSON.parse(saved) : {};
+    });
+    const [selectedOption, setSelectedOption] = useState(() => {
+        return localStorage.getItem('selectedTextType') || 'Texts';
+    });
+    const [textDifficulty, setTextDifficulty] = useState(() => {
+        return localStorage.getItem('textDifficulty') || "Easy";
+    });
+
+
+
+    useEffect(() => {
+        const handleGenerateWords = async () => {
+            try {
+                setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
+                const words = await generateRandomWords({
+                    wordSetName: savedSettings.selectedWordSet,
+                    numWords: savedSettings.numWords,
+                    numSignsPercent: savedSettings.numSignsPercent,
+                    numUpperCasePercent: savedSettings.numUpperCasePercent,
+                    doubleEveryWord: savedSettings.doubleEveryWord
+                });
+                setTextAPI(words.content);
+                setWords(words.content.match(regex));
+            } catch (error) {
+                console.error('Failed to generate random words:', error);
+            }
+        };
+
+        const handleRandomText = async () => {
+            try {
+                const text = await getRandomText(textDifficulty);
+                setTextAPI(text);
+                setWords(text.match(regex));
+            } catch (error) {
+                console.error('Failed to fetch random text:', error);
+            }
+        };
+
+        setSelectedOption(localStorage.getItem('selectedTextType') );
+        if (selectedOption === 'Words') {
+            handleGenerateWords();
+        } else {
+            handleRandomText();
+        }
+    }, [reseted]);
+
+    useEffect(() => {
+        if (props.type === "multiplayer") {
+            setLoaded(true);
+            if (isLoaded) {
+                props.amountOfWords(words.length);
+            }
+        }
+    }, [isLoaded, words, props]);
 
     useImperativeHandle(ref, () => ({
         resetText() {
@@ -54,7 +107,7 @@ const Typing = forwardRef((props, ref) => {
     }));
 
     const resetAllData = () => {
-        setWords(props.textAPI);
+        setWords(textAPI.match(regex));
         setInputText("");
         setWordIndex(0);
         setWordTyping(0);
@@ -65,6 +118,13 @@ const Typing = forwardRef((props, ref) => {
         setExtraLetter([]);
         setCursorVisible(true);
         inputRef.current.blur();
+        if(reseted === true)
+            isReseted(false);
+        else
+            isReseted(true);
+        setTextDifficulty(localStorage.getItem('textDifficulty'));
+        setSelectedOption(localStorage.getItem('selectedTextType') );
+        setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
     }
 
     const playSound = (sound) => {
@@ -315,7 +375,7 @@ const Typing = forwardRef((props, ref) => {
                     </div>
                     {/* {isCursorVisible ?
                         <div className="cursor"></div>
-                        : <></>   
+                        : <></>
                     } */}
                 </div>
                 {props.children}
