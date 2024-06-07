@@ -4,14 +4,8 @@ import "../styles/textchoice.scss";
 import { getRandomText } from "../api/TextAPI.jsx";
 
 export default function TextChoice({ isDarkTheme }) {
-    const [selectedOption, setSelectedOption] = useState(() => {
-        const savedSettings = localStorage.getItem('selectedTextType');
-        return savedSettings ? savedSettings : 'Texts';
-    });
-    const [savedSettings, setSavedSettings] = useState(() => {
-        const savedSettings = localStorage.getItem('wordChoiceSettings');
-        return savedSettings ? JSON.parse(savedSettings) : {};
-    });
+    const [selectedOption, setSelectedOption] = useState(() => localStorage.getItem('selectedTextType') || 'Texts');
+    const [savedSettings, setSavedSettings] = useState(() => JSON.parse(localStorage.getItem('wordChoiceSettings')) || {});
     const [wordSets, setWordSets] = useState([]);
     const [selectedWordSet, setSelectedWordSet] = useState(savedSettings.selectedWordSet || '');
     const [numWords, setNumWords] = useState(savedSettings.numWords || 10);
@@ -19,10 +13,7 @@ export default function TextChoice({ isDarkTheme }) {
     const [numUpperCasePercent, setNumUpperCasePercent] = useState(savedSettings.numUpperCasePercent || 0);
     const [doubleEveryWord, setDoubleEveryWord] = useState(savedSettings.doubleEveryWord || false);
     const [generatedWords, setGeneratedWords] = useState('');
-    const [textDifficulty, setTextDifficulty] = useState(() => {
-        const savedDifficulty = localStorage.getItem('textDifficulty');
-        return savedDifficulty ? savedDifficulty : "Easy";
-    });
+    const [textDifficulty, setTextDifficulty] = useState(() => localStorage.getItem('textDifficulty') || "Easy");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -32,16 +23,14 @@ export default function TextChoice({ isDarkTheme }) {
             try {
                 const wordSets = await getWordSets();
                 setWordSets(wordSets);
-                if (wordSets.length > 0) {
+                if (wordSets.length > 0 && selectedWordSet === '') {
                     setSelectedWordSet(wordSets[0]);
                 }
             } catch (error) {
                 console.error('Failed to fetch word sets:', error);
             }
         };
-
         fetchWordSets();
-
     }, []);
 
     useEffect(() => {
@@ -65,14 +54,7 @@ export default function TextChoice({ isDarkTheme }) {
 
 
     const handleGenerateWords = async () => {
-        let validNumWords = numWords;
-
-        if (numWords < 1) {
-            validNumWords = 1;
-        } else if (numWords > 999) {
-            validNumWords = 999;
-        }
-
+        const validNumWords = Math.max(1, Math.min(numWords, 999));
         setNumWords(validNumWords);
 
         try {
@@ -179,7 +161,7 @@ export default function TextChoice({ isDarkTheme }) {
                                                 max={999} min={1}
                                                 onChange={(e) => {
                                                     let value = parseInt(e.target.value, 10);
-                                                    if (value < 1) value = 1;
+                                                    if (value < 1 || isNaN(value)) value = 1;
                                                     if (value > 999) value = 999;
                                                     setNumWords(value);
                                                 }}

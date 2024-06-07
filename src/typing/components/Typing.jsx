@@ -9,7 +9,7 @@ import { getWordSets, generateRandomWords } from "../api/WordsAPI.jsx";
 import { getRandomText } from "../api/TextAPI.jsx";
 
 const Typing = forwardRef((props, ref) => {
-    const [textAPI, setTextAPI] = useState("");
+    const [textAPI, setTextAPI] = useState("Azikode Sukumar");
     const [inputText, setInputText] = useState("");
     const [counterExtraLetter, setCounterExtraLetter] = useState(0);
     const regex = /.*?\s|.*?$/g;
@@ -56,6 +56,9 @@ const Typing = forwardRef((props, ref) => {
                 setWords(words.content.match(regex));
             } catch (error) {
                 console.error('Failed to generate random words:', error);
+                const fallbackText = "customer source never whether kingdom animals limit wants figures shape booking honda captain giant prayer tiffany emails vitamin francis rocks stayed hopes cabin gibson galaxy promo limiting dubai samba bouquet";
+                setTextAPI(fallbackText);
+                setWords(fallbackText.match(regex));
             }
         };
 
@@ -66,16 +69,20 @@ const Typing = forwardRef((props, ref) => {
                 setWords(text.match(regex));
             } catch (error) {
                 console.error('Failed to fetch random text:', error);
+                const fallbackText = "Sukumar Azhikode defined a short story as 'a brief prose narrative with an intense episodic or anecdotal effect'. Flannery O'Connor emphasized the need to consider what is exactly meant by the descriptor short.";
+                setTextAPI(fallbackText);
+                setWords(fallbackText.match(regex));
             }
         };
 
-        setSelectedOption(localStorage.getItem('selectedTextType') );
+        setSelectedOption(localStorage.getItem('selectedTextType'));
         if (selectedOption === 'Words') {
             handleGenerateWords();
         } else {
             handleRandomText();
         }
     }, [reseted]);
+
 
     useEffect(() => {
         if (props.type === "multiplayer") {
