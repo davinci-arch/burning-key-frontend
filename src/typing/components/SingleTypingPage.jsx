@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import Settings from './TextChoice.jsx';
+import {generateRandomWords} from "../api/WordsAPI.jsx";
+import {getRandomText} from "../api/TextAPI.jsx";
 
 export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, toggleSound,
                                              selectedFont, handleFontClick, selectedSize, handleSizeClick }) {
@@ -21,10 +23,62 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
     const [activeTab, setActiveTab] = useState(() => {
         return  localStorage.getItem('activeTab') || "text";
     });
-
-
     const [choosenTime, setTime] = useState(15);
     const [result, setResult] = useState(false);
+
+    const [words, setWords] = useState([]);
+    const regex = /.*?\s|.*?$/g;
+    const [isReseted, setIsReserted] = useState(false);
+
+    const [savedSettings, setSavedSettings] = useState(() => {
+        const saved = localStorage.getItem('wordChoiceSettings');
+        return saved ? JSON.parse(saved) : {};
+    });
+    const [selectedOption, setSelectedOption] = useState(() => {
+        return localStorage.getItem('selectedTextType') || 'Texts';
+    });
+    const [textDifficulty, setTextDifficulty] = useState(() => {
+        return localStorage.getItem('textDifficulty') || "Easy";
+    });
+
+    useEffect(() => {
+        const handleGenerateWords = async () => {
+            try {
+                const words = await generateRandomWords({
+                    wordSetName: savedSettings.selectedWordSet,
+                    numWords: savedSettings.numWords,
+                    numSignsPercent: savedSettings.numSignsPercent,
+                    numUpperCasePercent: savedSettings.numUpperCasePercent,
+                    doubleEveryWord: savedSettings.doubleEveryWord
+                });
+                setWords(words.content.match(regex));
+            } catch (error) {
+                console.error('Failed to generate random words:', error);
+                const fallbackText = "customer source never whether kingdom animals limit wants figures shape booking honda " +
+                    "captain giant prayer tiffany emails vitamin francis rocks stayed hopes cabin gibson galaxy promo limiting dubai samba bouquet";
+                setWords(fallbackText.match(regex));
+            }
+        };
+
+        const handleRandomText = async () => {
+            try {
+                const text = await getRandomText(textDifficulty);
+                setWords(text.match(regex));
+            } catch (error) {
+                console.error('Failed to fetch random text:', error);
+                const fallbackText = "Sukumar Azhikode defined a short story as 'a brief prose narrative with an intense episodic " +
+                    "or anecdotal effect'. Flannery O'Connor emphasized the need to consider what is exactly meant by the descriptor short.";
+                setWords(fallbackText.match(regex));
+            }
+        };
+
+        if (selectedOption === 'Words') {
+            handleGenerateWords();
+        } else {
+            handleRandomText();
+        }
+    }, [isReseted]);
+
 
     useEffect(() => {
         const savedActiveTab = localStorage.getItem('activeTab');
@@ -166,7 +220,13 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                             setResult={setResult}
                             isDarkTheme={isDarkTheme}
                             selectedFont={selectedFont}
-                            selectedSize={selectedSize} />}
+                            selectedSize={selectedSize}
+                            textAPI={words}
+                            setIsReserted={setIsReserted}
+                            isReseted={isReseted}
+                            setSavedSettings={setSavedSettings}
+                            setSelectedOption={setSelectedOption}
+                            setTextDifficulty={setTextDifficulty}/>}
                     </div>
                     <div className={`animated-component ${activeTab === 'test' ? 'active' : ''}`}>
                         {activeTab === 'test' && <TestTyping
@@ -178,7 +238,13 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                             choosenTime={choosenTime}
                             isDarkTheme={isDarkTheme}
                             selectedFont={selectedFont}
-                            selectedSize={selectedSize} />}
+                            selectedSize={selectedSize}
+                            textAPI={words}
+                            setIsReserted={setIsReserted}
+                            isReseted={isReseted}
+                            setSavedSettings={setSavedSettings}
+                            setSelectedOption={setSelectedOption}
+                            setTextDifficulty={setTextDifficulty}/>}
                     </div>
                 </div>
 

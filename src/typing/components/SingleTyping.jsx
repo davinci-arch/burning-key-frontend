@@ -1,6 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Typing from "./Typing";
-export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, isDarkTheme, selectedFont, selectedSize }) {
+import { getWordSets, generateRandomWords } from "../api/WordsAPI.jsx";
+import { getRandomText } from "../api/TextAPI.jsx";
+
+export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, isDarkTheme, selectedFont, selectedSize,
+                                         textAPI,setIsReserted,isReseted,setSavedSettings,setSelectedOption,setTextDifficulty }) {
     const [timerDuration, setTimerDuration] = useState(5);
     const [isRunning, setIsRunning] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
@@ -8,11 +12,9 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
     const [countKeys, setCountKeys] = useState(0);
     const [isFocused, setFocused] = useState(false);
     const [isPause, setIsPause] = useState(false);
-    let regex = /.*?\s|.*?$/g;
-    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief story story as 'a brief story");
-    const [words, setWords] = useState(textAPI.match(regex));
     const [startTime, setStartTime] = useState();
     const [pauseTime, setPauseTime] = useState(0);
+
 
     useEffect(() => {
         let timer;
@@ -69,10 +71,13 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
                 isDarkTheme={isDarkTheme}
                 selectedFont={selectedFont}
                 selectedSize={selectedSize}
-                textAPI={words}
-
+                textAPI={textAPI}
+                setIsReserted={setIsReserted}
+                isReseted={isReseted}
+                setSavedSettings={setSavedSettings}
+                setSelectedOption={setSelectedOption}
+                setTextDifficulty={setTextDifficulty}
             >
-
                 {!isFocused ?
                     <div className={`description ${isDarkTheme ? 'dark' : ''}`}
                          onClick={handleFocuse}
@@ -86,5 +91,4 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
             </Typing>
         </div>
     )
-
 }

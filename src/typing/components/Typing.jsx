@@ -5,14 +5,10 @@ import EraseSound from "../../assets/sfx/eraseSound.wav"
 import ErrorSound from "../../assets/sfx/errorSound.mp3"
 import SpaceSound from "../../assets/sfx/spaceSound.wav"
 import "../styles/typing.scss"
-import { getWordSets, generateRandomWords } from "../api/WordsAPI.jsx";
-import { getRandomText } from "../api/TextAPI.jsx";
 
 const Typing = forwardRef((props, ref) => {
-    const [textAPI, setTextAPI] = useState("Azikode Sukumar");
     const [inputText, setInputText] = useState("");
     const [counterExtraLetter, setCounterExtraLetter] = useState(0);
-    const regex = /.*?\s|.*?$/g;
     const [words, setWords] = useState([]);
     const [isCursorVisible, setCursorVisible] = useState(false);
     const [extraLetter, setExtraLetter] = useState([]);
@@ -23,65 +19,13 @@ const Typing = forwardRef((props, ref) => {
     const [countCorrectTypingKeys, setCountCorrectTypingKeys] = useState(0);
     const [countTypingKeys, setCountTypingKeys] = useState(0);
     const [isLoaded, setLoaded] = useState(false);
-    const [reseted, isReseted] = useState(false);
     const inputRef = useRef(null);
     const containerRef = useRef(null);
     const amountOfExtraLetters = 5;
 
-    const [savedSettings, setSavedSettings] = useState(() => {
-        const saved = localStorage.getItem('wordChoiceSettings');
-        return saved ? JSON.parse(saved) : {};
-    });
-    const [selectedOption, setSelectedOption] = useState(() => {
-        return localStorage.getItem('selectedTextType') || 'Texts';
-    });
-    const [textDifficulty, setTextDifficulty] = useState(() => {
-        return localStorage.getItem('textDifficulty') || "Easy";
-    });
-
-
-
     useEffect(() => {
-        const handleGenerateWords = async () => {
-            try {
-                setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
-                const words = await generateRandomWords({
-                    wordSetName: savedSettings.selectedWordSet,
-                    numWords: savedSettings.numWords,
-                    numSignsPercent: savedSettings.numSignsPercent,
-                    numUpperCasePercent: savedSettings.numUpperCasePercent,
-                    doubleEveryWord: savedSettings.doubleEveryWord
-                });
-                setTextAPI(words.content);
-                setWords(words.content.match(regex));
-            } catch (error) {
-                console.error('Failed to generate random words:', error);
-                const fallbackText = "customer source never whether kingdom animals limit wants figures shape booking honda captain giant prayer tiffany emails vitamin francis rocks stayed hopes cabin gibson galaxy promo limiting dubai samba bouquet";
-                setTextAPI(fallbackText);
-                setWords(fallbackText.match(regex));
-            }
-        };
-
-        const handleRandomText = async () => {
-            try {
-                const text = await getRandomText(textDifficulty);
-                setTextAPI(text);
-                setWords(text.match(regex));
-            } catch (error) {
-                console.error('Failed to fetch random text:', error);
-                const fallbackText = "Sukumar Azhikode defined a short story as 'a brief prose narrative with an intense episodic or anecdotal effect'. Flannery O'Connor emphasized the need to consider what is exactly meant by the descriptor short.";
-                setTextAPI(fallbackText);
-                setWords(fallbackText.match(regex));
-            }
-        };
-
-        setSelectedOption(localStorage.getItem('selectedTextType'));
-        if (selectedOption === 'Words') {
-            handleGenerateWords();
-        } else {
-            handleRandomText();
-        }
-    }, [reseted]);
+        setWords(props.textAPI || []);
+    }, [props.textAPI, props.isReseted]);
 
 
     useEffect(() => {
@@ -114,7 +58,7 @@ const Typing = forwardRef((props, ref) => {
     }));
 
     const resetAllData = () => {
-        setWords(textAPI.match(regex));
+        setWords(props.textAPI || []);
         setInputText("");
         setWordIndex(0);
         setWordTyping(0);
@@ -125,13 +69,10 @@ const Typing = forwardRef((props, ref) => {
         setExtraLetter([]);
         setCursorVisible(true);
         inputRef.current.blur();
-        if(reseted === true)
-            isReseted(false);
-        else
-            isReseted(true);
-        setTextDifficulty(localStorage.getItem('textDifficulty'));
-        setSelectedOption(localStorage.getItem('selectedTextType') );
-        setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
+        props.setIsReserted(!props.isReseted);
+        props.setTextDifficulty(localStorage.getItem('textDifficulty'));
+        props.setSelectedOption(localStorage.getItem('selectedTextType') );
+        props.setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
     }
 
     const playSound = (sound) => {

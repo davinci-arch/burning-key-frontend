@@ -1,7 +1,8 @@
 
 import Typing from "./Typing";
 import { useState, useEffect, useRef } from "react";
-export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, choosenTime, isDarkTheme, selectedFont, selectedSize }) {
+export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, choosenTime, isDarkTheme, selectedFont, selectedSize,
+                                       textAPI,setIsReserted,isReseted,setSavedSettings,setSelectedOption,setTextDifficulty }) {
 
     const [timerDuration, setTimerDuration] = useState(choosenTime);
     const [isRunning, setIsRunning] = useState(false);
@@ -9,9 +10,6 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
     const [countKeys, setCountKeys] = useState(0);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isFocused, setFocused] = useState(false);
-    let regex = /.*?\s|.*?$/g;
-    const [textAPI, setTextAPI] = useState("Sukumar Azhikode defined a short story as 'a brief story story as 'a brief story");
-    const [words, setWords] = useState(textAPI.match(regex));
     const [startTime, setStartTime] = useState(0);
 
     const handleClick = useRef(null);
@@ -105,7 +103,12 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
                 isDarkTheme={isDarkTheme}
                 selectedFont={selectedFont}
                 selectedSize={selectedSize}
-                textAPI={words}
+                textAPI={textAPI}
+                setIsReserted={setIsReserted}
+                isReseted={isReseted}
+                setSavedSettings={setSavedSettings}
+                setSelectedOption={setSelectedOption}
+                setTextDifficulty={setTextDifficulty}
             >
                 {!isFocused ?
                     <div className={`description ${isDarkTheme ? 'dark' : ''}`} onClick={handleFocuse}>
