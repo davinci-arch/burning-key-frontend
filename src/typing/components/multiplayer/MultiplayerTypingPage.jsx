@@ -279,7 +279,6 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                     </div>
                 ))}
             </div>
-            <button className="saveRoom">Save room</button>
         </>
     )
 }
