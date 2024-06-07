@@ -29,7 +29,7 @@ const Typing = forwardRef((props, ref) => {
     const amountOfExtraLetters = 5;
 
     const [savedSettings, setSavedSettings] = useState(() => {
-        const saved = localStorage.getItem('textChoiceSettings');
+        const saved = localStorage.getItem('wordChoiceSettings');
         return saved ? JSON.parse(saved) : {};
     });
     const [selectedOption, setSelectedOption] = useState(() => {
@@ -44,7 +44,7 @@ const Typing = forwardRef((props, ref) => {
     useEffect(() => {
         const handleGenerateWords = async () => {
             try {
-                setSavedSettings(JSON.parse(localStorage.getItem('textChoiceSettings')));
+                setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
                 const words = await generateRandomWords({
                     wordSetName: savedSettings.selectedWordSet,
                     numWords: savedSettings.numWords,
@@ -124,7 +124,7 @@ const Typing = forwardRef((props, ref) => {
             isReseted(true);
         setTextDifficulty(localStorage.getItem('textDifficulty'));
         setSelectedOption(localStorage.getItem('selectedTextType') );
-        setSavedSettings(JSON.parse(localStorage.getItem('textChoiceSettings')));
+        setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
     }
 
     const playSound = (sound) => {

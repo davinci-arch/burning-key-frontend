@@ -52,6 +52,18 @@ export default function TextChoice({ isDarkTheme }) {
         localStorage.setItem('textDifficulty', textDifficulty);
     }, [textDifficulty]);
 
+    useEffect(() => {
+        const settings = {
+            selectedWordSet,
+            numWords,
+            numSignsPercent,
+            numUpperCasePercent,
+            doubleEveryWord,
+        };
+        localStorage.setItem('wordChoiceSettings', JSON.stringify(settings));
+    }, [selectedWordSet, numWords, numSignsPercent, numUpperCasePercent, doubleEveryWord]);
+
+
     const handleGenerateWords = async () => {
         let validNumWords = numWords;
 
