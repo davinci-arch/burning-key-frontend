@@ -8,11 +8,11 @@ import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import Settings from './TextChoice.jsx';
-import {generateRandomWords} from "../api/WordsAPI.jsx";
-import {getRandomText} from "../api/TextAPI.jsx";
+import { generateRandomWords } from "../api/WordsAPI.jsx";
+import { getRandomText } from "../api/TextAPI.jsx";
 
 export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, toggleSound,
-                                             selectedFont, handleFontClick, selectedSize, handleSizeClick }) {
+    selectedFont, handleFontClick, selectedSize, handleSizeClick }) {
 
     const typoRef = useRef(null);
 
@@ -21,7 +21,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
     const [prevSpeed, setPrevSpeed] = useState(0.0);
     const [prevAccuracy, setPrevAccuracy] = useState(0);
     const [activeTab, setActiveTab] = useState(() => {
-        return  localStorage.getItem('activeTab') || "text";
+        return localStorage.getItem('activeTab') || "text";
     });
     const [choosenTime, setTime] = useState(15);
     const [result, setResult] = useState(false);
@@ -63,6 +63,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
         const handleRandomText = async () => {
             try {
                 const text = await getRandomText(textDifficulty);
+
                 setWords(text.match(regex));
             } catch (error) {
                 console.error('Failed to fetch random text:', error);
@@ -125,7 +126,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                         <div className="navigation">
                             <Link to="/multiplayer/rooms" className='link'>
                                 <p onClick={() => handleTabClick('multiplayer')}
-                                   className={activeTab === 'multiplayer' ? 'active' : ''}>
+                                    className={activeTab === 'multiplayer' ? 'active' : ''}>
                                     multiplayer
                                 </p>
                             </Link>
@@ -147,16 +148,16 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                                 speed={speed}
                                 prevSpeed={prevSpeed}
                                 accuracy={accuracy}
-                                prevAccuracy={prevAccuracy}/>
+                                prevAccuracy={prevAccuracy} />
                             <div className={`time-options ${activeTab === "test" ? 'expanded' : ''}`}>
                                 <p onClick={() => changeTime(15)}
-                                   className={choosenTime === 15 ? 'active' : ''}>15</p>
+                                    className={choosenTime === 15 ? 'active' : ''}>15</p>
                                 <p onClick={() => changeTime(30)}
-                                   className={choosenTime === 30 ? 'active' : ''}>30</p>
+                                    className={choosenTime === 30 ? 'active' : ''}>30</p>
                                 <p onClick={() => changeTime(60)}
-                                   className={choosenTime === 60 ? 'active' : ''}>60</p>
+                                    className={choosenTime === 60 ? 'active' : ''}>60</p>
                                 <p onClick={() => changeTime(120)}
-                                   className={choosenTime === 120 ? 'active' : ''}>120</p>
+                                    className={choosenTime === 120 ? 'active' : ''}>120</p>
                             </div>
                         </div>
                         <span className="separator"></span>
@@ -226,7 +227,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                             isReseted={isReseted}
                             setSavedSettings={setSavedSettings}
                             setSelectedOption={setSelectedOption}
-                            setTextDifficulty={setTextDifficulty}/>}
+                            setTextDifficulty={setTextDifficulty} />}
                     </div>
                     <div className={`animated-component ${activeTab === 'test' ? 'active' : ''}`}>
                         {activeTab === 'test' && <TestTyping
@@ -244,7 +245,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                             isReseted={isReseted}
                             setSavedSettings={setSavedSettings}
                             setSelectedOption={setSelectedOption}
-                            setTextDifficulty={setTextDifficulty}/>}
+                            setTextDifficulty={setTextDifficulty} />}
                     </div>
                 </div>
 
@@ -258,7 +259,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
 
             </div>
             <Footer isDarkTheme={isDarkTheme} toggleTheme={toggleTheme} isSoundOn={isSoundOn}
-                    toggleSound={toggleSound} />
+                toggleSound={toggleSound} />
         </div>
     )
 }

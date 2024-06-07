@@ -42,8 +42,9 @@ const Typing = forwardRef((props, ref) => {
             resetAllData();
         },
         timer() {
+            props.setCountKeys(countTypingKeys);
+            props.setCorrectKeys(countCorrectTypingKeys);
             resetAllData();
-            results();
         },
         focusedField() {
             inputRef.current.focus();
@@ -69,10 +70,6 @@ const Typing = forwardRef((props, ref) => {
         setExtraLetter([]);
         setCursorVisible(true);
         inputRef.current.blur();
-        props.setIsReserted(!props.isReseted);
-        props.setTextDifficulty(localStorage.getItem('textDifficulty'));
-        props.setSelectedOption(localStorage.getItem('selectedTextType') );
-        props.setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
     }
 
     const playSound = (sound) => {
@@ -329,13 +326,13 @@ const Typing = forwardRef((props, ref) => {
                 {props.children}
             </div>
             <input type="text" className="text-input"
-                   ref={inputRef}
-                   value={inputText}
-                   onChange={handleInput}
-                   onBlur={() => {
-                       props.changeFocuse();
-                       setCursorVisible(false);
-                   }}
+                ref={inputRef}
+                value={inputText}
+                onChange={handleInput}
+                onBlur={() => {
+                    props.changeFocuse();
+                    setCursorVisible(false);
+                }}
             />
         </div>
     )

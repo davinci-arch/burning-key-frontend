@@ -2,7 +2,7 @@
 import Typing from "./Typing";
 import { useState, useEffect, useRef } from "react";
 export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, choosenTime, isDarkTheme, selectedFont, selectedSize,
-                                       textAPI,setIsReserted,isReseted,setSavedSettings,setSelectedOption,setTextDifficulty }) {
+    textAPI, setIsReserted, isReseted, setSavedSettings, setSelectedOption, setTextDifficulty }) {
 
     const [timerDuration, setTimerDuration] = useState(choosenTime);
     const [isRunning, setIsRunning] = useState(false);
@@ -22,27 +22,32 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
 
     useEffect(() => {
         let timer;
-        if (isRunning) {
-            if (startTime == 0) {
-                setStartTime(new Date().getTime());
-            }
-            document.getElementsByClassName("time-options")[0].addEventListener('click', handleClick.current, true);
+
+        const startTimer = () => {
             timer = setInterval(() => {
                 setTimerDuration((prevTime) => {
-                    if (prevTime <= 1) {
-                        clearInterval(timer);
-                        finishTest();
-                        return 0;
+                    if (prevTime == 1) {
+                        setIsRunning(false);
+                        return prevTime - 1;
                     }
                     setElapsedTime((prevTime) => prevTime + 1);
                     return prevTime - 1;
                 });
             }, 1000);
+        };
+
+        if (isRunning) {
+            if (startTime == 0) {
+                setStartTime(new Date().getTime());
+            }
+            document.getElementsByClassName("time-options")[0].addEventListener('click', handleClick.current, true);
+            startTimer();
         } else if (!isRunning && elapsedTime !== 0) {
             clearInterval(timer);
             finishTest();
             document.getElementsByClassName("time-options")[0].removeEventListener('click', handleClick.current, true);
         }
+
         return () => {
             clearInterval(timer);
         };
@@ -53,20 +58,27 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
     }, [choosenTime]);
 
     useEffect(() => {
-        if (!isRunning && elapsedTime != 0) {
-            console.log(startTime)
+        if (!isRunning && startTime != 0) {
             setNewSpeed((correctKeys / 5) / (((new Date().getTime() - startTime) / 1000) / 60));
             newAccuracy((correctKeys / countKeys) * 100);
+            setStartTime(0);
+            setCorrectKeys(0);
+            setCountKeys(0);
             setResult(true);
             setTimerDuration(choosenTime);
         }
-    }, [isRunning]);
+    }, [elapsedTime]);
 
     const finishTest = () => {
         if (typoRef.current) {
             setTimeout(() => {
+                setElapsedTime(0);
                 typoRef.current.timer();
+                setTextDifficulty(localStorage.getItem('textDifficulty'));
+                setSelectedOption(localStorage.getItem('selectedTextType'));
+                setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
             }, 0);
+
         }
     };
 
@@ -105,10 +117,6 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
                 selectedSize={selectedSize}
                 textAPI={textAPI}
                 setIsReserted={setIsReserted}
-                isReseted={isReseted}
-                setSavedSettings={setSavedSettings}
-                setSelectedOption={setSelectedOption}
-                setTextDifficulty={setTextDifficulty}
             >
                 {!isFocused ?
                     <div className={`description ${isDarkTheme ? 'dark' : ''}`} onClick={handleFocuse}>
