@@ -59,6 +59,7 @@ const Typing = forwardRef((props, ref) => {
     }));
 
     const resetAllData = () => {
+        props.setIsReseted(!props.isReseted);
         setWords(props.textAPI || []);
         setInputText("");
         setWordIndex(0);

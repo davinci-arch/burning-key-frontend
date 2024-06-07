@@ -4,7 +4,7 @@ import { getWordSets, generateRandomWords } from "../api/WordsAPI.jsx";
 import { getRandomText } from "../api/TextAPI.jsx";
 
 export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, isDarkTheme, selectedFont, selectedSize,
-    textAPI, setIsReserted, isReseted, setSavedSettings, setSelectedOption, setTextDifficulty }) {
+    textAPI, setIsReseted, isReseted, setSavedSettings, setSelectedOption, setTextDifficulty }) {
     const [isRunning, setIsRunning] = useState(false);
     const [correctKeys, setCorrectKeys] = useState(0);
     const [countKeys, setCountKeys] = useState(0);
@@ -38,6 +38,7 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
         }
         return () => clearInterval(timer);
     }, [isRunning]);
+
 
     const resetVariables = () => {
         setCountKeys(0)
@@ -82,7 +83,8 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
                 selectedFont={selectedFont}
                 selectedSize={selectedSize}
                 textAPI={textAPI}
-                setIsReserted={setIsReserted}
+                setIsReseted={setIsReseted}
+                isReseted={isReseted}
             >
                 {!isFocused ?
                     <div className={`description ${isDarkTheme ? 'dark' : ''}`}

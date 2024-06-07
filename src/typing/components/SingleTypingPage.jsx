@@ -17,6 +17,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
     const typoRef = useRef(null);
 
     const [speed, setSpeed] = useState(0.0);
+    const [updateText, setUpdateText] = useState(false);
     const [accuracy, setAccuracy] = useState(0);
     const [prevSpeed, setPrevSpeed] = useState(0.0);
     const [prevAccuracy, setPrevAccuracy] = useState(0);
@@ -28,7 +29,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
 
     const [words, setWords] = useState([]);
     const regex = /.*?\s|.*?$/g;
-    const [isReseted, setIsReserted] = useState(false);
+    const [isReseted, setIsReseted] = useState(false);
 
     const [savedSettings, setSavedSettings] = useState(() => {
         const saved = localStorage.getItem('wordChoiceSettings');
@@ -43,6 +44,10 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
 
     useEffect(() => {
         const handleGenerateWords = async () => {
+
+            setTextDifficulty(localStorage.getItem('textDifficulty'));
+            setSelectedOption(localStorage.getItem('selectedTextType'));
+            setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
             try {
                 const words = await generateRandomWords({
                     wordSetName: savedSettings.selectedWordSet,
@@ -78,8 +83,14 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
         } else {
             handleRandomText();
         }
-    }, [isReseted]);
+    }, [updateText]);
 
+    useEffect(() => {
+        setTextDifficulty(localStorage.getItem('textDifficulty'));
+        setSelectedOption(localStorage.getItem('selectedTextType'));
+        setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
+        setUpdateText(!updateText);
+    }, [isReseted]);
 
     useEffect(() => {
         const savedActiveTab = localStorage.getItem('activeTab');
@@ -223,7 +234,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                             selectedFont={selectedFont}
                             selectedSize={selectedSize}
                             textAPI={words}
-                            setIsReserted={setIsReserted}
+                            setIsReseted={setIsReseted}
                             isReseted={isReseted}
                             setSavedSettings={setSavedSettings}
                             setSelectedOption={setSelectedOption}
@@ -241,7 +252,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                             selectedFont={selectedFont}
                             selectedSize={selectedSize}
                             textAPI={words}
-                            setIsReserted={setIsReserted}
+                            setIsReseted={setIsReseted}
                             isReseted={isReseted}
                             setSavedSettings={setSavedSettings}
                             setSelectedOption={setSelectedOption}
