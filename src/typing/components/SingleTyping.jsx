@@ -28,7 +28,7 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
                 newAccuracy((correctKeys / countKeys) * 100)
                 clearInterval(timer);
                 setResult(true);
-                setIsReserted(!isReseted);
+                setIsReseted(!isReseted);
                 setTextDifficulty(localStorage.getItem('textDifficulty'));
                 setSelectedOption(localStorage.getItem('selectedTextType'));
                 setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
