@@ -26,7 +26,10 @@ export default function RoomSettings() {
         socket.current.onmessage = (event) => {
             const message = event.data;
             const data = JSON.parse(message);
-            navigate(`/multiplayer/rooms/room/${data.data.uid}`);
+            if (data.type === "DATA") {
+                socket.current.close();
+                navigate(`/multiplayer/rooms/room/${data.data.uid}`);
+            }
 
         }
 
