@@ -61,6 +61,7 @@
     background-color: #d9d28f;
     color: black;
     font-family: "Roboto Slab";
+    font-size: 1rem;
     padding: 10px 20px;
     width: 90%;
     border: none;
@@ -80,7 +81,7 @@
     justify-content: center;
     align-items: center;
     position: fixed;
-    z-index: 1;
+    z-index: 3;
     left: 0;
     top: 0;
     width: 100%;
@@ -180,7 +181,11 @@
     height: 340px;
     max-height: 340px;
     overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #e7e7e7 #c7c0a5;
 }
+
+
 
 .selection-button {
     font-family: "Roboto Slab";
@@ -193,10 +198,11 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-size: 1rem;
 }
 
 .selection-button.active {
-    background-color: #b6b3a9;
+    background-color: #cccac2;
 }
 
 
@@ -234,6 +240,9 @@
         color: #d6d2bc;
         background-color: #56554f;
     }
+    .custom-button:hover {
+        background-color: #736f61;
+    }
     .selection-button{
         color: #d6d2bc;
         background-color: #56554f;
@@ -243,10 +252,12 @@
     }
     .generated-words-panel{
         background-color: #2f3338;
+        scrollbar-color: #888 #2f3338;
     }
 
     .custom-slider::-webkit-slider-thumb {
         background-color: #d6d2bc;
+
     }
 }
 
