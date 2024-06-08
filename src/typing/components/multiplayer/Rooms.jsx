@@ -2,9 +2,11 @@ import { useRef } from "react";
 import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import "../../styles/rooms.scss"
-export default function Rooms({ isSoundOn }) {
+import Footer from "../Footer.jsx"
+import Header from "../Header.jsx"
+import RoomItem from "./RoomItem.jsx";
+export default function Rooms({ isDarkTheme, toggleTheme, isSoundOn, toggleSound }) {
 
-    const [connected, setConnected] = useState(false);
     const [isLoaded, setLoaded] = useState(false);
     const [rooms, setRooms] = useState([]);
     const navigate = useNavigate();
@@ -26,18 +28,19 @@ export default function Rooms({ isSoundOn }) {
     const connect = () => {
         socket.current = new WebSocket("ws://localhost:8080/multiplayer/rooms");
         socket.current.onopen = () => {
-            setConnected(true);
-            // console.log("conneceted")
+            console.log("conneceted")
         }
 
         socket.current.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            if (data.type == "CONNECT") {
+            if (data.type === "CONNECT") {
                 addListData(data.data);
-            } else if (data.type == "DATA") {
+            } else if (data.type === "DATA") {
                 addRoom(data.data)
-            } else if (data.type == "REMOVE_ROOM") {
+            } else if (data.type === "REMOVE_ROOM") {
                 setRooms(prevRoom => prevRoom.filter(room => room.uid !== data.data.uid));
+            } else if (data.type === "CONNECT_USER") {
+                addUserToRoom(data.uid, data.username, data.isTimerCountDown)
             }
         }
 
@@ -50,6 +53,19 @@ export default function Rooms({ isSoundOn }) {
         }
     }
 
+    const addUserToRoom = (idRoom, username, isTimerCountDown) => {
+        setRooms(prevRooms => {
+            return prevRooms.map(room => {
+                if (room.uid === idRoom) {
+                    return {
+                        ...room,
+                        activeUsers: room.activeUsers ? [...room.activeUsers, { username, isTimerCountDown }] : [{ username, isTimerCountDown }]
+                    };
+                }
+                return room;
+            });
+        });
+    };
     const addListData = (data) => {
         setRooms(data);
     }
@@ -63,27 +79,55 @@ export default function Rooms({ isSoundOn }) {
     }
 
     const handleNewRoom = () => {
-        // const message = {
-        //     type: "CREATE",
-        //     username: "Room",
-        // };
-
-        // sendMessage(message);
         navigate("/multiplayer/rooms/room-settings")
     }
 
     return (
-        <div className="container">
-            <div className="createRoom_btn" onClick={handleNewRoom}>
-                <p>Add new room</p>
+        <>
+            <div className="container">
+
+                <Header isDarkTheme={isDarkTheme} />
+                <div className="wrapper">
+
+                    <div className="content">
+                        <div className="navigation">
+                            <div className="toPage">
+                                <div>
+                                    <img src="/src/assets/back.png" alt="back-img" />
+                                </div>
+                                <div>Back to main</div>
+                            </div>
+                            <div className="create-room-btn" onClick={handleNewRoom}>
+                                <span>
+                                    Create room
+                                </span>
+                            </div>
+                        </div>
+                        <div className="available-rooms">
+                            {rooms.length > 0 ? (
+                                rooms.map((room, index) => {
+                                    return (
+                                        <RoomItem
+                                            key={index}
+                                            idRoom={room.uid}
+                                            title={room.title}
+                                            timeToStart={room.start}
+                                            activeUsers={room.activeUsers}
+                                            timerCountDown={room.timerCountDown}
+                                        />
+                                    );
+                                }))
+                                : null}
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <Footer isDarkTheme={isDarkTheme} toggleTheme={toggleTheme} isSoundOn={isSoundOn}
+                    toggleSound={toggleSound} />
             </div>
-            <div className="room_container">
-                {rooms.map((room, index) => (
-                    <Link to={`/multiplayer/rooms/room/${room.uid}`} className="room" key={index}>
-                        {room.title}
-                    </Link>
-                ))}
-            </div>
-        </div>
+
+        </>
     )
 }

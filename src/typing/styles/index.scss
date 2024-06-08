@@ -13,7 +13,6 @@
     justify-content: space-between;
     align-items: center;
     font-family: "Roboto Slab";
-
     .logo {
         width: 258px;
         height: 61px;
@@ -30,8 +29,8 @@
 }
 
 .nav-link {
-    color: #000;
-    text-decoration: none;
+    color: #000 !important;
+    text-decoration: none !important;
 
     &:hover {
         text-decoration: underline;
@@ -40,7 +39,7 @@
 
 .main-footer {
     width: 100%;
-    height: 42px;
+    line-height: 42px;
     background-color: #FEF9C7;
     font-family: "Roboto Slab";
     box-shadow: inset 0 4px 4px rgba(0, 0, 0, .25);
@@ -94,7 +93,7 @@
 //Темна тема
 .main-header.dark {
     background-color: #3a3c3d;
-    color: #d6d2bc;
+    color: #d6d2bc !important;
 
     .logo {
         filter: invert(50%) sepia(98%) saturate(108%) hue-rotate(211deg) brightness(270%) contrast(600%);

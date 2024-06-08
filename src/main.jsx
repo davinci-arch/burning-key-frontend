@@ -81,7 +81,12 @@ function App() {
                     selectedSize={selectedSize}
                     handleSizeClick={handleSizeClick}
                 />} />
-                <Route path="/multiplayer/rooms" element={<Rooms />} />
+                <Route path="/multiplayer/rooms" element={<Rooms
+                    isDarkTheme={isDarkTheme}
+                    toggleTheme={toggleTheme}
+                    isSoundOn={isSoundOn}
+                    toggleSound={toggleSound}
+                />} />
                 <Route path="/multiplayer/rooms/room/:uuid" element={<MultiplayerTypingPage />} />
                 <Route path="/multiplayer/rooms/room-settings" element={<RoomSettings />} />
             </Routes>

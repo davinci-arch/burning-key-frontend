@@ -28,14 +28,14 @@ const Typing = forwardRef((props, ref) => {
     }, [props.textAPI, props.isReseted]);
 
 
-    useEffect(() => {
-        if (props.type === "multiplayer") {
-            setLoaded(true);
-            if (isLoaded) {
-                props.amountOfWords(words.length);
-            }
-        }
-    }, [isLoaded, words, props]);
+    // useEffect(() => {
+    //     if (props.type === "multiplayer") {
+    //         setLoaded(true);
+    //         if (isLoaded) {
+    //             props.amountOfWords(words.length);
+    //         }
+    //     }
+    // }, [isLoaded, words, props]);
 
     useImperativeHandle(ref, () => ({
         resetText() {
