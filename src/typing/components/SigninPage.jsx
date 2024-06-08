@@ -1,17 +1,32 @@
 import "../styles/signinpage.scss";
 import { useState } from "react";
-import Header from "./Header"
-import Footer from "./Footer"
+import Header from "./Header";
+import Footer from "./Footer";
+import { getLoginLink } from "../api/AuthAPI.jsx";  // Adjust the import path as needed
 
 export default function SigninPage({ isDarkTheme, toggleTheme, isSoundOn, toggleSound }) {
     const [email, setEmail] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [message, setMessage] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError(null);
+        setMessage("");
+
+        try {
+            const token = await getLoginLink(email);
+            setMessage(`Login link sent! Please check your email: ${email}`);
+        } catch (error) {
+            setError("Failed to send login link. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-
         <div className={`signin ${isDarkTheme ? 'dark' : ''}`}>
             <Header isDarkTheme={isDarkTheme} />
             <div className="signin-container">
@@ -25,13 +40,27 @@ export default function SigninPage({ isDarkTheme, toggleTheme, isSoundOn, toggle
                         onChange={(e) => setEmail(e.target.value)}
                         required
                     />
-                    <button type="submit" className={`submit-button ${isDarkTheme ? 'dark' : ''}`}>
-                        <img src="src/assets/inputcursor.png" alt="donation" className={`img ${isDarkTheme ? 'dark' : ''}`} />
-                        Sign-n In with E-mail
+                    <button
+                        type="submit"
+                        className={`submit-button ${isDarkTheme ? 'dark' : ''}`}
+                        disabled={loading}
+                    >
+                        <img
+                            src="src/assets/inputcursor.png"
+                            alt="donation"
+                            className={`img ${isDarkTheme ? 'dark' : ''}`}
+                        />
+                        {loading ? "Sending..." : "Sign-In with E-mail"}
                     </button>
                 </form>
+                {message && <p className="success-message">{message}</p>}
+                {error && <p className="error-message">{error}</p>}
                 <div className="info-label">
-                    <img src="src/assets/question.png" alt="Info" className={`info-icon ${isDarkTheme ? 'dark' : ''}`} />
+                    <img
+                        src="src/assets/question.png"
+                        alt="Info"
+                        className={`info-icon ${isDarkTheme ? 'dark' : ''}`}
+                    />
                     <span className="info-text">Info</span>
                 </div>
                 <p className={`info-description ${isDarkTheme ? 'dark' : ''}`}>
@@ -41,7 +70,12 @@ export default function SigninPage({ isDarkTheme, toggleTheme, isSoundOn, toggle
                     To sign-in again later, enter the same e-mail address, and we will send a new link for the same account.
                 </p>
             </div>
-            <Footer isDarkTheme={isDarkTheme} toggleTheme={toggleTheme} isSoundOn={isSoundOn} toggleSound={toggleSound} />
+            <Footer
+                isDarkTheme={isDarkTheme}
+                toggleTheme={toggleTheme}
+                isSoundOn={isSoundOn}
+                toggleSound={toggleSound}
+            />
         </div>
     );
 }

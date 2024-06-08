@@ -7,6 +7,8 @@ import SingleTypingPage from './typing/components/SingleTypingPage';
 import Rooms from './typing/components/multiplayer/Rooms';
 import MultiplayerTypingPage from './typing/components/multiplayer/MultiplayerTypingPage';
 import RoomSettings from './typing/components/multiplayer/RoomSettings';
+import TokenHandler from './AuthRedirectHandler.jsx';
+
 function App() {
     const [isSoundOn, setSoundState] = useState(() => {
         const savedSound = localStorage.getItem('sound');
@@ -60,6 +62,7 @@ function App() {
 
     return (
         <Router>
+            <TokenHandler />
             <Routes>
                 <Route path="/" element={<SingleTypingPage
                     isDarkTheme={isDarkTheme}

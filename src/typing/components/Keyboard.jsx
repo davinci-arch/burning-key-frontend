@@ -1,9 +1,67 @@
-// eslint-disable-next-line no-unused-vars
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/keyboard.scss';
 
-export default  function Keyboard({isDarkTheme }) {
+const UkrainianLayout = {
+    Backquote: ['~', '₴'],
+    Digit1:  ["!", "1"],
+    Digit2: ['@', '2'],
+    Digit3: ['#', '3'],
+    Digit4: ['$', '4'],
+    Digit5: ['%', '5'],
+    Digit6: ['^', '6'],
+    Digit7: ['&', '7'],
+    Digit8: ['*', '8'],
+    Digit9: ['(', '9'],
+    Digit0: [')', '0'],
+    Minus: ["_", '-'],
+    Equal: ["+", '='],
+    Backspace: ['Backspace'],
+    KeyQ: ['Q', 'Й'],
+    KeyW: ['W', 'Ц'],
+    KeyE: ['E', 'У'],
+    KeyR: ['R', 'К'],
+    KeyT: ['T', 'Е'],
+    KeyY: ['Y', 'Н'],
+    KeyU: ['U', 'Г'],
+    KeyI: ['I', 'Ш'],
+    KeyO: ['O', 'Щ'],
+    KeyP: ['P', 'З'],
+    BracketLeft: ['[', 'Х'],
+    BracketRight: [']', 'Ї'],
+    Backslash: ['\\', '|'],
+    CapsLock: ['Caps Lock'],
+    KeyA: ['A', 'Ф'],
+    KeyS: ['S', 'І'],
+    KeyD: ['D', 'В'],
+    KeyF: ['F', 'А'],
+    KeyG: ['G', 'П'],
+    KeyH: ['H', 'Р'],
+    KeyJ: ['J', 'О'],
+    KeyK: ['K', 'Л'],
+    KeyL: ['L', 'Д'],
+    Semicolon: [';', 'Ж'],
+    Quote: ['\'', 'Є'],
+    Enter: ['Enter'],
+    ShiftLeft: ['Shift'],
+    KeyZ: ['Z', 'Я'],
+    KeyX: ['X', 'Ч'],
+    KeyC: ['C', 'С'],
+    KeyV: ['V', 'М'],
+    KeyB: ['B', 'И'],
+    KeyN: ['N', 'Т'],
+    KeyM: ['M', 'Ь'],
+    Comma: [',', 'Б'],
+    Period: ['.', 'Ю'],
+    Slash: ['/', '.'],
+    ShiftRight: ['Shift'],
+    ControlLeft: ['Ctrl'],
+    AltLeft: ['Alt'],
+    Space: ['Space'],
+    AltRight: ['Alt'],
+    ControlRight: ['Ctrl']
+};
 
+const Keyboard = ({ isDarkTheme }) => {
     const [inputText, setInputText] = useState('');
     const [isShiftPressed, setIsShiftPressed] = useState(false);
 
@@ -28,7 +86,6 @@ export default  function Keyboard({isDarkTheme }) {
         }
     };
 
-
     const handleMouseClick = (code) => {
         const keyElement = document.getElementById(code);
         if (keyElement) {
@@ -39,7 +96,7 @@ export default  function Keyboard({isDarkTheme }) {
                 case 'Space':
                     handleSpace();
                     break;
-                case "Backspace":
+                case 'Backspace':
                     handleBackspace();
                     break;
                 case 'Shift':
@@ -49,7 +106,6 @@ export default  function Keyboard({isDarkTheme }) {
                     handleKeyInput(keyLabel);
                     break;
             }
-            // Simulate keyup event after a short delay to remove 'active' class
             setTimeout(() => {
                 keyElement.classList.remove('active');
             }, 150);
@@ -61,18 +117,16 @@ export default  function Keyboard({isDarkTheme }) {
     };
 
     const handleKeyInput = (keyLabel) => {
-        const adjustedLabel = isShiftPressed ? keyLabel.toUpperCase() : keyLabel.toLowerCase();
-        setInputText(prevInputText => prevInputText + adjustedLabel);
+        const adjustedLabel = isShiftPressed ? UkrainianLayout[keyLabel][1] : UkrainianLayout[keyLabel][0];
+        setInputText((prevInputText) => prevInputText + adjustedLabel);
     };
 
     const handleSpace = () => {
-        // Perform action for Space key
-        setInputText(prevInputText => prevInputText + ' ');
+        setInputText((prevInputText) => prevInputText + ' ');
     };
 
     const handleBackspace = () => {
-        // Perform action for Backspace key
-        setInputText(prevInputText => prevInputText.slice(0, -1));
+        setInputText((prevInputText) => prevInputText.slice(0, -1));
     };
 
     useEffect(() => {
@@ -100,77 +154,76 @@ export default  function Keyboard({isDarkTheme }) {
         <main className="main">
             <div className={`keyboard ${isDarkTheme ? 'dark' : ''}`}>
                 <div className="row">
-                    {createKey("Backquote", ["~", "`"], 'key-small col1', isDarkTheme)}
-                    {createKey("Digit1", ["!", "1"], 'key-small col1', isDarkTheme)}
-                    {createKey("Digit2", ["@", "2"], 'key-small col2', isDarkTheme)}
-                    {createKey("Digit3", ["#", "3"], 'key-small col3', isDarkTheme)}
-                    {createKey("Digit4", ["$", "4"], 'key-small col4', isDarkTheme)}
-                    {createKey("Digit5", ["%", "5"], 'key-small col4', isDarkTheme)}
-                    {createKey("Digit6", ["^", "6"], 'key-small col5', isDarkTheme)}
-                    {createKey("Digit7", ["&", "7"], 'key-small col5', isDarkTheme)}
-                    {createKey("Digit8", ["*", "8"], 'key-small col3', isDarkTheme)}
-                    {createKey("Digit9", ["(", "9"], 'key-small col2', isDarkTheme)}
-                    {createKey("Digit0", [")", "0"], 'key-small col1', isDarkTheme)}
-                    {createKey("Minus", ["_", "-"], 'key-small col1', isDarkTheme)}
-                    {createKey("Equal", ["+", "="], 'key-small col1', isDarkTheme)}
-                    {createKey("Backspace", "Backspace", 'key-large col1', isDarkTheme)}
+                    {createKey("Backquote", UkrainianLayout.Backquote, 'key-small col1')}
+                    {createKey("Digit1", UkrainianLayout.Digit1, 'key-small col1')}
+                    {createKey("Digit2", UkrainianLayout.Digit2, 'key-small col2')}
+                    {createKey("Digit3", UkrainianLayout.Digit3, 'key-small col3')}
+                    {createKey("Digit4", UkrainianLayout.Digit4, 'key-small col4')}
+                    {createKey("Digit5", UkrainianLayout.Digit5, 'key-small col4')}
+                    {createKey("Digit6", UkrainianLayout.Digit6, 'key-small col5')}
+                    {createKey("Digit7", UkrainianLayout.Digit7, 'key-small col5')}
+                    {createKey("Digit8", UkrainianLayout.Digit8, 'key-small col3')}
+                    {createKey("Digit9", UkrainianLayout.Digit9, 'key-small col2')}
+                    {createKey("Digit0", UkrainianLayout.Digit0, 'key-small col1')}
+                    {createKey("Minus", UkrainianLayout.Minus, 'key-small col1')}
+                    {createKey("Equal", UkrainianLayout.Equal, 'key-small col1')}
+                    {createKey("Backspace", UkrainianLayout.Backspace, 'key-large col1')}
                 </div>
                 <div className="row">
-                    {createKey("Tab", "Tab", 'key-medium col1', isDarkTheme)}
-                    {createKey("KeyQ", "Q", 'key-small col1', isDarkTheme)}
-                    {createKey("KeyW", "W", 'key-small col2', isDarkTheme)}
-                    {createKey("KeyE", "E", 'key-small col3', isDarkTheme)}
-                    {createKey("KeyR", "R", 'key-small col4', isDarkTheme)}
-                    {createKey("KeyT", "T", 'key-small col4', isDarkTheme)}
-                    {createKey("KeyY", "Y", 'key-small col5', isDarkTheme)}
-                    {createKey("KeyU", "U", 'key-small col5', isDarkTheme)}
-                    {createKey("KeyI", "I", 'key-small col3', isDarkTheme)}
-                    {createKey("KeyO", "O", 'key-small col2', isDarkTheme)}
-                    {createKey("KeyP", "P", 'key-small col1', isDarkTheme)}
-                    {createKey("BracketLeft", ["{", "["], 'key-small col1', isDarkTheme)}
-                    {createKey("BracketRight", ["}", "]"], 'key-small col1', isDarkTheme)}
-                    {createKey("Backslash", ["|", "\\"], 'key-medium col1', isDarkTheme)}
+                    {createKey("Tab", "Tab", 'key-medium col1')}
+                    {createKey("KeyQ", UkrainianLayout.KeyQ, 'key-small col1')}
+                    {createKey("KeyW", UkrainianLayout.KeyW, 'key-small col2')}
+                    {createKey("KeyE", UkrainianLayout.KeyE, 'key-small col3')}
+                    {createKey("KeyR", UkrainianLayout.KeyR, 'key-small col4')}
+                    {createKey("KeyT", UkrainianLayout.KeyT, 'key-small col4')}
+                    {createKey("KeyY", UkrainianLayout.KeyY, 'key-small col5')}
+                    {createKey("KeyU", UkrainianLayout.KeyU, 'key-small col5')}
+                    {createKey("KeyI", UkrainianLayout.KeyI, 'key-small col3')}
+                    {createKey("KeyO", UkrainianLayout.KeyO, 'key-small col2')}
+                    {createKey("KeyP", UkrainianLayout.KeyP, 'key-small col1')}
+                    {createKey("BracketLeft", UkrainianLayout.BracketLeft, 'key-small col1')}
+                    {createKey("BracketRight", UkrainianLayout.BracketRight, 'key-small col1')}
+                    {createKey("Backslash", UkrainianLayout.Backslash, 'key-medium col1')}
                 </div>
                 <div className="row">
-                    {createKey("CapsLock", "Caps Lock", 'key-large col1', isDarkTheme)}
-                    {createKey("KeyA", "A", 'key-small col1', isDarkTheme)}
-                    {createKey("KeyS", "S", 'key-small col2', isDarkTheme)}
-                    {createKey("KeyD", "D", 'key-small col3', isDarkTheme)}
-                    {createKey("KeyF", "F", 'key-small col4', isDarkTheme)}
-                    {createKey("KeyG", "G", 'key-small col4', isDarkTheme)}
-                    {createKey("KeyH", "H", 'key-small col5', isDarkTheme)}
-                    {createKey("KeyJ", "J", 'key-small col5', isDarkTheme)}
-                    {createKey("KeyK", "K", 'key-small col3', isDarkTheme)}
-                    {createKey("KeyL", "L", 'key-small col2', isDarkTheme)}
-                    {createKey("Semicolon", [":", ";"], 'key-small col1', isDarkTheme)}
-                    {createKey("Quote", ['"', "'"], 'key-small col1', isDarkTheme)}
-                    {createKey("Enter", "Enter", 'key-large col1', isDarkTheme)}
+                    {createKey("CapsLock", UkrainianLayout.CapsLock, 'key-large col1')}
+                    {createKey("KeyA", UkrainianLayout.KeyA, 'key-small col1')}
+                    {createKey("KeyS", UkrainianLayout.KeyS, 'key-small col2')}
+                    {createKey("KeyD", UkrainianLayout.KeyD, 'key-small col3')}
+                    {createKey("KeyF", UkrainianLayout.KeyF, 'key-small col4')}
+                    {createKey("KeyG", UkrainianLayout.KeyG, 'key-small col4')}
+                    {createKey("KeyH", UkrainianLayout.KeyH, 'key-small col5')}
+                    {createKey("KeyJ", UkrainianLayout.KeyJ, 'key-small col5')}
+                    {createKey("KeyK", UkrainianLayout.KeyK, 'key-small col3')}
+                    {createKey("KeyL", UkrainianLayout.KeyL, 'key-small col2')}
+                    {createKey("Semicolon", UkrainianLayout.Semicolon, 'key-small col1')}
+                    {createKey("Quote", UkrainianLayout.Quote, 'key-small col1')}
+                    {createKey("Enter", UkrainianLayout.Enter, 'key-large col1')}
                 </div>
                 <div className="row">
-                    {createKey("ShiftLeft", "Shift", 'key-xlarge col1', isDarkTheme)}
-                    {createKey("KeyZ", "Z", 'key-small col1', isDarkTheme)}
-                    {createKey("KeyX", "X", 'key-small col2', isDarkTheme)}
-                    {createKey("KeyC", "C", 'key-small col3', isDarkTheme)}
-                    {createKey("KeyV", "V", 'key-small col4', isDarkTheme)}
-                    {createKey("KeyB", "B", 'key-small col4', isDarkTheme)}
-                    {createKey("KeyN", "N", 'key-small col5', isDarkTheme)}
-                    {createKey("KeyM", "M", 'key-small col5', isDarkTheme)}
-                    {createKey("Comma", ["<", ","], 'key-small col3', isDarkTheme)}
-                    {createKey("Period", [">", "."], 'key-small col2', isDarkTheme)}
-                    {createKey("Slash", ["?", "/"], 'key-small col1', isDarkTheme)}
-                    {createKey("ShiftRight", "Shift", 'key-xlarge col1', isDarkTheme)}
+                    {createKey("ShiftLeft", UkrainianLayout.ShiftLeft, 'key-xlarge col1')}
+                    {createKey("KeyZ", UkrainianLayout.KeyZ, 'key-small col1')}
+                    {createKey("KeyX", UkrainianLayout.KeyX, 'key-small col2')}
+                    {createKey("KeyC", UkrainianLayout.KeyC, 'key-small col3')}
+                    {createKey("KeyV", UkrainianLayout.KeyV, 'key-small col4')}
+                    {createKey("KeyB", UkrainianLayout.KeyB, 'key-small col4')}
+                    {createKey("KeyN", UkrainianLayout.KeyN, 'key-small col5')}
+                    {createKey("KeyM", UkrainianLayout.KeyM, 'key-small col5')}
+                    {createKey("Comma", UkrainianLayout.Comma, 'key-small col3')}
+                    {createKey("Period", UkrainianLayout.Period, 'key-small col2')}
+                    {createKey("Slash", UkrainianLayout.Slash, 'key-small col1')}
+                    {createKey("ShiftRight", UkrainianLayout.ShiftRight, 'key-xlarge col1')}
                 </div>
                 <div className="row">
-                    {createKey("ControlLeft", "Ctrl", 'key-medium col1', isDarkTheme)}
-                    {createKey("AltLeft", "Alt", 'key-medium col1', isDarkTheme)}
-                    {createKey("Space", "Space", 'key-space col6', isDarkTheme)}
-                    {createKey("AltRight", "Alt", 'key-medium col1', isDarkTheme)}
-                    {createKey("ControlRight", "Ctrl", 'key-medium col1', isDarkTheme)}
+                    {createKey("ControlLeft", UkrainianLayout.ControlLeft, 'key-medium col1')}
+                    {createKey("AltLeft", UkrainianLayout.AltLeft, 'key-medium col1')}
+                    {createKey("Space", UkrainianLayout.Space, 'key-space col6')}
+                    {createKey("AltRight", UkrainianLayout.AltRight, 'key-medium col1')}
+                    {createKey("ControlRight", UkrainianLayout.ControlRight, 'key-medium col1')}
                 </div>
             </div>
         </main>
-    )
+    );
+};
 
-}
-
-
+export default Keyboard;
