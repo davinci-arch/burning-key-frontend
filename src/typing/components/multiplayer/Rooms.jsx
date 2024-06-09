@@ -84,7 +84,7 @@ export default function Rooms({ isDarkTheme, toggleTheme, isSoundOn, toggleSound
 
     return (
         <>
-            <div className="container">
+            <div className={`container ${isDarkTheme ? 'dark' : ''}`}>
 
                 <Header isDarkTheme={isDarkTheme} />
                 <div className="wrapper">
@@ -119,10 +119,14 @@ export default function Rooms({ isDarkTheme, toggleTheme, isSoundOn, toggleSound
                                         />
                                     );
                                 }))
-                                : null}
+                                :
+                                <div className="empty-rooms-list">
+                                    <span>List of rooms is empty</span>
+                                    <img src="/src/assets/sad.png" alt="refresh" className="empty-rooms-img"/>
+                                </div>
+                            }
                         </div>
                     </div>
-
                 </div>
 
 

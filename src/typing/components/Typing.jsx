@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "re
 
 import PressSound from "../../assets/sfx/pressSound.wav"
 import EraseSound from "../../assets/sfx/eraseSound.wav"
-import ErrorSound from "../../assets/sfx/errorSound.mp3"
+import ErrorSound from "../../assets/sfx/errorSound.wav"
 import SpaceSound from "../../assets/sfx/spaceSound.wav"
 import "../styles/typing.scss"
 
@@ -68,6 +68,17 @@ const Typing = forwardRef((props, ref) => {
         }
     }
 
+    const ukrToEngMap = {
+        'а': 'f', 'б': ',', 'в': 'd', 'г': 'u', 'ґ': 'g', 'д': 'l', 'е': 't', 'є': '`', 'ж': ';', 'з': 'p',
+        'и': 'b', 'і': 'q', 'ї': ']', 'й': 'y', 'к': 'r', 'л': 'k', 'м': 'v', 'н': 'y', 'о': 'j', 'п': 'g',
+        'р': 'h', 'с': 'c', 'т': 'n', 'у': 'e', 'ф': 'a', 'х': '[', 'ц': 'w', 'ч': 'x', 'ш': 'i', 'щ': 'o',
+        'ь': 'm', 'ю': '.', 'я': 'z'
+    };
+
+    const convertUkrToEng = (char) => {
+        return ukrToEngMap[char.toLowerCase()] || char;
+    };
+
     const handleInput = (event) => {
         const value = event.target.value;
         const lastChar = value[value.length - 1];
@@ -108,15 +119,16 @@ const Typing = forwardRef((props, ref) => {
             if (!wrongWordsIndexes.includes(wordIndex)) {
                 setWrongWords(prev => [...prev, wordIndex]);
             }
-        }else if (inputText.length < value.length) {
-            playSound(ErrorSound);
+            if (inputText.length < value.length) {
+                playSound(ErrorSound);
 
-            const incorrectKeyElement = document.getElementById(`Key${lastChar.toUpperCase()}`);
-            if (incorrectKeyElement) {
-                incorrectKeyElement.classList.add('pulsate');
-                setTimeout(() => {
-                    incorrectKeyElement.classList.remove('pulsate');
-                }, 500);
+                const incorrectKeyElement = document.getElementById(`Key${convertUkrToEng(lastChar).toUpperCase()}`);
+                if (incorrectKeyElement) {
+                    incorrectKeyElement.classList.add('pulsate');
+                    setTimeout(() => {
+                        incorrectKeyElement.classList.remove('pulsate');
+                    }, 500);
+                }
             }
         }
         if (words[wordIndex].length - 1 == letterIndex &&

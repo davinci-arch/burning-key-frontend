@@ -287,3 +287,18 @@
         top: 50px;
     }
 }
+
+
+    .toolbar.dark{
+        background-color: #3a3c3d;
+        color: #d6d2bc;
+        .navigation{
+            .single {
+                color: #d6d2bc;
+                transition: color ease-in-out 300ms;
+            }
+        }
+        .separator{
+            border: 1px solid #d6d2bc;
+        }
+    }
