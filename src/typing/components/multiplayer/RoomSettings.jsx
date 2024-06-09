@@ -101,6 +101,7 @@ export default function RoomSettings() {
                     timeToStart: parseInt(timeToStart),
                     text: getText
                 };
+                console.log("mes: " + JSON.stringify(message));
                 createRoom(message);
 
             }
@@ -160,6 +161,7 @@ export default function RoomSettings() {
                                         rules={{
                                             required: "Field must not be empty!",
                                         }}
+                                        onChange={(e) => setTitle(e.target.value)}
                                         render={({ field }) => (
                                             <TextField
                                                 {...field}
@@ -174,6 +176,10 @@ export default function RoomSettings() {
                                                     sx: {
                                                         height: '50px',
                                                     },
+                                                    onChange: (e) => {
+                                                        field.onChange(e);
+                                                        setTitle(e.target.value);
+                                                    }
                                                 }}
                                             />
                                         )}
@@ -213,6 +219,10 @@ export default function RoomSettings() {
                                                     sx: {
                                                         height: '50px',
                                                     },
+                                                    onChange: (e) => {
+                                                        field.onChange(e);
+                                                        setAmountOfPlayers(e.target.value);
+                                                    }
                                                 }}
                                             />
                                         )}
@@ -253,6 +263,10 @@ export default function RoomSettings() {
                                                     sx: {
                                                         height: '50px',
                                                     },
+                                                    onChange: (e) => {
+                                                        field.onChange(e);
+                                                        setTimeToStart(e.target.value);
+                                                    }
                                                 }}
                                             />
                                         )}

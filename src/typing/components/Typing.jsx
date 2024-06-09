@@ -58,7 +58,6 @@ const Typing = forwardRef((props, ref) => {
         setExtraLetter([]);
         setWrongWords([]);
         setCursorVisible(true);
-        inputRef.current.blur();
     }
 
     const playSound = (sound) => {
