@@ -20,12 +20,12 @@ export const getWordSets = async () => {
 };
 
 export const generateRandomWords = async ({
-                                              wordSetName,
-                                              numWords,
-                                              numSignsPercent,
-                                              numUpperCasePercent,
-                                              doubleEveryWord
-                                          }) => {
+    wordSetName,
+    numWords,
+    numSignsPercent,
+    numUpperCasePercent,
+    doubleEveryWord
+}) => {
     try {
         const params = {
             wordSetName,

@@ -55,15 +55,17 @@ export default function Rooms({ isDarkTheme, toggleTheme, isSoundOn, toggleSound
 
     const addUserToRoom = (idRoom, username, isTimerCountDown) => {
         setRooms(prevRooms => {
-            return prevRooms.map(room => {
+            const updatedRooms = prevRooms.map(room => {
                 if (room.uid === idRoom) {
                     return {
                         ...room,
-                        activeUsers: room.activeUsers ? [...room.activeUsers, { username, isTimerCountDown }] : [{ username, isTimerCountDown }]
+                        activeUsers: room.activeUsers ? [...room.activeUsers, { username, isTimerCountDown }] : [{ username, isTimerCountDown }],
+                        timerCountDown: isTimerCountDown 
                     };
                 }
                 return room;
             });
+            return updatedRooms;
         });
     };
     const addListData = (data) => {

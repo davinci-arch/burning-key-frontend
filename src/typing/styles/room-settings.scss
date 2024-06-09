@@ -1,0 +1,14 @@
+.content-settings {
+    display: flex;
+    justify-content: center;
+    height: 70vh;
+    margin-top: 30px;
+    .form {
+        width: 400px;
+        .field-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
+}

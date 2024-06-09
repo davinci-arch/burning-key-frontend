@@ -38,6 +38,8 @@ export default function MultiplayerTypingPage({
     const [playersPosition, setPlayersPosition] = useState([]);
     const [positions, setPositions] = useState([]);
     const [username, setUsername] = useState("");
+    const [textAPI, setTextAPI] = useState("");
+
     useEffect(() => {
         usersRef.current = users;
         setAmountOfPlayers(usersRef.current.length);
@@ -114,9 +116,13 @@ export default function MultiplayerTypingPage({
             } else if (data.type == "EXPIRED_ROOM") {
                 console.log("This room already closed, you will be redirected");
                 setIsRedirect(true);
+            } else if (data.type == "ROOM_FILLED") {
+                console.log("This room already filled, you will be redirected");
+                setIsRedirect(true);
             } else if (data.type === "CONNECT") {
                 addUsers(data.data);
             } else if (data.type === "CONNECT_USER") {
+                setTextAPI(data.text);
                 addUser(data.data);
             } else if (data.type === "DISCONNECT") {
                 setUsers(prevUsers => prevUsers.filter(user => user.sessionId !== data.data.sessionId));
@@ -300,6 +306,7 @@ export default function MultiplayerTypingPage({
                                 isDarkTheme={isDarkTheme}
                                 selectedFont={selectedFont}
                                 selectedSize={selectedSize}
+                                text={textAPI}
                             />}
                         </div>
                     </div>

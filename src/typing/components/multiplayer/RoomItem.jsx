@@ -14,6 +14,8 @@ export default function RoomItem({ idRoom, title, timeToStart, activeUsers, time
 
     }
 
+    // console.log(idRoom + " " + title + " " + timeToStart + " " + timerCountDown)
+
     const [time, setTime] = useState(convertToMinutesSeconds(timeToStart));
     useEffect(() => {
 
@@ -33,8 +35,8 @@ export default function RoomItem({ idRoom, title, timeToStart, activeUsers, time
             }, 1000);
 
         }
-    }, []);
-    
+    }, [timerCountDown]);
+
     return (
         <div className={time != "0:00" ? "room active-room" : "room done-room"}>
             <Link to={`/multiplayer/rooms/room/${idRoom}`}>

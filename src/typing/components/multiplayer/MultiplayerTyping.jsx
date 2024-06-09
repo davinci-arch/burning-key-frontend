@@ -5,7 +5,7 @@ export default function MultiplayerTyping({
     typoRef, isSoundOn, setNewSpeed, setNewAccuracy, setResult,
     sendMessage, uuid, setWords, timerToStart, amountOfPlayers,
     setDurationOfMatch, setMistakes, setWrongWords, setTextWords,
-    isDarkTheme, selectedFont, selectedSize }) {
+    isDarkTheme, selectedFont, selectedSize, text }) {
     const [isRunning, setIsRunning] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [correctKeys, setCorrectKeys] = useState(0);
@@ -16,10 +16,16 @@ export default function MultiplayerTyping({
     const [startTime, setStartTime] = useState(0);
     const [endTime, setEndTime] = useState(0);
     let regex = /.*?\s|.*?$/g;
-    const [textAPI, setTextAPI] = useState("By the aid of this, every little warp thread or cluster of threads can be lifted by its");
-    const [words, setSplitWords] = useState(textAPI.match(regex));
+    // const [textAPI, setTextAPI] = useState("By the aid of this, every little warp thread or cluster of threads can be lifted by its");
+    const [words, setSplitWords] = useState();
 
     const [timerIsEnd, setTimer] = useState(false);
+
+    useEffect(() => {
+        if (text) {
+            setSplitWords(text.match(regex));
+        }
+    }, [text])
 
     useEffect(() => {
         let timer;
