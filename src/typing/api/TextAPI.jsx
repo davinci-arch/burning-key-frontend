@@ -19,10 +19,10 @@ export const getText = async () => {
     }
   };
 
-export const getRandomText = async (difficulty) => {
+export const getRandomText = async (difficulty, language) => {
     try {
         const response = await apiClient.get("/text", {
-            params: { difficulty: difficulty }
+            params: { difficulty: difficulty, language: language }
         });
         return response.data.content;
     } catch (error) {

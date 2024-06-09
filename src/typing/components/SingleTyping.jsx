@@ -2,9 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import Typing from "./Typing";
 import { getWordSets, generateRandomWords } from "../api/WordsAPI.jsx";
 import { getRandomText } from "../api/TextAPI.jsx";
+import Settings from "./TextChoice.jsx";
 
 export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, isDarkTheme, selectedFont, selectedSize,
-    textAPI, setIsReseted, isReseted, setSavedSettings, setSelectedOption, setTextDifficulty }) {
+    textAPI, setIsReseted, isReseted, setSavedSettings, setSelectedOption, setTextSavedSettings }) {
     const [isRunning, setIsRunning] = useState(false);
     const [correctKeys, setCorrectKeys] = useState(0);
     const [countKeys, setCountKeys] = useState(0);
@@ -29,7 +30,7 @@ export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccur
                 clearInterval(timer);
                 setResult(true);
                 setIsReseted(!isReseted);
-                setTextDifficulty(localStorage.getItem('textDifficulty'));
+                setTextSavedSettings(JSON.parse(localStorage.getItem('textChoiceSettings')));
                 setSelectedOption(localStorage.getItem('selectedTextType'));
                 setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
                 resetVariables()

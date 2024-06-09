@@ -6,6 +6,7 @@ import { getRandomText } from "../api/TextAPI.jsx";
 export default function TextChoice({ isDarkTheme }) {
     const [selectedOption, setSelectedOption] = useState(() => localStorage.getItem('selectedTextType') || 'Texts');
     const [savedSettings, setSavedSettings] = useState(() => JSON.parse(localStorage.getItem('wordChoiceSettings')) || {});
+    const [textSavedSettings, setTextSavedSettings] = useState(() => JSON.parse(localStorage.getItem('textChoiceSettings')) || {});
     const [wordSets, setWordSets] = useState([]);
     const [selectedWordSet, setSelectedWordSet] = useState(savedSettings.selectedWordSet || '');
     const [numWords, setNumWords] = useState(savedSettings.numWords || 10);
@@ -13,7 +14,8 @@ export default function TextChoice({ isDarkTheme }) {
     const [numUpperCasePercent, setNumUpperCasePercent] = useState(savedSettings.numUpperCasePercent || 0);
     const [doubleEveryWord, setDoubleEveryWord] = useState(savedSettings.doubleEveryWord || false);
     const [generatedWords, setGeneratedWords] = useState('');
-    const [textDifficulty, setTextDifficulty] = useState(() => localStorage.getItem('textDifficulty') || "Easy");
+    const [textDifficulty, setTextDifficulty] = useState(() => textSavedSettings.textDifficulty || "Easy");
+    const [textLanguage, setTextLanguage] = useState(() => textSavedSettings.textLanguage || "English");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -38,8 +40,12 @@ export default function TextChoice({ isDarkTheme }) {
     }, [selectedOption]);
 
     useEffect(() => {
-        localStorage.setItem('textDifficulty', textDifficulty);
-    }, [textDifficulty]);
+        const settings = {
+            textDifficulty,
+            textLanguage,
+        };
+        localStorage.setItem('textChoiceSettings', JSON.stringify(settings));
+    }, [textDifficulty, textLanguage]);
 
     useEffect(() => {
         const settings = {
@@ -73,7 +79,7 @@ export default function TextChoice({ isDarkTheme }) {
 
     const handleGenerateText = async () => {
         try {
-            const text = await getRandomText( textDifficulty);
+            const text = await getRandomText( textDifficulty, textLanguage);
             setGeneratedWords(text);
         } catch (error) {
             console.error('Failed to generate random text:', error);
@@ -90,16 +96,23 @@ export default function TextChoice({ isDarkTheme }) {
         setTimeout(() => setIsModalVisible(false), 300);
     };
 
-    const saveSettings = () => {
-        const settings = {
+    const saveSettingsWord = () => {
+        const settingsWord = {
             selectedWordSet,
             numWords,
             numSignsPercent,
             numUpperCasePercent,
             doubleEveryWord
         };
-        localStorage.setItem('wordChoiceSettings', JSON.stringify(settings));
-        localStorage.setItem('textDifficulty',textDifficulty);
+        localStorage.setItem('wordChoiceSettings', JSON.stringify(settingsWord));
+        closeModal();
+    };
+    const saveSettingsText = () => {
+        const settingsText = {
+            textDifficulty,
+            textLanguage
+        };
+        localStorage.setItem('textChoiceSettings', JSON.stringify(settingsText));
         closeModal();
     };
 
@@ -111,9 +124,11 @@ export default function TextChoice({ isDarkTheme }) {
 
     return (
         <div>
-            <div className={`settings-container ${isDarkTheme ? 'dark' : ''}`} onClick={openModal}>
-                <img src="/src/assets/settings.png" alt="settings" className="settings-img" />
-                <span className="settings-text">Text Settings</span>
+            <div className="settings-text">
+                <div className={`settings-container ${isDarkTheme ? 'dark' : ''}`} onClick={openModal}>
+                    <img src="/src/assets/settings.png" alt="settings" className="settings-img" />
+                    <span className="settings-text">Text Settings</span>
+                </div>
             </div>
             {isModalVisible && (
                 <div className={`modal ${isModalOpen ? 'open' : ''} ${isDarkTheme ? 'dark' : ''}`} onClick={handleBackgroundClick}>
@@ -203,7 +218,7 @@ export default function TextChoice({ isDarkTheme }) {
                                     </div>
                                     <div className="modal-grid" style={{width: '95%'}}>
                                         <button className="custom-button" onClick={handleGenerateWords}>Test</button>
-                                        <button className="custom-button" onClick={saveSettings}>Submit</button>
+                                        <button className="custom-button" onClick={saveSettingsWord}>Submit</button>
                                     </div>
                                 </div>
                             )}
@@ -220,9 +235,18 @@ export default function TextChoice({ isDarkTheme }) {
                                         <option key={"Medium"} value={"Medium"}>Medium</option>
                                         <option key={"Hard"} value={"Hard"}>Hard</option>
                                     </select>
+                                    <p>Text language:</p>
+                                    <select
+                                        className="custom-select"
+                                        value={textLanguage}
+                                        onChange={(e) => setTextLanguage(e.target.value)}
+                                    >
+                                        <option key={"English"} value={"English"}>English</option>
+                                        <option key={"Ukrainian"} value={"Ukrainian"}>Ukrainian</option>
+                                    </select>
                                     <div className="modal-grid" style={{width: '95%'}}>
                                         <button className="custom-button" onClick={handleGenerateText}>Test</button>
-                                        <button className="custom-button" onClick={saveSettings}>Submit</button>
+                                        <button className="custom-button" onClick={saveSettingsText}>Submit</button>
                                     </div>
                                 </div>
                             )}

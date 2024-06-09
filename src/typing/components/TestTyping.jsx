@@ -2,7 +2,7 @@
 import Typing from "./Typing";
 import { useState, useEffect, useRef } from "react";
 export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, choosenTime, isDarkTheme, selectedFont, selectedSize,
-    textAPI, setIsReseted, isReseted, setSavedSettings, setSelectedOption, setTextDifficulty }) {
+    textAPI, setIsReseted, isReseted, setSavedSettings, setSelectedOption, setTextSavedSettings }) {
 
     const [timerDuration, setTimerDuration] = useState(choosenTime);
     const [isRunning, setIsRunning] = useState(false);
@@ -75,7 +75,7 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
             setTimeout(() => {
                 setElapsedTime(0);
                 typoRef.current.timer();
-                setTextDifficulty(localStorage.getItem('textDifficulty'));
+                setTextSavedSettings(JSON.parse(localStorage.getItem('textChoiceSettings')));
                 setSelectedOption(localStorage.getItem('selectedTextType'));
                 setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
             }, 0);
@@ -96,7 +96,7 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
 
     return (
         <div>
-            <div className="timer-container" style={{ opacity: isRunning ? 1 : 0 }}>
+            <div className="timer-container" style={{ opacity: isRunning ? 1 : 0.2 }}>
                 <div className="timer">
                     <p>{timerDuration}</p>
                 </div>

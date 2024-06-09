@@ -80,7 +80,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    position: fixed;
+    position: absolute;
     z-index: 3;
     left: 0;
     top: 0;
@@ -132,32 +132,24 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 18px;
     font-family: "Roboto Slab";
 }
 
 .settings-container {
-    margin-right: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     user-select: none;
-    opacity: 0.6;
-    width: 100%;
     transition: opacity 0.3s ease;
 }
 
-.settings-container:hover {
-    transition: opacity 0.3s ease;
-    opacity: 1;
-}
 
 .settings-img {
     width: 18px;
     height: 18px;
     margin-right: 5px;
-    margin-top: 19px;
+    margin-left: 10px;
 }
 
 .modal-grid {
