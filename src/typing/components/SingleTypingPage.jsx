@@ -4,6 +4,7 @@ import '../styles/mainpage.scss';
 import TestTyping from './TestTyping';
 import TypingResult from './TypingResult';
 import SingleTyping from './SingleTyping';
+import OwnText from './OwnText';
 import { Link } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
@@ -132,19 +133,20 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                         <div className="navigation">
                             <Link to="/multiplayer/rooms" className='link'>
                                 <p onClick={() => handleTabClick('multiplayer')}
-                                    className={activeTab === 'multiplayer' ? 'active' : ''}>
+                                   className={activeTab === 'multiplayer' ? 'active' : ''}>
                                     multiplayer
                                 </p>
                             </Link>
 
+                            <p onClick={() => handleTabClick('single')}
+                               className={activeTab === 'single' ? 'active' : ''}>
+                                single
+                            </p>
                             <p onClick={() => handleTabClick('test')} className={activeTab === 'test' ? 'active' : ''}>
                                 test
                             </p>
                             <p onClick={() => handleTabClick('text')} className={activeTab === 'text' ? 'active' : ''}>
                                 text
-                            </p>
-                            <p onClick={() => handleTabClick('single')} className={activeTab === 'single' ? 'active' : ''}>
-                                single
                             </p>
                             <div className="animation move">navigation</div>
                         </div>
@@ -217,8 +219,8 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                     </div>
                 </div>
                 <div className="animated-container">
-                    <div className={`animated-component ${activeTab === 'text' ? 'active' : ''}`}>
-                        {activeTab === 'text' && <SingleTyping
+                    <div className={`animated-component ${activeTab === 'single' ? 'active' : ''}`}>
+                        {activeTab === 'single' && <SingleTyping
                             typoRef={typoRef}
                             isSoundOn={isSoundOn}
                             setNewSpeed={setNewSpeed}
@@ -232,7 +234,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                             isReseted={isReseted}
                             setSavedSettings={setSavedSettings}
                             setSelectedOption={setSelectedOption}
-                            setTextDifficulty={setTextSavedSettings} />}
+                            setTextSavedSettings={setTextSavedSettings}/>}
                     </div>
                     <div className={`animated-component ${activeTab === 'test' ? 'active' : ''}`}>
                         {activeTab === 'test' && <TestTyping
@@ -250,23 +252,44 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                             isReseted={isReseted}
                             setSavedSettings={setSavedSettings}
                             setSelectedOption={setSelectedOption}
-                            setTextDifficulty={setTextSavedSettings} />}
+                            setTextSavedSettings={setTextSavedSettings}/>}
+                    </div>
+                    <div className={`animated-component ${activeTab === 'text' ? 'active' : ''}`}>
+                        {activeTab === 'text' && <OwnText
+                            typoRef={typoRef}
+                            isSoundOn={isSoundOn}
+                            setNewSpeed={setNewSpeed}
+                            newAccuracy={newAccuracy}
+                            setResult={setResult}
+                            isDarkTheme={isDarkTheme}
+                            selectedFont={selectedFont}
+                            selectedSize={selectedSize}
+                            setIsReseted={setIsReseted}
+                            isReseted={isReseted}
+                            />}
                     </div>
                 </div>
-
+                {activeTab !== 'text' ? (
                 <div className="reset-text">
                     <div className="reset-container" onClick={handleResetClick}>
-                        <img src="/src/assets/refresh-button.png" alt="refresh" className="reset-img" />
+                        <img src="/src/assets/refresh-button.png" alt="refresh" className="reset-img"/>
                         <span>reset text</span>
                     </div>
-                    <span style={{marginLeft:"10px"}}>|</span>
+                    <span style={{marginLeft: "10px"}}>|</span>
                     <Settings></Settings>
                 </div>
-                <Keyboard isDarkTheme={isDarkTheme} />
-
+                    ): (
+                    <div className="reset-text">
+                        <div className="reset-container" onClick={handleResetClick}>
+                            <img src="/src/assets/refresh-button.png" alt="refresh" className="reset-img"/>
+                            <span>reset text</span>
+                        </div>
+                    </div>
+                )}
+                <Keyboard isDarkTheme={isDarkTheme}/>
             </div>
             <Footer isDarkTheme={isDarkTheme} toggleTheme={toggleTheme} isSoundOn={isSoundOn}
-                toggleSound={toggleSound} />
+                    toggleSound={toggleSound}/>
         </div>
     )
 }
