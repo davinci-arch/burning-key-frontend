@@ -15,13 +15,13 @@ export default function Footer({ isSoundOn, toggleSound, isDarkTheme, toggleThem
                     <span>instagram</span>
                 </div>
                 <div className="link">
-                    <img src="src/assets/donation.png" alt="donation" className={`img ${isDarkTheme ? 'dark' : ''}`}/>
+                    <img src="/src/assets/donation.png" alt="donation" className={`img ${isDarkTheme ? 'dark' : ''}`}/>
                     <span>donation</span>
                 </div>
             </div>
             <div className="link-container">
                 <div className="change-button" onClick={toggleTheme}>
-                    {isDarkTheme ? <img src="./src/assets/sun.png" alt="soundOn"
+                    {isDarkTheme ? <img src="/src/assets/sun.png" alt="soundOn"
                                         className={`img ${isDarkTheme ? 'dark' : ''}`}/> :
                         <img src="/src/assets/moon.png" alt="soundOn"/>}
                 </div>

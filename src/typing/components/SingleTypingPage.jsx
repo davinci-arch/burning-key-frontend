@@ -31,22 +31,17 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
     const regex = /.*?\s|.*?$/g;
     const [isReseted, setIsReseted] = useState(false);
 
-    const [savedSettings, setSavedSettings] = useState(() => {
-        const saved = localStorage.getItem('wordChoiceSettings');
-        return saved ? JSON.parse(saved) : {};
-    });
+    const [savedSettings, setSavedSettings] = useState(() => JSON.parse(localStorage.getItem('wordChoiceSettings')) || {});
+    const [textSavedSettings, setTextSavedSettings] = useState(() => JSON.parse(localStorage.getItem('textChoiceSettings')) || {});
+
     const [selectedOption, setSelectedOption] = useState(() => {
         return localStorage.getItem('selectedTextType') || 'Texts';
-    });
-    const [textDifficulty, setTextDifficulty] = useState(() => {
-        return localStorage.getItem('textDifficulty') || "Easy";
     });
 
     useEffect(() => {
         const handleGenerateWords = async () => {
-
-            setTextDifficulty(localStorage.getItem('textDifficulty'));
             setSelectedOption(localStorage.getItem('selectedTextType'));
+            setTextSavedSettings(localStorage.getItem('textChoiceSettings'));
             setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
             try {
                 const words = await generateRandomWords({
@@ -67,8 +62,8 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
 
         const handleRandomText = async () => {
             try {
-                const text = await getRandomText(textDifficulty);
 
+                const text = await getRandomText(textSavedSettings.textDifficulty, textSavedSettings.textLanguage);
                 setWords(text.match(regex));
             } catch (error) {
                 console.error('Failed to fetch random text:', error);
@@ -86,7 +81,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
     }, [updateText]);
 
     useEffect(() => {
-        setTextDifficulty(localStorage.getItem('textDifficulty'));
+        setTextSavedSettings(JSON.parse(localStorage.getItem('textChoiceSettings')));
         setSelectedOption(localStorage.getItem('selectedTextType'));
         setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
         setUpdateText(!updateText);
@@ -222,7 +217,6 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                     </div>
                 </div>
                 <div className="animated-container">
-                    <Settings></Settings>
                     <div className={`animated-component ${activeTab === 'text' ? 'active' : ''}`}>
                         {activeTab === 'text' && <SingleTyping
                             typoRef={typoRef}
@@ -238,7 +232,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                             isReseted={isReseted}
                             setSavedSettings={setSavedSettings}
                             setSelectedOption={setSelectedOption}
-                            setTextDifficulty={setTextDifficulty} />}
+                            setTextDifficulty={setTextSavedSettings} />}
                     </div>
                     <div className={`animated-component ${activeTab === 'test' ? 'active' : ''}`}>
                         {activeTab === 'test' && <TestTyping
@@ -256,7 +250,7 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                             isReseted={isReseted}
                             setSavedSettings={setSavedSettings}
                             setSelectedOption={setSelectedOption}
-                            setTextDifficulty={setTextDifficulty} />}
+                            setTextDifficulty={setTextSavedSettings} />}
                     </div>
                 </div>
 
@@ -265,6 +259,8 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                         <img src="/src/assets/refresh-button.png" alt="refresh" className="reset-img" />
                         <span>reset text</span>
                     </div>
+                    <span style={{marginLeft:"10px"}}>|</span>
+                    <Settings></Settings>
                 </div>
                 <Keyboard isDarkTheme={isDarkTheme} />
 

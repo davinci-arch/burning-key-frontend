@@ -229,9 +229,9 @@ export default function MultiplayerTypingPage({
             /> :
                 <>
                     <div className="toolbar-container">
-                        <div className="toolbar">
+                        <div className={`toolbar ${isDarkTheme ? 'dark' : ''}`}>
                             <div className="navigation">
-                                <Link to="/">
+                                <Link className='single' to="/">
                                     <p>single</p>
                                 </Link>
                                 <div className="animation move">navigation</div>

@@ -67,7 +67,7 @@ $toolbar-margin: 20px;
             }
 
             .time-options.expanded {
-                max-height: 200px; /* достатньо для вмісту */
+                max-height: 200px;
             }
 
             .time-options p {
@@ -322,7 +322,9 @@ $toolbar-margin: 20px;
             color: #dab671;
         }
     }
-
+    .link{
+        color: #d6d2bc;
+    }
     p:hover {
         color: #b4943b;
     }
