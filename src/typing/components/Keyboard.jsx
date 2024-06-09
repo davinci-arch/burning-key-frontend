@@ -89,7 +89,7 @@ const Keyboard = ({ isDarkTheme }) => {
     const handleMouseClick = (code) => {
         const keyElement = document.getElementById(code);
         if (keyElement) {
-            keyElement.classList.add('active');
+           // keyElement.classList.add('active');
             const keyLabel = keyElement.textContent.trim();
 
             switch (keyLabel) {

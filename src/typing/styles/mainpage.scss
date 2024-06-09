@@ -16,6 +16,7 @@ $toolbar-margin: 20px;
 }
 .toolbar-container {
     margin-top: 20px;
+    margin-bottom: 20px;
     z-index: 1;
     display: flex;
     justify-content: center;
@@ -289,7 +290,6 @@ $toolbar-margin: 20px;
 .dark .toolbar-container {
     display: flex;
     justify-content: center;
-
     .toolbar {
 
         background-color: #3a3c3d;
