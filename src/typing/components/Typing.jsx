@@ -18,24 +18,14 @@ const Typing = forwardRef((props, ref) => {
     const [lines, setLines] = useState([]);
     const [countCorrectTypingKeys, setCountCorrectTypingKeys] = useState(0);
     const [countTypingKeys, setCountTypingKeys] = useState(0);
-    const [isLoaded, setLoaded] = useState(false);
     const inputRef = useRef(null);
     const containerRef = useRef(null);
     const amountOfExtraLetters = 5;
+    const [wrongWordsIndexes, setWrongWords] = useState([]);
 
     useEffect(() => {
         setWords(props.textAPI || []);
     }, [props.textAPI, props.isReseted]);
-
-
-    // useEffect(() => {
-    //     if (props.type === "multiplayer") {
-    //         setLoaded(true);
-    //         if (isLoaded) {
-    //             props.amountOfWords(words.length);
-    //         }
-    //     }
-    // }, [isLoaded, words, props]);
 
     useImperativeHandle(ref, () => ({
         resetText() {
@@ -50,11 +40,8 @@ const Typing = forwardRef((props, ref) => {
             inputRef.current.focus();
             setCursorVisible(true);
         },
-        getCorrectLetter() {
-            return countCorrectTypingKeys;
-        },
-        getAllLetter() {
-            return countTypingKeys;
+        getWrongWordsIndexes() {
+            return wrongWordsIndexes;
         }
     }));
 
@@ -68,6 +55,7 @@ const Typing = forwardRef((props, ref) => {
         setCountTypingKeys(0);
         setLetterIndex(0);
         setExtraLetter([]);
+        setWrongWords([]);
         setCursorVisible(true);
         inputRef.current.blur();
     }
@@ -89,7 +77,7 @@ const Typing = forwardRef((props, ref) => {
             }
         } else {
             if (props.type == "multiplayer" && wordIndex == 0 && letterIndex == 0) {
-                props.setNewData(wordTyping, words[wordTyping])
+                props.setNewData(wordTyping, words[wordTyping], countCorrectTypingKeys, countTypingKeys)
             }
         }
 
@@ -99,8 +87,6 @@ const Typing = forwardRef((props, ref) => {
         if (wordIndex == lines[lines.length == 1 ? 0 : 1].endIndex && (words[wordIndex].length - 1) == letterIndex && lastChar == ' ' && lines.length > 3) {
             setInputText(value);
             removeLineByIndex(0);
-            setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
-            setCountTypingKeys(countTypingKeys + 1);
             playSound(SpaceSound);
             return;
         }
@@ -110,13 +96,18 @@ const Typing = forwardRef((props, ref) => {
 
         if (words[wordIndex][letterIndex] == lastChar) {
             if (lastChar === ' ') {
+                setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
                 playSound(SpaceSound);
             } else {
                 setCountCorrectTypingKeys(countCorrectTypingKeys + 1);
                 setCountTypingKeys(countTypingKeys + 1);
                 playSound(PressSound);
             }
-        } else if (inputText.length < value.length) {
+        } else if (words[wordIndex][letterIndex] != lastChar) {
+            if (!wrongWordsIndexes.includes(wordIndex)) {
+                setWrongWords(prev => [...prev, wordIndex]);
+            }
+        }else if (inputText.length < value.length) {
             playSound(ErrorSound);
 
             const incorrectKeyElement = document.getElementById(`Key${lastChar.toUpperCase()}`);
@@ -151,7 +142,7 @@ const Typing = forwardRef((props, ref) => {
                 setWordIndex(wordIndex - 1);
                 setWordTyping(wordTyping - 1);
                 if (props.type == "multiplayer") {
-                    props.setNewData(wordTyping - 1, words[wordTyping - 1])
+                    props.setNewData(wordTyping - 1, words[wordTyping - 1], countCorrectTypingKeys, countTypingKeys)
                 }
                 setLetterIndex(words[wordIndex - 1].length - 1)
                 setInputText(value);
@@ -164,8 +155,7 @@ const Typing = forwardRef((props, ref) => {
                 setWordIndex(wordIndex + 1);
                 setWordTyping(wordTyping + 1);
                 if (props.type == "multiplayer") {
-                    props.setNewData(wordTyping + 1, words[wordTyping + 1])
-
+                    props.setNewData(wordTyping + 1, words[wordTyping + 1], countCorrectTypingKeys, countTypingKeys)
                 }
             } else {
                 setLetterIndex(letterIndex + 1);
@@ -173,7 +163,6 @@ const Typing = forwardRef((props, ref) => {
             setCountTypingKeys(countTypingKeys + 1);
         }
         setInputText(value);
-
         if ((wordIndex - 1) == lines[lines.length - 1].endIndex - 2 && letterIndex == words[wordIndex].length - 1 && inputText.length < value.length) {
             results();
             return;

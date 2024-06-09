@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import Typing from "../Typing";
 import CountDown from "/src/assets/startRace.mp3"
-export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, sendMessage, sessionId, uuid, setWords, timerToStart, amountOfPlayers}) {
+export default function MultiplayerTyping({
+    typoRef, isSoundOn, setNewSpeed, setNewAccuracy, setResult,
+    sendMessage, uuid, setWords, timerToStart, amountOfPlayers,
+    setDurationOfMatch, setMistakes, setWrongWords, setTextWords,
+    isDarkTheme, selectedFont, selectedSize }) {
     const [isRunning, setIsRunning] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [correctKeys, setCorrectKeys] = useState(0);
@@ -9,20 +13,19 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
     const [isFocused, setFocused] = useState(false);
     const [wordCount, setWordCount] = useState(0);
     const [currentWord, setCurrentWord] = useState("");
-    const [startTime, setStartTime] = useState();
+    const [startTime, setStartTime] = useState(0);
+    const [endTime, setEndTime] = useState(0);
     let regex = /.*?\s|.*?$/g;
     const [textAPI, setTextAPI] = useState("By the aid of this, every little warp thread or cluster of threads can be lifted by its");
     const [words, setSplitWords] = useState(textAPI.match(regex));
 
-
     const [timerIsEnd, setTimer] = useState(false);
 
-    
     useEffect(() => {
         let timer;
         if (isRunning) {
             timer = setInterval(() => {
-                setElapsedTime((prevTime) => prevTime + 10); // Оновлення часу кожні 10 мілісекунд
+                setElapsedTime((prevTime) => prevTime + 10);
             }, 10);
         } else if (!isRunning && elapsedTime !== 0) {
             clearInterval(timer);
@@ -31,6 +34,13 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
                 uid: uuid
             }
             sendMessage(message);
+            setDurationOfMatch(Math.ceil((endTime - startTime) / 1000));
+            setMistakes(countKeys - correctKeys);
+            setNewSpeed((correctKeys / 5) / (((endTime - startTime) / 1000) / 60));
+            setNewAccuracy((correctKeys / countKeys) * 100);
+            setResult(true);
+            setTextWords(words);
+            setWrongWords(typoRef.current.getWrongWordsIndexes());
         }
         return () => clearInterval(timer);
     }, [isRunning]);
@@ -38,7 +48,7 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
     useEffect(() => {
         setTimer(true);
         if (timerToStart == 3) {
-            playSound(CountDown)
+            // playSound(CountDown)
         }
         if (timerIsEnd && timerToStart == 0) {
             setWords(words.length);
@@ -53,25 +63,24 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
             audio.play();
         }
     }
-    
-    const setNewData = (wordCount, word) => {
+
+    const setNewData = (wordCount, word, correctTypingKeys, keys) => {
         setWordCount(wordCount + 1);
         setCurrentWord(word)
-        const correct = typoRef.current.getCorrectLetter();
-        const all = typoRef.current.getAllLetter();
-        setCorrectKeys(correct);
-        setCountKeys(all);
-        const timeElapsed = ((new Date().getTime() - startTime) / 1000) / 60;
+        const end = new Date().getTime();
+        const timeElapsed = ((end - startTime) / 1000) / 60;
+        setEndTime(end);
         const message = {
             type: "DATA",
-            sessionId: sessionId,
             wordCount: wordCount + 1,
             currentWord: word,
             uid: uuid,
-            newSpeed: (correctKeys / 5) / timeElapsed + ""
+            newSpeed: (correctTypingKeys / 5) / timeElapsed + ""
         }
 
         sendMessage(message);
+        setCorrectKeys(correctTypingKeys);
+        setCountKeys(keys);
     }
 
     const startRace = () => {
@@ -111,6 +120,9 @@ export default function MultiplayerTyping({ typoRef, isSoundOn, setNewSpeed, new
                 isFocused={isFocused}
                 setNewData={setNewData}
                 textAPI={words}
+                isDarkTheme={isDarkTheme}
+                selectedFont={selectedFont}
+                selectedSize={selectedSize}
             >
                 {!isFocused ?
                     <div className="description"

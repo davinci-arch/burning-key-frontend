@@ -87,7 +87,16 @@ function App() {
                     isSoundOn={isSoundOn}
                     toggleSound={toggleSound}
                 />} />
-                <Route path="/multiplayer/rooms/room/:uuid" element={<MultiplayerTypingPage />} />
+                <Route path="/multiplayer/rooms/room/:uuid" element={<MultiplayerTypingPage
+                    isDarkTheme={isDarkTheme}
+                    toggleTheme={toggleTheme}
+                    isSoundOn={isSoundOn}
+                    toggleSound={toggleSound}
+                    selectedFont={selectedFont}
+                    handleFontClick={handleFontClick}
+                    selectedSize={selectedSize}
+                    handleSizeClick={handleSizeClick}
+                />} />
                 <Route path="/multiplayer/rooms/room-settings" element={<RoomSettings />} />
             </Routes>
         </Router>

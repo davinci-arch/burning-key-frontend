@@ -28,7 +28,7 @@ export default function Rooms({ isDarkTheme, toggleTheme, isSoundOn, toggleSound
     const connect = () => {
         socket.current = new WebSocket("ws://localhost:8080/multiplayer/rooms");
         socket.current.onopen = () => {
-            console.log("conneceted")
+            // console.log("Rooms conneceted")
         }
 
         socket.current.onmessage = (event) => {
@@ -45,7 +45,7 @@ export default function Rooms({ isDarkTheme, toggleTheme, isSoundOn, toggleSound
         }
 
         socket.current.onclose = () => {
-            // console.log("socket was closed")
+            // console.log("Rooms socket was closed")
         }
 
         socket.current.onerror = () => {
@@ -88,15 +88,17 @@ export default function Rooms({ isDarkTheme, toggleTheme, isSoundOn, toggleSound
 
                 <Header isDarkTheme={isDarkTheme} />
                 <div className="wrapper">
-
                     <div className="content">
                         <div className="navigation">
-                            <div className="toPage">
-                                <div>
-                                    <img src="/src/assets/back.png" alt="back-img" />
+                            <Link to='/'>
+                                <div className="toPage">
+                                    <div>
+                                        <img src="/src/assets/back.png" alt="back-img" />
+                                    </div>
+                                    <div>Back to main</div>
                                 </div>
-                                <div>Back to main</div>
-                            </div>
+                            </Link>
+
                             <div className="create-room-btn" onClick={handleNewRoom}>
                                 <span>
                                     Create room

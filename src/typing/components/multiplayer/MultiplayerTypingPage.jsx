@@ -2,40 +2,46 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import MultiplayerTyping from "./MultiplayerTyping";
 import "../../styles/multiplayer.scss"
-export default function MultiplayerTypingPage({ isSoundOn }) {
+import Result from "./Result";
+import Header from "../Header";
+import Footer from "../Footer";
+
+export default function MultiplayerTypingPage({
+    isDarkTheme, toggleTheme, isSoundOn, toggleSound,
+    selectedFont, handleFontClick, selectedSize, handleSizeClick
+}) {
     const typoRef = useRef(null);
     const { uuid } = useParams();
 
     const [speed, setSpeed] = useState(0.0);
     const [accuracy, setAccuracy] = useState(0);
-    const [prevSpeed, setPrevSpeed] = useState(0.0);
-    const [prevAccuracy, setPrevAccuracy] = useState(0);
+    const [elapsedTime, setElapsedTime] = useState(0);
+    const [mistakes, setMistakes] = useState(0);
     const [activeTab, setActiveTab] = useState('text');
     const [result, setResult] = useState(false);
+    const [wrongWordsIndexes, setWrongWords] = useState([]);
+    const [textWords, setTextWords] = useState([]);
+
     const [words, setWords] = useState(0);
     const [users, setUsers] = useState([]);
     const [isLoaded, setLoaded] = useState(false);
     const [isConnected, setConnected] = useState(false);
-    const [sessionId, setSessionId] = useState("");
     const [timerToStart, setTimerToStart] = useState();
     const [isStart, setStart] = useState(false);
     const [amountOfPlayers, setAmountOfPlayers] = useState(0);
     const socket = useRef();
     const usersRef = useRef(users);
-    const sessionIdRef = useRef(sessionId);
     const amountWords = useRef(words);
     const navigate = useNavigate();
     const [isRedirect, setIsRedirect] = useState(false);
     const [redirectTime, setRedirectTime] = useState(10);
     const [playersPosition, setPlayersPosition] = useState([]);
-
+    const [positions, setPositions] = useState([]);
+    const [username, setUsername] = useState("");
     useEffect(() => {
         usersRef.current = users;
         setAmountOfPlayers(usersRef.current.length);
     }, [users]);
-    useEffect(() => {
-        sessionIdRef.current = sessionId;
-    }, [sessionId]);
     useEffect(() => {
         amountWords.current = words;
     }, [words]);
@@ -65,14 +71,12 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
         return () => clearInterval(timer);
     }, [isRedirect, redirectTime]);
 
-    const setNewSpeed = (wpm) => {
-        setSpeed(wpm);
-        setPrevSpeed(speed);
+    const setNewSpeed = (speed) => {
+        setSpeed(speed.toFixed(2));
     }
 
-    const newAccuracy = (newAccuracy) => {
-        setAccuracy(newAccuracy);
-        setPrevAccuracy(accuracy);
+    const newAccuracy = (accuracy) => {
+        setAccuracy(Math.ceil(accuracy));
     }
 
     const calculateProgress = (wordPosition) => {
@@ -89,10 +93,13 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
     const connect = () => {
         socket.current = new WebSocket("ws://localhost:8080/multiplayer/rooms/room");
         socket.current.onopen = () => {
+            // console.log("Room connected")
             setConnected(true);
+            const user = "Visitor " + Math.floor(Math.random() * (1000 + 1));
+            setUsername(user);
             const message = {
                 type: "CONNECT",
-                username: Math.floor(Math.random() * (1000 - 0 + 1)) + 0 + "",
+                username: user,
                 uid: uuid,
             }
             sendMessage(message);
@@ -111,7 +118,6 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                 addUsers(data.data);
             } else if (data.type === "CONNECT_USER") {
                 addUser(data.data);
-                setSessionId(data.sessionId);
             } else if (data.type === "DISCONNECT") {
                 setUsers(prevUsers => prevUsers.filter(user => user.sessionId !== data.data.sessionId));
             } else if (data.type === "DATA") {
@@ -124,14 +130,13 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
         }
 
         socket.current.onclose = () => {
-            console.log("socket was closed");
+            // console.log("Room socket was closed");
         }
 
         socket.current.onerror = () => {
             console.log("something went wrong");
         }
     }
-
     const updateCurrentUserWord = (currentWord, id, position, speed) => {
         setUsers(prevUsers => {
             const updatedUsers = prevUsers.map(user => {
@@ -144,6 +149,20 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
             return updatedUsers;
         });
     };
+    useEffect(() => {
+        if (playersPosition.length > 0) {
+            const lastUserId = playersPosition[playersPosition.length - 1];
+            const user = usersRef.current.find(user => user.sessionId === lastUserId);
+            if (user) {
+                const userPosition = playersPosition.length - 1;
+                setPositions(prevPositions => [
+                    ...prevPositions,
+                    { username: user.username, position: userPosition }
+                ]);
+            }
+        }
+    }, [playersPosition]);
+
     const handleEndRace = (data) => {
         setPlayersPosition(prev => {
             const newPositions = [...prev, data.userId];
@@ -155,6 +174,7 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                 }
                 return user;
             });
+
             setUsers(updatedUsers);
 
             return newPositions;
@@ -172,22 +192,8 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
         socket.current.send(JSON.stringify(message));
     }
 
-
     return (
         <>
-            {/* {result ?
-                <TypingResult
-                    speed={speed}
-                    prevSpeed={prevSpeed}
-                    accuracy={accuracy}
-                    prevAccuracy={prevAccuracy} /> : null
-            } */}
-            {isRedirect > 0 ?
-                <div>
-                    You will be redirected after {redirectTime}
-                </div>
-                : null
-            }
             {timerToStart > 0 ?
                 <div className="start-race-timer-container">
                     <div className="start-race-timer">
@@ -195,65 +201,113 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                     </div>
                 </div> : null
             }
+            <Header isDarkTheme={isDarkTheme} />
 
-            <div className="toolbar-container">
-                <div className="toolbar">
-                    <div className="navigation">
-                        <Link to="multiplayer" className='link'>
-                            <p onClick={() => handleTabClick('multiplayer')}
-                                className={activeTab === 'multiplayer' ? 'active' : ''}>
-                                multiplayer
-                            </p>
-                        </Link>
-                        <p onClick={() => handleTabClick('test')} className={activeTab === 'test' ? 'active' : ''}>
-                            test
-                        </p>
-                        <p onClick={() => handleTabClick('text')} className={activeTab === 'text' ? 'active' : ''}>
-                            text
-                        </p>
-                        <p onClick={() => handleTabClick('single')} className={activeTab === 'single' ? 'active' : ''}>
-                            single
-                        </p>
-                        <div className="animation move">navigation</div>
-                    </div>
-                    <span className="separator"></span>
-                    <div className="toolbar-middle">
-                        {activeTab === "test" ?
-                            <div className="time-options">
-                                <p onClick={() => changeTime(15)} className={choosenTime === 15 ? 'active' : ''}>15</p>
-                                <p onClick={() => changeTime(30)} className={choosenTime === 30 ? 'active' : ''}>30</p>
-                                <p onClick={() => changeTime(60)} className={choosenTime === 60 ? 'active' : ''}>60</p>
-                            </div> : null
-                        }
-                    </div>
-                    <span className="separator"></span>
-                    <div className="text-config">
-                        <p>font</p>
-                        <p>size</p>
-                        <div className="animation move">style</div>
-                    </div>
+            {isRedirect > 0 ?
+                <div>
+                    You will be redirected after {redirectTime}
                 </div>
-            </div>
-            <div className="animated-container">
-                <div className={`animated-component ${activeTab === 'text' ? 'active' : ''}`}>
-                    {activeTab === 'text' && <MultiplayerTyping
-                        typoRef={typoRef}
-                        isSoundOn={isSoundOn}
-                        setNewSpeed={setNewSpeed}
-                        newAccuracy={newAccuracy}
-                        setResult={setResult}
-                        sendMessage={sendMessage}
-                        sessionId={sessionId}
-                        uuid={uuid}
-                        setWords={setWords}
-                        timerToStart={timerToStart}
-                        amountOfPlayers={amountOfPlayers}
-                    />}
-                </div>
-            </div>
+                : null
+            }
+
+            {result ? <Result
+                wordsPerMinute={speed}
+                accuracy={accuracy}
+                mistakes={mistakes}
+                elapsedTime={elapsedTime}
+                places={positions}
+                username={username}
+                isSoundOn={isSoundOn}
+                textWords={textWords}
+                wrongWordsIndexes={wrongWordsIndexes}
+            /> :
+                <>
+                    <div className="toolbar-container">
+                        <div className="toolbar">
+                            <div className="navigation">
+                                <Link to="/">
+                                    <p>single</p>
+                                </Link>
+                                <div className="animation move">navigation</div>
+                            </div>
+                            <span className="separator"></span>
+                            <div className="text-config">
+                                <div className="dropdown-wrapper">
+                                    <div className="dropdown">
+                                        <p>Font</p>
+                                        <ul className="dropdown-list">
+                                            <li className={selectedFont === 'system-ui' ? 'selected' : ''}
+                                                onClick={() => handleFontClick('system-ui')}>
+                                                System-UI
+                                            </li>
+                                            <li className={selectedFont === 'Arial' ? 'selected' : ''}
+                                                onClick={() => handleFontClick('Arial')}>
+                                                Arial
+                                            </li>
+                                            <li className={selectedFont === 'Roboto Slab' ? 'selected' : ''}
+                                                onClick={() => handleFontClick('Roboto Slab')}>
+                                                Roboto Slab
+                                            </li>
+                                            <li className={selectedFont === 'Cambria' ? 'selected' : ''}
+                                                onClick={() => handleFontClick('Cambria')}>
+                                                Cambria
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div className="dropdown">
+                                        <p>Size</p>
+                                        <ul className="dropdown-list">
+                                            <li className={selectedSize === '11px' ? 'selected' : ''}
+                                                onClick={() => handleSizeClick('11px')}>
+                                                12px
+                                            </li>
+                                            <li className={selectedSize === '17px' ? 'selected' : ''}
+                                                onClick={() => handleSizeClick('17px')}>
+                                                18px
+                                            </li>
+                                            <li className={selectedSize === '22px' ? 'selected' : ''}
+                                                onClick={() => handleSizeClick('22px')}>
+                                                22px
+                                            </li>
+                                            <li className={selectedSize === '23px' ? 'selected' : ''}
+                                                onClick={() => handleSizeClick('23px')}>
+                                                24px
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div className="animation move">style</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="animated-container">
+                        <div className={`animated-component ${activeTab === 'text' ? 'active' : ''}`}>
+                            {activeTab === 'text' && <MultiplayerTyping
+                                typoRef={typoRef}
+                                isSoundOn={isSoundOn}
+                                setNewSpeed={setNewSpeed}
+                                setNewAccuracy={newAccuracy}
+                                setResult={setResult}
+                                sendMessage={sendMessage}
+                                uuid={uuid}
+                                setWords={setWords}
+                                timerToStart={timerToStart}
+                                amountOfPlayers={amountOfPlayers}
+                                setMistakes={setMistakes}
+                                setDurationOfMatch={setElapsedTime}
+                                setWrongWords={setWrongWords}
+                                setTextWords={setTextWords}
+                                isDarkTheme={isDarkTheme}
+                                selectedFont={selectedFont}
+                                selectedSize={selectedSize}
+                            />}
+                        </div>
+                    </div>
+                </>
+            }
             <div className="players" >
                 {users.map((user, index) => (
-                    <div className="players-row" key={index}>
+                    <div className={user.username == username ? "players-row current-user" : "players-row"} key={index}>
                         <div className="data">
                             <img src="/src/assets/user.png" className="user-avatar" alt="user" />
                             <p>{user.username}</p>
@@ -279,6 +333,10 @@ export default function MultiplayerTypingPage({ isSoundOn }) {
                     </div>
                 ))}
             </div>
+            <Footer isDarkTheme={isDarkTheme} toggleTheme={toggleTheme} isSoundOn={isSoundOn}
+                toggleSound={toggleSound} />
+
         </>
+
     )
 }
