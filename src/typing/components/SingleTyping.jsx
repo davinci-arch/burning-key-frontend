@@ -4,7 +4,8 @@ import { getWordSets, generateRandomWords } from "../api/WordsAPI.jsx";
 import { getRandomText } from "../api/TextAPI.jsx";
 import Settings from "./TextChoice.jsx";
 
-export default function SingleTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, isDarkTheme, selectedFont, selectedSize,
+export default function SingleTyping({ 
+    typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, isDarkTheme, selectedFont, selectedSize,
     textAPI, setIsReseted, isReseted, setSavedSettings, setSelectedOption, setTextSavedSettings }) {
     const [isRunning, setIsRunning] = useState(false);
     const [correctKeys, setCorrectKeys] = useState(0);

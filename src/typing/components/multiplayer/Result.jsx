@@ -105,7 +105,7 @@ export default function Result({ wordsPerMinute, accuracy, elapsedTime, mistakes
                         <div className="place-container">
                             <div className="place-img">
                                 {/* "second-place" */}
-                                <div className={secondPlace && secondPlace.username == username ? "second-place animate" : "second-place"}>
+                                <div className={secondPlace ? "second-place animate" : "second-place"}>
                                     {secondPlace && (
                                         <>
                                             <img src="/src/assets/user.png" alt="avatar" className="avatar" />
@@ -113,7 +113,7 @@ export default function Result({ wordsPerMinute, accuracy, elapsedTime, mistakes
                                         </>
                                     )}
                                 </div>
-                                <div className={firstPlace && firstPlace.username == username ? "first-place animate" : "first-place"}>
+                                <div className={firstPlace ? "first-place animate" : "first-place"}>
                                     {firstPlace && (
                                         <>
                                             <img src="/src/assets/user.png" alt="avatar" className="avatar" />
@@ -121,7 +121,7 @@ export default function Result({ wordsPerMinute, accuracy, elapsedTime, mistakes
                                         </>
                                     )}
                                 </div>
-                                <div className={thirdPlace && thirdPlace.username == username ? "third-place animate" : "third-place"}>
+                                <div className={thirdPlace ? "third-place animate" : "third-place"}>
                                     {thirdPlace && (
                                         <>
                                             <img src="/src/assets/user.png" alt="avatar" className="avatar" />
