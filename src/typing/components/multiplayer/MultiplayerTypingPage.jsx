@@ -39,7 +39,7 @@ export default function MultiplayerTypingPage({
     const [positions, setPositions] = useState([]);
     const [username, setUsername] = useState("");
     const [textAPI, setTextAPI] = useState("");
-
+    const [redirectMessage, setRedirectMessage] = useState("");
     useEffect(() => {
         usersRef.current = users;
         setAmountOfPlayers(usersRef.current.length);
@@ -111,13 +111,13 @@ export default function MultiplayerTypingPage({
             const data = JSON.parse(message);
 
             if (data.type == "STARTED") {
-                console.log("The match already started, you will be redirected");
+                setRedirectMessage("The match already started, you will be redirected after: ")
                 setIsRedirect(true);
             } else if (data.type == "EXPIRED_ROOM") {
-                console.log("This room already closed, you will be redirected");
+                setRedirectMessage("This room already closed, you will be redirected after: ")
                 setIsRedirect(true);
             } else if (data.type == "ROOM_FILLED") {
-                console.log("This room already filled, you will be redirected");
+                setRedirectMessage("This room already filled, you will be redirected after: ")
                 setIsRedirect(true);
             } else if (data.type === "CONNECT") {
                 addUsers(data.data);
@@ -211,141 +211,141 @@ export default function MultiplayerTypingPage({
                 }
                 <Header isDarkTheme={isDarkTheme} />
 
-                {isRedirect > 0 ?
-                    <div>
-                        You will be redirected after {redirectTime}
+
+
+                {isRedirect ?
+                    <div className="redirect-message">
+                        {redirectMessage}{redirectTime}s
+                    </div> :
+
+                    <div className="middle-container">
+
+                        {result ? <Result
+                            wordsPerMinute={speed}
+                            accuracy={accuracy}
+                            mistakes={mistakes}
+                            elapsedTime={elapsedTime}
+                            places={positions}
+                            username={username}
+                            isSoundOn={isSoundOn}
+                            textWords={textWords}
+                            wrongWordsIndexes={wrongWordsIndexes}
+                        /> :
+                            <>
+                                <div className="toolbar-container">
+                                    <div className={`toolbar ${isDarkTheme ? 'dark' : ''}`}>
+                                        <div className="navigation">
+                                            <Link className='single' to="/">
+                                                <p>single</p>
+                                            </Link>
+                                            <div className="animation move">navigation</div>
+                                        </div>
+                                        <span className="separator"></span>
+                                        <div className="text-config">
+                                            <div className="dropdown-wrapper">
+                                                <div className="dropdown">
+                                                    <p>Font</p>
+                                                    <ul className="dropdown-list">
+                                                        <li className={selectedFont === 'system-ui' ? 'selected' : ''}
+                                                            onClick={() => handleFontClick('system-ui')}>
+                                                            System-UI
+                                                        </li>
+                                                        <li className={selectedFont === 'Arial' ? 'selected' : ''}
+                                                            onClick={() => handleFontClick('Arial')}>
+                                                            Arial
+                                                        </li>
+                                                        <li className={selectedFont === 'Roboto Slab' ? 'selected' : ''}
+                                                            onClick={() => handleFontClick('Roboto Slab')}>
+                                                            Roboto Slab
+                                                        </li>
+                                                        <li className={selectedFont === 'Cambria' ? 'selected' : ''}
+                                                            onClick={() => handleFontClick('Cambria')}>
+                                                            Cambria
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div className="dropdown">
+                                                    <p>Size</p>
+                                                    <ul className="dropdown-list">
+                                                        <li className={selectedSize === '11px' ? 'selected' : ''}
+                                                            onClick={() => handleSizeClick('11px')}>
+                                                            12px
+                                                        </li>
+                                                        <li className={selectedSize === '17px' ? 'selected' : ''}
+                                                            onClick={() => handleSizeClick('17px')}>
+                                                            18px
+                                                        </li>
+                                                        <li className={selectedSize === '22px' ? 'selected' : ''}
+                                                            onClick={() => handleSizeClick('22px')}>
+                                                            22px
+                                                        </li>
+                                                        <li className={selectedSize === '23px' ? 'selected' : ''}
+                                                            onClick={() => handleSizeClick('23px')}>
+                                                            24px
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div className="animation move">style</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="animated-container">
+                                    <div className={`animated-component ${activeTab === 'text' ? 'active' : ''}`}>
+                                        {activeTab === 'text' && <MultiplayerTyping
+                                            typoRef={typoRef}
+                                            isSoundOn={isSoundOn}
+                                            setNewSpeed={setNewSpeed}
+                                            setNewAccuracy={newAccuracy}
+                                            setResult={setResult}
+                                            sendMessage={sendMessage}
+                                            uuid={uuid}
+                                            setWords={setWords}
+                                            timerToStart={timerToStart}
+                                            amountOfPlayers={amountOfPlayers}
+                                            setMistakes={setMistakes}
+                                            setDurationOfMatch={setElapsedTime}
+                                            setWrongWords={setWrongWords}
+                                            setTextWords={setTextWords}
+                                            isDarkTheme={isDarkTheme}
+                                            selectedFont={selectedFont}
+                                            selectedSize={selectedSize}
+                                            text={textAPI}
+                                        />}
+                                    </div>
+                                </div>
+                            </>
+                        }
+                        <div className="players" >
+                            {users.map((user, index) => (
+                                <div className={user.username == username ? "players-row current-user" : "players-row"} key={index}>
+                                    <div className="data">
+                                        <img src="/src/assets/user.png" className="user-avatar" alt="user" />
+                                        <p>{user.username}</p>
+                                    </div>
+                                    <div className="data">
+                                        <div className="progress-bar">
+                                            <div className="progress-smooth" style={{ width: `${user.completeText}%` }}></div>
+                                            <div className="current-word">
+                                                {user.currentWord ? user.currentWord : null}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="data">
+                                        {user.finished !== undefined && (
+                                            user.finished === 0 ? (
+                                                <img src="/src/assets/fireBlue.png" className="fire" alt="" />
+                                            ) : (
+                                                <span>{(user.finished + 1)}nd</span>
+                                            )
+                                        )}
+                                        <p>WPM:{user.currentSpeed ? user.currentSpeed : 0.0}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    : null
                 }
-
-                <div className="middle-container">
-
-                    {result ? <Result
-                        wordsPerMinute={speed}
-                        accuracy={accuracy}
-                        mistakes={mistakes}
-                        elapsedTime={elapsedTime}
-                        places={positions}
-                        username={username}
-                        isSoundOn={isSoundOn}
-                        textWords={textWords}
-                        wrongWordsIndexes={wrongWordsIndexes}
-                    /> :
-                        <>
-                            <div className="toolbar-container">
-                                <div className={`toolbar ${isDarkTheme ? 'dark' : ''}`}>
-                                    <div className="navigation">
-                                        <Link className='single' to="/">
-                                            <p>single</p>
-                                        </Link>
-                                        <div className="animation move">navigation</div>
-                                    </div>
-                                    <span className="separator"></span>
-                                    <div className="text-config">
-                                        <div className="dropdown-wrapper">
-                                            <div className="dropdown">
-                                                <p>Font</p>
-                                                <ul className="dropdown-list">
-                                                    <li className={selectedFont === 'system-ui' ? 'selected' : ''}
-                                                        onClick={() => handleFontClick('system-ui')}>
-                                                        System-UI
-                                                    </li>
-                                                    <li className={selectedFont === 'Arial' ? 'selected' : ''}
-                                                        onClick={() => handleFontClick('Arial')}>
-                                                        Arial
-                                                    </li>
-                                                    <li className={selectedFont === 'Roboto Slab' ? 'selected' : ''}
-                                                        onClick={() => handleFontClick('Roboto Slab')}>
-                                                        Roboto Slab
-                                                    </li>
-                                                    <li className={selectedFont === 'Cambria' ? 'selected' : ''}
-                                                        onClick={() => handleFontClick('Cambria')}>
-                                                        Cambria
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div className="dropdown">
-                                                <p>Size</p>
-                                                <ul className="dropdown-list">
-                                                    <li className={selectedSize === '11px' ? 'selected' : ''}
-                                                        onClick={() => handleSizeClick('11px')}>
-                                                        12px
-                                                    </li>
-                                                    <li className={selectedSize === '17px' ? 'selected' : ''}
-                                                        onClick={() => handleSizeClick('17px')}>
-                                                        18px
-                                                    </li>
-                                                    <li className={selectedSize === '22px' ? 'selected' : ''}
-                                                        onClick={() => handleSizeClick('22px')}>
-                                                        22px
-                                                    </li>
-                                                    <li className={selectedSize === '23px' ? 'selected' : ''}
-                                                        onClick={() => handleSizeClick('23px')}>
-                                                        24px
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div className="animation move">style</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="animated-container">
-                                <div className={`animated-component ${activeTab === 'text' ? 'active' : ''}`}>
-                                    {activeTab === 'text' && <MultiplayerTyping
-                                        typoRef={typoRef}
-                                        isSoundOn={isSoundOn}
-                                        setNewSpeed={setNewSpeed}
-                                        setNewAccuracy={newAccuracy}
-                                        setResult={setResult}
-                                        sendMessage={sendMessage}
-                                        uuid={uuid}
-                                        setWords={setWords}
-                                        timerToStart={timerToStart}
-                                        amountOfPlayers={amountOfPlayers}
-                                        setMistakes={setMistakes}
-                                        setDurationOfMatch={setElapsedTime}
-                                        setWrongWords={setWrongWords}
-                                        setTextWords={setTextWords}
-                                        isDarkTheme={isDarkTheme}
-                                        selectedFont={selectedFont}
-                                        selectedSize={selectedSize}
-                                        text={textAPI}
-                                    />}
-                                </div>
-                            </div>
-                        </>
-                    }
-                    <div className="players" >
-                        {users.map((user, index) => (
-                            <div className={user.username == username ? "players-row current-user" : "players-row"} key={index}>
-                                <div className="data">
-                                    <img src="/src/assets/user.png" className="user-avatar" alt="user" />
-                                    <p>{user.username}</p>
-                                </div>
-                                <div className="data">
-                                    <div className="progress-bar">
-                                        <div className="progress-smooth" style={{ width: `${user.completeText}%` }}></div>
-                                        <div className="current-word">
-                                            {user.currentWord ? user.currentWord : null}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="data">
-                                    {user.finished !== undefined && (
-                                        user.finished === 0 ? (
-                                            <img src="/src/assets/fireBlue.png" className="fire" alt="" />
-                                        ) : (
-                                            <span>{(user.finished + 1)}nd</span>
-                                        )
-                                    )}
-                                    <p>WPM:{user.currentSpeed ? user.currentSpeed : 0.0}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
                 <Footer isDarkTheme={isDarkTheme} toggleTheme={toggleTheme} isSoundOn={isSoundOn}
                     toggleSound={toggleSound} />
             </div>

@@ -26,9 +26,11 @@ export default function Result({ wordsPerMinute, accuracy, elapsedTime, mistakes
         }
     }
     const prevPlacesLength = useRef(places.length);
-
     useEffect(() => {
-        if (places.length === prevPlacesLength.current + 1) {
+
+        if (places.find(v => v.username == username)) {
+            console.log("hello")
+            console.log("places: " + JSON.stringify(places) + " username: " + username);
             const topPlaces = places.filter(v => v.position === 0 || v.position === 1 || v.position === 2);
             const first = topPlaces.find(v => v.position === 0) || null;
             const second = topPlaces.find(v => v.position === 1) || null;
@@ -36,14 +38,15 @@ export default function Result({ wordsPerMinute, accuracy, elapsedTime, mistakes
             setFirstPlace(first);
             setSecondPlace(second);
             setThirdPlace(third);
-            const isInTop = (first && first.username === username) ||
-                (second && second.username === username) ||
-                (third && third.username === username);
-            if (isInTop) {
+            // const isInTop = (first && first.username === username) ||
+            //     (second && second.username === username) ||
+            //     (third && third.username === username);
+            if (first?.username == username || second?.username == username || third?.username == username) {
                 playSound(Finish);
-            } else {
-                playSound(Lose);
             }
+            //  else if (first.username != username && second.username != username && third.username != username) {
+            //     playSound(Lose);
+            // }
         }
     }, [places]);
 
@@ -105,27 +108,27 @@ export default function Result({ wordsPerMinute, accuracy, elapsedTime, mistakes
                         <div className="place-container">
                             <div className="place-img">
                                 {/* "second-place" */}
-                                <div className={secondPlace ? "second-place animate" : "second-place"}>
+                                <div className={secondPlace && secondPlace.username == username ? "second-place animate" : "second-place"}>
                                     {secondPlace && (
                                         <>
                                             <img src="/src/assets/user.png" alt="avatar" className="avatar" />
-                                            {/* <span>{secondPlace.username}</span> */}
+                                            <span>{secondPlace.username}</span>
                                         </>
                                     )}
                                 </div>
-                                <div className={firstPlace ? "first-place animate" : "first-place"}>
+                                <div className={firstPlace && firstPlace.username == username ? "first-place animate" : "first-place"}>
                                     {firstPlace && (
                                         <>
                                             <img src="/src/assets/user.png" alt="avatar" className="avatar" />
-                                            {/* <span>{firstPlace.username}</span> */}
+                                            <span>{firstPlace.username}</span>
                                         </>
                                     )}
                                 </div>
-                                <div className={thirdPlace ? "third-place animate" : "third-place"}>
+                                <div className={thirdPlace && thirdPlace.username == username ? "third-place animate" : "third-place"}>
                                     {thirdPlace && (
                                         <>
                                             <img src="/src/assets/user.png" alt="avatar" className="avatar" />
-                                            {/* <span>{thirdPlace.username}</span> */}
+                                            <span>{thirdPlace.username}</span>
                                         </>
                                     )}
                                 </div>

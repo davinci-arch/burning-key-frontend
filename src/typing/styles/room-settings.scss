@@ -1,130 +1,148 @@
 .wrapper-settings {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  background-color: #FFFEEF;
+
+  align-items: center;
+  justify-content: space-between;
+}
+
+.content-settings {
+  display: flex;
+  flex-grow: 1;
+  width: 900px;
+  margin-top: 30px;
+
+  form {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    height: 100vh;
-    background-color: #FFFEEF;
-    
-    align-items: center;
-    justify-content: space-between;
-}
-.content-settings {
+  }
+
+  .form {
     display: flex;
-    flex-grow: 1;
-    width: 1000px;
-    margin-top: 30px;
-    form {
-        width: 100%;
+    justify-content: center;
+
+    .field-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 300px;
+
+      .field {}
+
+      .settings-options {
         display: flex;
         flex-direction: column;
-    }
-    .form{
-        display: flex;
-        justify-content: center;
-        .field-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 300px;
-            .field {
-            }
-            .settings-options {
-                display: flex;
-                flex-direction: column;
-                gap: 20px;
-                .radio-options {
-                    display: flex;
-                    justify-content: space-evenly;
-                    
-                    .radio-option-container {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        gap: 10px;
-                    }
-                }
-                .words-option {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                }
-            }
-        }
-    }
-    .content-settings-navigation {
-        display: flex;
-        justify-content: space-between;
-        .back-to-page {
-            display: flex;
-            flex-direction: column;
+        gap: 20px;
 
-            img {
-                width: 32px;
-                height: 20px;
-            }
-        }
+        .radio-options {
+          display: flex;
+          justify-content: space-evenly;
 
-        button {
-            all: unset;
-            display: inline-block;
-            cursor: pointer;
+          .radio-option-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 111px;
-            height: 26px;
-            background-color: rgba(4, 2, 2, .62);
-            border-radius: 4px;
-            color: white;
-            transition: background-color ease-in-out 200ms;
-
-            &:hover {
-                background-color: black;
-            }
+            gap: 10px;
+          }
         }
+
+        .words-option {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
     }
+  }
+
+  .content-settings-navigation {
+    display: flex;
+    justify-content: space-between;
+
+    a {
+      text-decoration: none;
+      color: black;
+    }
+
+    .back-to-page {
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+
+      user-select: none;
+
+      img {
+        width: 27px;
+        height: 16px;
+      }
+    }
+
+    button {
+      all: unset;
+      display: inline-block;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 111px;
+      height: 26px;
+      background-color: rgba(4, 2, 2, .62);
+      border-radius: 4px;
+      color: white;
+      transition: background-color ease-in-out 200ms;
+
+      &:hover {
+        background-color: black;
+      }
+    }
+  }
 }
 
 .toggle-button {
-    width: 60px;
-    height: 30px;
-    background-color: #ccc;
-    border-radius: 15px;
-    cursor: pointer;
-    position: relative;
-  }
-  
-  .toggle-ball {
-    width: 30px;
-    height: 30px;
-    background-color: #fff;
-    border-radius: 50%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transition: transform 0.3s ease;
-  }
-  
-  .toggle-button.on {
-    background-color: #4caf50;
-  }
-  
-  .toggle-button.off {
-    background-color: #f44336;
-  }
-  
-  .toggle-button.on .toggle-ball {
-    transform: translateX(30px);
-  }
-  
-  .toggle-button.off .toggle-ball {
-    transform: translateX(0);
-  }
+  width: 60px;
+  height: 30px;
+  background-color: #ccc;
+  border-radius: 15px;
+  cursor: pointer;
+  position: relative;
+}
 
-  .error{
-    font-size: 14px;
-    color: red;
-  }
-  .error-hidden {
-    opacity: 0;
-  }
+.toggle-ball {
+  width: 30px;
+  height: 30px;
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.3s ease;
+}
+
+.toggle-button.on {
+  background-color: #4caf50;
+}
+
+.toggle-button.off {
+  background-color: #f44336;
+}
+
+.toggle-button.on .toggle-ball {
+  transform: translateX(30px);
+}
+
+.toggle-button.off .toggle-ball {
+  transform: translateX(0);
+}
+
+.error {
+  font-size: 14px;
+  color: red;
+}
+
+.error-hidden {
+  opacity: 0;
+}

@@ -60,7 +60,7 @@ export default function Rooms({ isDarkTheme, toggleTheme, isSoundOn, toggleSound
                     return {
                         ...room,
                         activeUsers: room.activeUsers ? [...room.activeUsers, { username, isTimerCountDown }] : [{ username, isTimerCountDown }],
-                        timerCountDown: isTimerCountDown 
+                        timerCountDown: isTimerCountDown
                     };
                 }
                 return room;
@@ -94,9 +94,7 @@ export default function Rooms({ isDarkTheme, toggleTheme, isSoundOn, toggleSound
                         <div className="navigation">
                             <Link to='/'>
                                 <div className="toPage">
-                                    <div>
-                                        <img src="/src/assets/back.png" alt="back-img" />
-                                    </div>
+                                    <img src="/src/assets/back.png" alt="back-img" />
                                     <div>Back to main</div>
                                 </div>
                             </Link>
@@ -124,7 +122,7 @@ export default function Rooms({ isDarkTheme, toggleTheme, isSoundOn, toggleSound
                                 :
                                 <div className="empty-rooms-list">
                                     <span>List of rooms is empty</span>
-                                    <img src="/src/assets/sad.png" alt="refresh" className="empty-rooms-img"/>
+                                    <img src="/src/assets/sad.png" alt="refresh" className="empty-rooms-img" />
                                 </div>
                             }
                         </div>

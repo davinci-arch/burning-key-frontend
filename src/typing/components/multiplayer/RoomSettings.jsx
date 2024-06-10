@@ -15,8 +15,8 @@ export default function RoomSettings() {
     const [title, setTitle] = useState("");
     const [timeToStart, setTimeToStart] = useState(5);
     const [isStatistics, setStatistics] = useState(true);
-    const [amountOfPlayers, setAmountOfPlayers] = useState(2);
-    const [numberOfWords, setNumberOfWords] = useState(0);
+    const [amountOfPlayers, setAmountOfPlayers] = useState(10);
+    const [numberOfWords, setNumberOfWords] = useState(10);
     const [difficulties, setDifficultyies] = useState([
         "Easy",
         "Medium",
@@ -97,11 +97,10 @@ export default function RoomSettings() {
                 const message = {
                     type: "CREATE",
                     title: title,
-                    maxAmountOfPlayers: amountOfPlayers,
+                    maxAmountOfPlayers: parseInt(amountOfPlayers),
                     timeToStart: parseInt(timeToStart),
                     text: getText
                 };
-                console.log("mes: " + JSON.stringify(message));
                 createRoom(message);
 
             }
@@ -115,7 +114,7 @@ export default function RoomSettings() {
             const message = {
                 type: "CREATE",
                 title: title,
-                maxAmountOfPlayers: amountOfPlayers,
+                maxAmountOfPlayers: parseInt(amountOfPlayers),
                 timeToStart: parseInt(timeToStart),
                 text: getRandomWords.content
             };
@@ -143,10 +142,13 @@ export default function RoomSettings() {
                 <div className="content-settings">
                     <form action="" onSubmit={handleSubmit(handleSaveRoom)}>
                         <div className="content-settings-navigation">
-                            <div className="back-to-page">
-                                <img src="/src/assets/back.png" alt="back to page" className="toPage" />
-                                <span>Back to rooms</span>
-                            </div>
+                            <Link to="/multiplayer/rooms">
+                                <div className="back-to-page">
+                                    <img src="/src/assets/back.png" alt="back to page" className="toPage" />
+                                    <span>Back to rooms</span>
+                                </div>
+                            </Link>
+
                             <div>
                                 <button>Save settings</button>
                             </div>
