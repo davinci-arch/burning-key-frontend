@@ -1,5 +1,5 @@
 import '../styles/typingresult.scss';
-export default function TypingResult({ speed, prevSpeed, accuracy, prevAccuracy }) {
+export default function TypingResult({ speed, prevSpeed, accuracy, prevAccuracy,isDarkTheme }) {
     const getColorClass = (current, previous) => {
         if (current > previous) {
             return 'positive';
@@ -12,7 +12,7 @@ export default function TypingResult({ speed, prevSpeed, accuracy, prevAccuracy 
     return (
         <div className="empty-middle">
             <div>
-                <span className="span-name">
+                <span className={`span-name ${isDarkTheme ? 'dark' : ''}`}>
                     Speed:
                 </span>
                 <span className="speed-value">{speed.toFixed(1)}wpm</span> (
@@ -21,7 +21,7 @@ export default function TypingResult({ speed, prevSpeed, accuracy, prevAccuracy 
                 </span>)
             </div>
             <div>
-                <span className="span-name">
+                <span className={`span-name ${isDarkTheme ? 'dark' : ''}`}>
                     Accuracy:
                 </span>
                 <span className="accuracy-value">{accuracy.toFixed(1)}%</span> (

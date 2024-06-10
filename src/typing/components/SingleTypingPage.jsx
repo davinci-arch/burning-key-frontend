@@ -156,7 +156,8 @@ export default function SingleTypingPage({ isDarkTheme, toggleTheme, isSoundOn, 
                                 speed={speed}
                                 prevSpeed={prevSpeed}
                                 accuracy={accuracy}
-                                prevAccuracy={prevAccuracy} />
+                                prevAccuracy={prevAccuracy}
+                                isDarkTheme={isDarkTheme}/>
                             <div className={`time-options ${activeTab === "test" ? 'expanded' : ''}`}>
                                 <p onClick={() => changeTime(15)}
                                     className={choosenTime === 15 ? 'active' : ''}>15</p>
