@@ -4,15 +4,21 @@
     width: 100%;
     height: 100vh;
     background-color: #FFFEEF;
-    
     align-items: center;
     justify-content: space-between;
+    font-family: "Roboto Slab";
+  &.dark{
+    background-color: #2f3338;
+    color: #d6d2bc;
+  }
 }
 .content-settings {
     display: flex;
     flex-grow: 1;
     width: 1000px;
     margin-top: 30px;
+
+
     form {
         width: 100%;
         display: flex;
@@ -128,3 +134,50 @@
   .error-hidden {
     opacity: 0;
   }
+
+
+
+
+
+.dark.content-settings{
+
+  form {
+  }
+  .form{
+    .field-container {
+      .field {
+
+        .textfield_room{
+
+        }
+      }
+      .settings-options {
+        color: #d6d2bc;
+
+        .radio-options {
+          .radio-option-container {
+          }
+        }
+        .words-option {
+        }
+      }
+    }
+  }
+  .content-settings-navigation {
+    .back-to-page {
+      color: #d6d2bc;
+      img {
+        filter: invert(95%) sepia(10%) saturate(400%) hue-rotate(7deg) brightness(90%) contrast(88%);
+
+      }
+    }
+
+    button {
+      color: #d6d2bc;
+      background-color: #56554f;
+      &:hover {
+        background-color: #736f61;
+      }
+    }
+  }
+}

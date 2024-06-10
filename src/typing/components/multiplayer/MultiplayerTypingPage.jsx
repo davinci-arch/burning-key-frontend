@@ -200,7 +200,7 @@ export default function MultiplayerTypingPage({
 
     return (
         <>
-            <div className="multiplayer-wrapper">
+            <div className={`multiplayer-wrapper ${isDarkTheme ? 'dark' : ''}`}>
 
                 {timerToStart > 0 ?
                     <div className="start-race-timer-container">
@@ -230,6 +230,7 @@ export default function MultiplayerTypingPage({
                         isSoundOn={isSoundOn}
                         textWords={textWords}
                         wrongWordsIndexes={wrongWordsIndexes}
+                        isDarkTheme={isDarkTheme}
                     /> :
                         <>
                             <div className="toolbar-container">

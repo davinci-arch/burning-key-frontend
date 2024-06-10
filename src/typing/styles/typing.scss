@@ -162,8 +162,11 @@
     }
 }
 
-.description.dark
+.description.dark{
+    color: #d6d2bc;
+}
 .img-container.dark{
+    color: #d6d2bc;
     filter: invert(95%) sepia(10%) saturate(400%) hue-rotate(7deg) brightness(90%) contrast(88%);
 }
 

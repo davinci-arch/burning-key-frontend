@@ -131,10 +131,10 @@ export default function MultiplayerTyping({
                 selectedSize={selectedSize}
             >
                 {!isFocused ?
-                    <div className="description"
-                        onClick={handleFocuse}
+                    <div className={`description ${isDarkTheme ? 'dark' : ''}`}
+                         onClick={handleFocuse}
                     >
-                        <span className="img-container">
+                        <span className={`img-container ${isDarkTheme ? 'dark' : ''}`}>
                             <img src="/src/assets/cursor.png" alt="cursor" className="cursor-pointer" />
                         </span>
                         <span className="hint">Click to focus on field</span>
