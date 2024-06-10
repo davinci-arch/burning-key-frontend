@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Finish from "/src/assets/finish.mp3"
 import Lose from "/src/assets/lose.mp3"
-export default function Result({ wordsPerMinute, accuracy, elapsedTime, mistakes, places, username, isSoundOn, textWords, wrongWordsIndexes }) {
+export default function Result({ wordsPerMinute, accuracy, elapsedTime, mistakes, places, username, isSoundOn, textWords, wrongWordsIndexes,isDarkTheme }) {
 
     function convertToMinutesSeconds(seconds) {
         if (seconds > 0) {
@@ -70,8 +70,8 @@ export default function Result({ wordsPerMinute, accuracy, elapsedTime, mistakes
     };
 
     return (
-        <div className="result-wrapper">
-            <div className="result-container">
+        <div className={`result-wrapper ${isDarkTheme ? 'dark' : ''}`}>
+            <div className={`result-container ${isDarkTheme ? 'dark' : ''}`}>
                 <div className="result-title">
                     <h1>Result</h1>
                 </div>

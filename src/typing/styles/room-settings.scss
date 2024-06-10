@@ -7,12 +7,18 @@
 
   align-items: center;
   justify-content: space-between;
+  font-family: "Roboto Slab";
+
+  &.dark {
+    background-color: #2f3338;
+    color: #d6d2bc;
+  }
 }
 
 .content-settings {
   display: flex;
   flex-grow: 1;
-  width: 900px;
+  width: 1000px;
   margin-top: 30px;
 
   form {
@@ -63,17 +69,9 @@
     display: flex;
     justify-content: space-between;
 
-    a {
-      text-decoration: none;
-      color: black;
-    }
-
     .back-to-page {
       display: flex;
       flex-direction: column;
-      cursor: pointer;
-
-      user-select: none;
 
       img {
         width: 27px;

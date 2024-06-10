@@ -8,7 +8,7 @@ import { TextField, Autocomplete, Box, Slider } from "@mui/material";
 import { getWordSets, generateRandomWords } from "../../api/WordsAPI.jsx";
 import { getRandomText } from "../../api/TextAPI.jsx";
 
-export default function RoomSettings() {
+export default function RoomSettings({ isDarkTheme, toggleTheme, isSoundOn, toggleSound }) {
 
 
     const socket = useRef();
@@ -137,18 +137,17 @@ export default function RoomSettings() {
     };
     return (
         <>
-            <div className="wrapper-settings">
-                <Header />
-                <div className="content-settings">
+            <div className={`wrapper-settings ${isDarkTheme ? 'dark' : ''}`}>
+                <Header isDarkTheme={isDarkTheme} />
+                <div className={`content-settings ${isDarkTheme ? 'dark' : ''}`}>
                     <form action="" onSubmit={handleSubmit(handleSaveRoom)}>
                         <div className="content-settings-navigation">
-                            <Link to="/multiplayer/rooms">
-                                <div className="back-to-page">
-                                    <img src="/src/assets/back.png" alt="back to page" className="toPage" />
-                                    <span>Back to rooms</span>
-                                </div>
+                            <Link to='/multiplayer/rooms' style={{textDecoration:"none"}}>
+                            <div className="back-to-page">
+                                <img src="/src/assets/back.png" alt="back to page" className="toPage" />
+                                <span>Back to rooms</span>
+                            </div>
                             </Link>
-
                             <div>
                                 <button>Save settings</button>
                             </div>
@@ -173,6 +172,27 @@ export default function RoomSettings() {
                                                 error={!!errors?.title}
                                                 sx={{
                                                     width: '300px',
+                                                    // Умовна логіка для зміни кольору в залежності від теми
+                                                    '& .MuiOutlinedInput-root': {
+                                                        '& fieldset': {
+                                                            borderColor: isDarkTheme ? '#778183' : '',
+                                                        },
+                                                        '&:hover fieldset': {
+                                                            borderColor: isDarkTheme ? '#d6d2bc' : '',
+                                                        },
+                                                        '&.Mui-focused fieldset': {
+                                                            borderColor: isDarkTheme ? '#d6d2bc' : '',
+                                                        },
+                                                        '& input': {
+                                                            color: isDarkTheme ? '#d6d2bc' : '',
+                                                        },
+                                                    },
+                                                    '& .MuiInputLabel-root': {
+                                                        color: isDarkTheme ? '#d6d2bc' : '',
+                                                    },
+                                                    '& .MuiInputLabel-root.Mui-focused': {
+                                                        color: isDarkTheme ? '#d6d2bc' : '',
+                                                    },
                                                 }}
                                                 InputProps={{
                                                     sx: {
@@ -209,6 +229,7 @@ export default function RoomSettings() {
                                         }}
                                         render={({ field }) => (
                                             <TextField
+                                                className='textfield_room'
                                                 {...field}
                                                 id="outlined-basic"
                                                 label="Max amount of players"
@@ -216,6 +237,26 @@ export default function RoomSettings() {
                                                 error={!!errors?.amountOfPlayers}
                                                 sx={{
                                                     width: '300px',
+                                                    '& .MuiOutlinedInput-root': {
+                                                        '& fieldset': {
+                                                            borderColor: isDarkTheme ? '#778183' : '',
+                                                        },
+                                                        '&:hover fieldset': {
+                                                            borderColor: isDarkTheme ? '#d6d2bc' : '',
+                                                        },
+                                                        '&.Mui-focused fieldset': {
+                                                            borderColor: isDarkTheme ? '#d6d2bc' : '',
+                                                        },
+                                                        '& input': {
+                                                            color: isDarkTheme ? '#d6d2bc' : '',
+                                                        },
+                                                    },
+                                                    '& .MuiInputLabel-root': {
+                                                        color: isDarkTheme ? '#d6d2bc' : '',
+                                                    },
+                                                    '& .MuiInputLabel-root.Mui-focused': {
+                                                        color: isDarkTheme ? '#d6d2bc' : '',
+                                                    },
                                                 }}
                                                 InputProps={{
                                                     sx: {
@@ -260,6 +301,27 @@ export default function RoomSettings() {
                                                 error={!!errors?.maxAmountOfPlayers}
                                                 sx={{
                                                     width: '300px',
+                                                    // Умовна логіка для зміни кольору в залежності від теми
+                                                    '& .MuiOutlinedInput-root': {
+                                                        '& fieldset': {
+                                                            borderColor: isDarkTheme ? '#778183' : '',
+                                                        },
+                                                        '&:hover fieldset': {
+                                                            borderColor: isDarkTheme ? '#d6d2bc' : '',
+                                                        },
+                                                        '&.Mui-focused fieldset': {
+                                                            borderColor: isDarkTheme ? '#d6d2bc' : '',
+                                                        },
+                                                        '& input': {
+                                                            color: isDarkTheme ? '#d6d2bc' : '',
+                                                        },
+                                                    },
+                                                    '& .MuiInputLabel-root': {
+                                                        color: isDarkTheme ? '#d6d2bc' : '',
+                                                    },
+                                                    '& .MuiInputLabel-root.Mui-focused': {
+                                                        color: isDarkTheme ? '#d6d2bc' : '',
+                                                    },
                                                 }}
                                                 InputProps={{
                                                     sx: {
@@ -325,8 +387,31 @@ export default function RoomSettings() {
                                                         label="Choose a difficulties"
                                                         inputProps={{
                                                             ...params.inputProps,
-                                                            autoComplete: 'Easy', // disable autocomplete and autofill
+                                                            autoComplete: 'Easy',
                                                         }}
+                                                        sx={{
+                                                            '& .MuiOutlinedInput-root': {
+                                                                '& fieldset': {
+                                                                    borderColor: isDarkTheme ? '#778183' : '',
+                                                                },
+                                                                '&:hover fieldset': {
+                                                                    borderColor: isDarkTheme ? '#d6d2bc' : '',
+                                                                },
+                                                                '&.Mui-focused fieldset': {
+                                                                    borderColor: isDarkTheme ? '#d6d2bc' : '',
+                                                                },
+                                                                '& input': {
+                                                                    color: isDarkTheme ? '#d6d2bc' : '',
+                                                                },
+                                                            },
+                                                            '& .MuiInputLabel-root': {
+                                                                color: isDarkTheme ? '#d6d2bc' : '',
+                                                            },
+                                                            '& .MuiInputLabel-root.Mui-focused': {
+                                                                color: isDarkTheme ? '#d6d2bc' : '',
+                                                            },
+                                                        }}
+
                                                     />
                                                 )}
                                             />
@@ -346,8 +431,29 @@ export default function RoomSettings() {
                                                         label="Choose a word set"
                                                         inputProps={{
                                                             ...params.inputProps,
-                                                            autoComplete: 'Easy', // disable autocomplete and autofill
-
+                                                            autoComplete: 'Easy',
+                                                        }}
+                                                        sx={{
+                                                            '& .MuiOutlinedInput-root': {
+                                                                '& fieldset': {
+                                                                    borderColor: isDarkTheme ? '#778183' : '',
+                                                                },
+                                                                '&:hover fieldset': {
+                                                                    borderColor: isDarkTheme ? '#d6d2bc' : '',
+                                                                },
+                                                                '&.Mui-focused fieldset': {
+                                                                    borderColor: isDarkTheme ? '#d6d2bc' : '',
+                                                                },
+                                                                '& input': {
+                                                                    color: isDarkTheme ? '#d6d2bc' : '',
+                                                                },
+                                                            },
+                                                            '& .MuiInputLabel-root': {
+                                                                color: isDarkTheme ? '#d6d2bc' : '',
+                                                            },
+                                                            '& .MuiInputLabel-root.Mui-focused': {
+                                                                color: isDarkTheme ? '#d6d2bc' : '',
+                                                            },
                                                         }}
                                                     />
                                                 )}
@@ -361,21 +467,56 @@ export default function RoomSettings() {
                                                 sx={{
                                                     width: '300px',
                                                 }}
-                                                InputProps={{
-                                                    sx: {
-                                                        height: '50px',
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root': {
+                                                        '& fieldset': {
+                                                            borderColor: isDarkTheme ? '#778183' : '',
+                                                        },
+                                                        '&:hover fieldset': {
+                                                            borderColor: isDarkTheme ? '#d6d2bc' : '',
+                                                        },
+                                                        '&.Mui-focused fieldset': {
+                                                            borderColor: isDarkTheme ? '#d6d2bc' : '',
+                                                        },
+                                                        '& input': {
+                                                            color: isDarkTheme ? '#d6d2bc' : '',
+                                                        },
+                                                    },
+                                                    '& .MuiInputLabel-root': {
+                                                        color: isDarkTheme ? '#d6d2bc' : '',
+                                                    },
+                                                    '& .MuiInputLabel-root.Mui-focused': {
+                                                        color: isDarkTheme ? '#d6d2bc' : '',
                                                     },
                                                 }}
                                             />
                                             <div>Number of Signs Percent: {signPercent}%</div>
-                                            <Box sx={{ width: 300 }}>
+                                            <Box sx={{ width: 300, color: '#3a3c3d',
+                                                '& .MuiSlider-thumb': {
+                                                    backgroundColor: '#85898a',
+                                                },
+                                                '& .MuiSlider-rail': {
+                                                    backgroundColor: '#666e70',
+                                                },
+                                                '& .MuiSlider-track': {
+                                                    backgroundColor: '#677070',
+                                                }, }}>
                                                 <Slider defaultValue={0}
                                                     aria-label="Default"
                                                     valueLabelDisplay="off"
                                                     onChange={handleSignPercentSlider} />
                                             </Box>
                                             <div>Number of Upper Case Percent: {upperCasePercent}%</div>
-                                            <Box sx={{ width: 300 }}>
+                                            <Box sx={{ width: 300, color: '#3a3c3d',
+                                                '& .MuiSlider-thumb': {
+                                                    backgroundColor: '#85898a',
+                                                },
+                                                '& .MuiSlider-rail': {
+                                                    backgroundColor: '#666e70',
+                                                },
+                                                '& .MuiSlider-track': {
+                                                    backgroundColor: '#677070',
+                                                }, }}>
                                                 <Slider defaultValue={0}
                                                     aria-label="Default"
                                                     valueLabelDisplay="off"
@@ -390,7 +531,8 @@ export default function RoomSettings() {
                         </div>
                     </form>
                 </div>
-                <Footer />
+                <Footer isDarkTheme={isDarkTheme} toggleTheme={toggleTheme} isSoundOn={isSoundOn}
+                        toggleSound={toggleSound} />
             </div>
 
         </>

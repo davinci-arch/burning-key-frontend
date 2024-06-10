@@ -1,4 +1,5 @@
 .multiplayer-wrapper {
+    font-family: "Roboto Slab";
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -130,6 +131,7 @@
 }
 
 .result-wrapper {
+    margin-top: 50px;
     display: flex;
     justify-content: center;
 }
@@ -147,6 +149,7 @@
         position: absolute;
         top: 0;
         left: 0;
+        color: #000000;
 
         img {
             width: 32px;
@@ -163,6 +166,7 @@
             flex-direction: column;
             align-items: center;
             gap: 5px;
+            margin-right: 30px;
 
             .statistics-data {
                 display: flex;
@@ -241,12 +245,14 @@
                                 animation: animationText 2s both;
                             }
                         }
+
                         span {
                             position: absolute;
                             bottom: 0;
                             font-size: 12px;
                             color: black
                         }
+
                         img {
                             margin-top: 8px;
                         }
@@ -265,17 +271,20 @@
                         height: 100%;
                         width: 100%;
                         position: relative;
+
                         &:hover {
                             span {
                                 animation: animationText 2s both;
                             }
                         }
+
                         span {
                             position: absolute;
                             bottom: 0;
                             font-size: 12px;
                             color: black
                         }
+
                         span {
                             position: absolute;
                         }
@@ -299,9 +308,10 @@
     }
 }
 
-.redirect-message{
+.redirect-message {
     font-size: 20px;
 }
+
 .animate::before {
     content: '';
     position: absolute;
@@ -347,6 +357,20 @@
     }
 }
 
+.multiplayer-wrapper.dark {
+    background-color: #2f3338;
+    color: #d6d2bc;
+
+    .start-race-timer-container {
+        background-color: rgba(72, 70, 70, 0.8);
+    }
+
+    .start-race-timer {
+        border: 1px solid black;
+        background-color: rgba(198, 198, 208, 0.7);
+        color: #b6b29f;
+    }
+}
 
 .toolbar.dark {
     background-color: #3a3c3d;
@@ -361,5 +385,36 @@
 
     .separator {
         border: 1px solid #d6d2bc;
+    }
+}
+
+.result-container.dark {
+    color: #d6d2bc;
+
+    .back {
+        color: #d6d2bc;
+
+        img {
+            filter: invert(95%) sepia(10%) saturate(400%) hue-rotate(7deg) brightness(90%) contrast(88%);
+        }
+    }
+
+    .content {
+        .statistics {
+            .statistics-data {
+                background-color: #696565;
+                color: white;
+            }
+        }
+
+        .statistics-race-result {
+            .text-result {
+                background-color: #5d5353;
+
+                .incorrect-word {
+                    color: red;
+                }
+            }
+        }
     }
 }

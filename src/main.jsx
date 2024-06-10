@@ -100,7 +100,12 @@ function App() {
                     selectedSize={selectedSize}
                     handleSizeClick={handleSizeClick}
                 />} />
-                <Route path="/multiplayer/rooms/room-settings" element={<RoomSettings />} />
+                <Route path="/multiplayer/rooms/room-settings" element={<RoomSettings
+                    isDarkTheme={isDarkTheme}
+                    toggleTheme={toggleTheme}
+                    isSoundOn={isSoundOn}
+                    toggleSound={toggleSound}
+                />} />
             </Routes>
         </Router>
     );
