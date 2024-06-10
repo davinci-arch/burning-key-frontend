@@ -45,6 +45,22 @@ const Typing = forwardRef((props, ref) => {
         }
     }));
 
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (inputRef.current === document.activeElement) {
+                if (event.ctrlKey || event.metaKey) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+            }
+        }
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+
+        }
+    }, [])
     const resetAllData = () => {
         props.setIsReseted(!props.isReseted);
         setWords(props.textAPI || []);
