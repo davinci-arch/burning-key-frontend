@@ -94,6 +94,14 @@ const Typing = forwardRef((props, ref) => {
         return ukrToEngMap[char.toLowerCase()] || char;
     };
 
+    const removeElementByIndex = (arr, index) => {
+        return arr.filter((_, i) => i !== index);
+        // if (index >= 0 && index < arr.length) {
+        //     return [...arr.slice(0, index), ...arr.slice(index + 1)]
+
+        // }
+        // return arr;
+    }
     const handleInput = (event) => {
         const value = event.target.value;
         const lastChar = value[value.length - 1];
@@ -108,9 +116,9 @@ const Typing = forwardRef((props, ref) => {
             }
         }
 
-        if (lastChar === ' ' && counterExtraLetter > 0 && inputText.length < value.length) {
-            return;
-        }
+        // if (lastChar === ' ' && counterExtraLetter > 0 && inputText.length < value.length) {
+        //     return;
+        // }
         if (wordIndex == lines[lines.length == 1 ? 0 : 1].endIndex && (words[wordIndex].length - 1) == letterIndex && lastChar == ' ' && lines.length > 3) {
             setInputText(value);
             removeLineByIndex(0);
@@ -118,6 +126,9 @@ const Typing = forwardRef((props, ref) => {
             return;
         }
         if (inputText.length < value.length && extraLetter.length >= amountOfExtraLetters) {
+            return;
+        }
+        if (inputText.length < value.length && extraLetter.length > 0 && words[wordIndex][letterIndex] == lastChar) {
             return;
         }
 
@@ -130,10 +141,14 @@ const Typing = forwardRef((props, ref) => {
                 setCountTypingKeys(countTypingKeys + 1);
                 playSound(PressSound);
             }
-        } else if (words[wordIndex][letterIndex] != lastChar) {
+        } else if (words[wordIndex][letterIndex] != lastChar && inputText.length < value.length) {
             if (!wrongWordsIndexes.includes(wordIndex)) {
                 setWrongWords(prev => [...prev, wordIndex]);
             }
+            setExtraLetter(prevExtraLetter => [...prevExtraLetter, letterIndex]);
+            setCounterExtraLetter(counterExtraLetter + 1);
+            setCountTypingKeys(countTypingKeys + 1);
+            words[wordIndex] = words[wordIndex].slice(0, letterIndex) + lastChar + words[wordIndex].slice(letterIndex);
             if (inputText.length < value.length) {
                 playSound(ErrorSound);
 
@@ -146,22 +161,12 @@ const Typing = forwardRef((props, ref) => {
                 }
             }
         }
-        if (words[wordIndex].length - 1 == letterIndex &&
-            lastChar != ' ' &&
-            inputText.length < value.length &&
-            (wordIndex - 1) != lines[lines.length - 1].endIndex - 2) {
-
-            setExtraLetter(prevExtraLetter => [...prevExtraLetter, letterIndex]);
-            setCounterExtraLetter(counterExtraLetter + 1);
-            setCountTypingKeys(countTypingKeys + 1);
-            words[wordIndex] = words[wordIndex].slice(0, letterIndex) + lastChar + words[wordIndex].slice(letterIndex);
-        }
 
         if (inputText.length > value.length) {
             playSound(EraseSound);
-            if (extraLetter.length > 0) {
-                const updateLetters = words[wordIndex].split('');
-                updateLetters[extraLetter[counterExtraLetter - 1]] = '';
+            if (extraLetter.length != 0) {
+                let updateLetters = words[wordIndex].split('');
+                updateLetters = removeElementByIndex(updateLetters, extraLetter[counterExtraLetter - 1])
                 words[wordIndex] = updateLetters.join('');
                 setCounterExtraLetter(counterExtraLetter - 1);
                 setExtraLetter(extraLetter.slice(0, -1));
