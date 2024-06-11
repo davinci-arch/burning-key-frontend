@@ -2,9 +2,15 @@
 import React, {useState} from 'react';
 import "../styles/leaderboard.scss";
 
-const LeaderboardModal = ({ data, isDarkTheme }) => {
+const LeaderboardModal = ({ isDarkTheme }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const data = Array.from({ length: 50 }, (_, index) => ({
+        username: `User${index + 1}`,
+        speed: Math.floor(Math.random() * (100 - 60 + 1)) + 60,
+        accuracy: Math.floor(Math.random() * (100 - 90 + 1)) + 90
+    }));
 
     const openModal = () => {
         setIsModalVisible(true);

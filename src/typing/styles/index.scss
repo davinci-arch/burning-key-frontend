@@ -31,11 +31,26 @@
 .nav-link {
     color: #000;
     text-decoration: none !important;
-
     &:hover {
         text-decoration: underline;
     }
+    .avatar-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+    }
+
+    .user-avatar {
+        color: #000;
+        text-decoration: none !important;
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+    }
 }
+
 
 .main-footer {
     width: 100%;
@@ -109,4 +124,7 @@
     img {
         filter: invert(95%) sepia(10%) saturate(400%) hue-rotate(7deg) brightness(90%) contrast(88%);
     }
+}
+.user-avatar.dark {
+    color: #d6d2bc;
 }
