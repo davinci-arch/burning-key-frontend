@@ -19,4 +19,18 @@ export const getLoginLink = async (email) => {
     }
 };
 
+export const logoutUser = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const headers = {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': "text/plain",
+            crossDomain:true,
+        };
+        const response = await apiClient.get("/logout",{headers});
+    } catch (error) {
+        console.error('Error logout user:', error.response ? error.response.data : error.message);
+        throw error;
+    }
+};
 

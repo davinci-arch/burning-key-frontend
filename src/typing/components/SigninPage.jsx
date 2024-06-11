@@ -1,8 +1,9 @@
 import "../styles/signinpage.scss";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import { getLoginLink } from "../api/AuthAPI.jsx";  // Adjust the import path as needed
+import { getLoginLink } from "../api/AuthAPI.jsx";
+import {fetchLeaderboard} from "../api/StatisticAPI.jsx";  // Adjust the import path as needed
 
 export default function SigninPage({ isDarkTheme, toggleTheme, isSoundOn, toggleSound }) {
     const [email, setEmail] = useState("");
@@ -10,6 +11,10 @@ export default function SigninPage({ isDarkTheme, toggleTheme, isSoundOn, toggle
     const [error, setError] = useState(null);
     const [message, setMessage] = useState("");
 
+    useEffect(() => {
+       if(localStorage.getItem('token'))
+           window.location.replace('/');
+    }, []);
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);

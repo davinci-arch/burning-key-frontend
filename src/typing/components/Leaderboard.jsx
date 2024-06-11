@@ -1,16 +1,27 @@
-// Leaderboard.js
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import "../styles/leaderboard.scss";
+import { fetchLeaderboard } from "../api/StatisticAPI.jsx";
 
 const LeaderboardModal = ({ isDarkTheme }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [data, setData] = useState([]);
 
-    const data = Array.from({ length: 50 }, (_, index) => ({
-        username: `User${index + 1}`,
-        speed: Math.floor(Math.random() * (100 - 60 + 1)) + 60,
-        accuracy: Math.floor(Math.random() * (100 - 90 + 1)) + 90
-    }));
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const userData = await fetchLeaderboard();
+                if (Array.isArray(userData)) {
+                    setData(userData);
+                } else {
+                    console.error('Fetched data is not an array:', userData);
+                }
+            } catch (error) {
+                console.error('Failed to fetch leaderboard data:', error);
+            }
+        };
+        fetchUserData();
+    }, []);
 
     const openModal = () => {
         setIsModalVisible(true);
@@ -31,14 +42,13 @@ const LeaderboardModal = ({ isDarkTheme }) => {
     return (
         <div>
             <div className={`leaderboard-container ${isDarkTheme ? 'dark' : ''}`} onClick={openModal}>
-                <img src="/src/assets/leaderboard.png" title="leaderboard" className="leaderboard-img" onClick={openModal}/>
+                <img src="/src/assets/leaderboard.png" title="leaderboard" className="leaderboard-img" onClick={openModal} />
             </div>
             {isModalVisible && (
-                <div className={`modal ${isModalOpen ? 'open' : ''} ${isDarkTheme ? 'dark' : ''}`}
-                     onClick={handleBackgroundClick}>
+                <div className={`modal ${isModalOpen ? 'open' : ''} ${isDarkTheme ? 'dark' : ''}`} onClick={handleBackgroundClick}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <h2 className="title">Leaderboard</h2>
-                        <div className="table-container ">
+                        <div className="table-container">
                             <table className="custom-table">
                                 <thead>
                                 <tr>
@@ -50,9 +60,9 @@ const LeaderboardModal = ({ isDarkTheme }) => {
                                 <tbody>
                                 {data.map((user, index) => (
                                     <tr key={index}>
-                                        <td>{user.username}</td>
-                                        <td>{user.speed + ' wpm'}</td>
-                                        <td>{user.accuracy + ' %'}</td>
+                                        <td>{user.nickname}</td>
+                                        <td>{user.averageSpeedWpm.toFixed(1) + ' wpm'}</td>
+                                        <td>{user.averageAccuracy.toFixed(1) + ' %'}</td>
                                     </tr>
                                 ))}
                                 </tbody>

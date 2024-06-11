@@ -1,0 +1,184 @@
+// accountpage.scss
+
+.account {
+  background-color: #FFFEEF;
+  color: #333;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.account-avatar-image {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid black;
+  margin-right: 20px;
+  transition: opacity 0.3s ease;
+}
+
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.account-avatar-image-editable {
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+
+  .edit-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform: translate(-140%, -100%);
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    opacity: 1;
+  }
+
+  .account-avatar-image {
+    opacity: 0.7;
+  }
+
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
+.modal-grid {
+  display: flex;
+  gap: 20px;
+}
+
+.custom-input-user {
+  font-size: 1rem;
+  padding: 10px;
+  width: 340px;
+  text-align: left;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-left: 10px;
+}
+
+.custom-button-user {
+  background-color: #d7d1ac;
+  color: black;
+  font-family: "Roboto Slab";
+  font-size: 1rem;
+  padding: 10px 20px;
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-top: 20px;
+}
+
+.custom-button-user:hover {
+  background-color: #aba58e;
+}
+
+.account-container {
+  font-family: "Roboto Slab";
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+
+.user-details {
+  font-size: 22px;
+  text-align: Left;
+  margin-bottom: 20px;
+  background-color: #dad8ce;
+  padding: 30px;
+  width: 40%;
+  max-height: 19%;
+  min-width: 630px;
+}
+
+.user-details-full {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+
+.user-statistic {
+  text-align: center;
+  margin-bottom: 20px;
+  background-color: #dad8ce;
+  padding: 30px;
+  width: 40%;
+  height: 20%;
+  min-width: 630px;
+}
+.user-logout {
+  text-align: center;
+  margin-bottom: 20px;
+  background-color: #dad8ce;
+  padding: 30px;
+  width: 40%;
+  height: 13%;
+  min-width: 630px;
+}
+
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .account-container {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings {
+    width: 100%;
+    padding: 10px;
+  }
+}
+
+.dark.account {
+  background-color: #2f3338;
+  color: #d6d2bc;
+
+  .user-details{
+    background-color: #494c4d;
+
+    .account-avatar-image {
+      border: 4px solid #d6d2bc;
+
+    }
+  }
+
+  .user-statistic{
+    background-color: #494c4d;
+  }
+  .user-logout{
+    background-color: #494c4d;
+  }
+  .custom-input-user {
+    color: #d6d2bc;
+    background-color: #787c7c;
+  }
+
+  .custom-button-user{
+    color: #d6d2bc;
+    background-color: #56554f;
+  }
+  .custom-button-user:hover {
+    background-color: #736f61;
+  }
+
+}

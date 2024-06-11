@@ -34,3 +34,18 @@ export const fetchStatisticData = async () => {
     */
 
 };
+export const fetchLeaderboard = async () => {
+    try {
+        const apiClient = axios.create({
+            baseURL: API_BASE_URL,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const response = await apiClient.get(`/leaderboard`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    }
+}
