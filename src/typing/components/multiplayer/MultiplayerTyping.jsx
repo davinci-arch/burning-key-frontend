@@ -40,13 +40,13 @@ export default function MultiplayerTyping({
                 type: "END_RACE",
                 uid: uuid
             }
-            const speed = (endTime - startTime) / 1000;
             const timeWaste = (endTime - startTime) / 1000;
+            const speed = (correctKeys / 5) / (timeWaste / 60);
             const accuracy = (correctKeys / countKeys) * 100
             sendMessage(message);
             setDurationOfMatch(Math.ceil(timeWaste));
             setMistakes(countKeys - correctKeys);
-            setNewSpeed((correctKeys / 5) / (speed / 60));
+            setNewSpeed(speed);
             setNewAccuracy(accuracy);
             setResult(true);
             setTextWords(words);
