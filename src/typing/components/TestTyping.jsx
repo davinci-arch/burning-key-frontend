@@ -1,6 +1,9 @@
 
 import Typing from "./Typing";
 import { useState, useEffect, useRef } from "react";
+import { saveStatistics } from "../api/StatisticAPI";
+import CryptoJS from "crypto-js";
+
 export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, choosenTime, isDarkTheme, selectedFont, selectedSize,
     textAPI, setIsReseted, isReseted, setSavedSettings, setSelectedOption, setTextSavedSettings }) {
 
@@ -45,6 +48,7 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
         } else if (!isRunning && elapsedTime !== 0) {
             clearInterval(timer);
             finishTest();
+            
             document.getElementsByClassName("time-options")[0].removeEventListener('click', handleClick.current, true);
         }
 
@@ -53,6 +57,7 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
         };
     }, [isRunning]);
 
+    
 
     useEffect(() => {
         setTimerDuration(choosenTime);
@@ -60,16 +65,28 @@ export default function TestTyping({ typoRef, isSoundOn, setNewSpeed, newAccurac
 
     useEffect(() => {
         if (!isRunning && startTime != 0) {
-            setNewSpeed((correctKeys / 5) / (((new Date().getTime() - startTime) / 1000) / 60));
-            newAccuracy((correctKeys / countKeys) * 100);
+            const timeWaste = (new Date().getTime() - startTime) / 1000;
+            const newSpeed = (correctKeys / 5) / (timeWaste / 60);
+            setNewSpeed(newSpeed);
+            const accuracy = (correctKeys / countKeys) * 100;
+            newAccuracy(accuracy);
             setStartTime(0);
             setCorrectKeys(0);
             setCountKeys(0);
             setResult(true);
             setTimerDuration(choosenTime);
+            statistics(newSpeed, accuracy, timeWaste);
         }
     }, [elapsedTime]);
 
+    const statistics = (speed, accuracy, timeWaste) => {
+        const encryptedUserData = localStorage.getItem('userData');
+        if (encryptedUserData) {
+            const bytes = CryptoJS.AES.decrypt(encryptedUserData, 'secret_key');
+            const userId = JSON.parse(bytes.toString(CryptoJS.enc.Utf8)).userId;
+            const response = saveStatistics(userId, speed, accuracy, Math.ceil(timeWaste));
+        }
+    }
     const finishTest = () => {
         if (typoRef.current) {
             setTimeout(() => {

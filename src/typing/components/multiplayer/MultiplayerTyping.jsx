@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import Typing from "../Typing";
 import CountDown from "/src/assets/startRace.mp3"
+import { saveStatistics } from "../../api/StatisticAPI";
+import CryptoJS from "crypto-js";
 export default function MultiplayerTyping({
     typoRef, isSoundOn, setNewSpeed, setNewAccuracy, setResult,
     sendMessage, uuid, setWords, timerToStart, amountOfPlayers,
@@ -16,7 +18,6 @@ export default function MultiplayerTyping({
     const [startTime, setStartTime] = useState(0);
     const [endTime, setEndTime] = useState(0);
     let regex = /.*?\s|.*?$/g;
-    // const [textAPI, setTextAPI] = useState("By the aid of this, every little warp thread or cluster of threads can be lifted by its");
     const [words, setSplitWords] = useState();
 
     const [timerIsEnd, setTimer] = useState(false);
@@ -39,18 +40,30 @@ export default function MultiplayerTyping({
                 type: "END_RACE",
                 uid: uuid
             }
+            const speed = (endTime - startTime) / 1000;
+            const timeWaste = (endTime - startTime) / 1000;
+            const accuracy = (correctKeys / countKeys) * 100
             sendMessage(message);
-            setDurationOfMatch(Math.ceil((endTime - startTime) / 1000));
+            setDurationOfMatch(Math.ceil(duration));
             setMistakes(countKeys - correctKeys);
-            setNewSpeed((correctKeys / 5) / (((endTime - startTime) / 1000) / 60));
-            setNewAccuracy((correctKeys / countKeys) * 100);
+            setNewSpeed((correctKeys / 5) / (speed / 60));
+            setNewAccuracy(accuracy);
             setResult(true);
             setTextWords(words);
             setWrongWords(typoRef.current.getWrongWordsIndexes());
+            statistics(speed, accuracy, timeWaste);
         }
         return () => clearInterval(timer);
     }, [isRunning]);
 
+    const statistics = (speed, accuracy, timeWaste) => {
+        const encryptedUserData = localStorage.getItem('userData');
+        if (encryptedUserData) {
+            const bytes = CryptoJS.AES.decrypt(encryptedUserData, 'secret_key');
+            const userId = JSON.parse(bytes.toString(CryptoJS.enc.Utf8)).userId;
+            const response = saveStatistics(userId, speed, accuracy, Math.ceil(timeWaste));
+        }
+    }
     useEffect(() => {
         setTimer(true);
         if (timerToStart == 3) {

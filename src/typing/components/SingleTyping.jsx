@@ -3,8 +3,10 @@ import Typing from "./Typing";
 import { getWordSets, generateRandomWords } from "../api/WordsAPI.jsx";
 import { getRandomText } from "../api/TextAPI.jsx";
 import Settings from "./TextChoice.jsx";
+import CryptoJS from "crypto-js";
+import { saveStatistics } from "../api/StatisticAPI.jsx";
 
-export default function SingleTyping({ 
+export default function SingleTyping({
     typoRef, isSoundOn, setNewSpeed, newAccuracy, setResult, isDarkTheme, selectedFont, selectedSize,
     textAPI, setIsReseted, isReseted, setSavedSettings, setSelectedOption, setTextSavedSettings }) {
     const [isRunning, setIsRunning] = useState(false);
@@ -22,25 +24,42 @@ export default function SingleTyping({
             setStartTime(new Date().getTime());
         } else if (!isRunning && startTime !== undefined && !isPause) {
             if (!isPause) {
+                let speed;
+                let timeWaste;
                 if (pauseTime > 0) {
-                    setNewSpeed((correctKeys / 5) / (((((new Date().getTime() - startTime) - pauseTime)) / 1000) / 60));
+                    timeWaste = ((((new Date().getTime() - startTime) - pauseTime)) / 1000);
+                    speed = (correctKeys / 5) / (timeWaste / 60);
+                    setNewSpeed(speed);
                 } else {
-                    setNewSpeed((correctKeys / 5) / (((new Date().getTime() - startTime) / 1000) / 60));
+                    timeWaste = ((new Date().getTime() - startTime) / 1000);
+                    speed = (correctKeys / 5) / (timeWaste / 60)
+                    setNewSpeed(speed);
                 }
-                newAccuracy((correctKeys / countKeys) * 100)
+                const accuracy = (correctKeys / countKeys) * 100;
+                newAccuracy(accuracy)
                 clearInterval(timer);
                 setResult(true);
                 setIsReseted(!isReseted);
                 setTextSavedSettings(JSON.parse(localStorage.getItem('textChoiceSettings')));
                 setSelectedOption(localStorage.getItem('selectedTextType'));
                 setSavedSettings(JSON.parse(localStorage.getItem('wordChoiceSettings')));
-                resetVariables()
+                resetVariables();
+                statistics(speed, accuracy, timeWaste);
             }
 
         }
         return () => clearInterval(timer);
     }, [isRunning]);
 
+
+    const statistics = (speed, accuracy, timeWaste) => {
+        const encryptedUserData = localStorage.getItem('userData');
+        if (encryptedUserData) {
+            const bytes = CryptoJS.AES.decrypt(encryptedUserData, 'secret_key');
+            const userId = JSON.parse(bytes.toString(CryptoJS.enc.Utf8)).userId;
+            const response = saveStatistics(userId, speed, accuracy, Math.ceil(timeWaste));
+        }
+    }
 
     const resetVariables = () => {
         setCountKeys(0)

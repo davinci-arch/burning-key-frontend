@@ -29,8 +29,6 @@ export default function Result({ wordsPerMinute, accuracy, elapsedTime, mistakes
     useEffect(() => {
 
         if (places.find(v => v.username == username)) {
-            console.log("hello")
-            console.log("places: " + JSON.stringify(places) + " username: " + username);
             const topPlaces = places.filter(v => v.position === 0 || v.position === 1 || v.position === 2);
             const first = topPlaces.find(v => v.position === 0) || null;
             const second = topPlaces.find(v => v.position === 1) || null;

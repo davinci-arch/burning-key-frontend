@@ -12,11 +12,32 @@ const apiClient = axios.create({
     },
 });
 
+export const saveStatistics = async (userId, averageSpeedWpm, averageAccuracy, timeSpent) => {
+    try {
+        const apiClient = axios.create({
+            baseURL: 'http://localhost:8080/api/v1/user-lessons/',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+        const requestBody = {
+            averageAccuracy: averageAccuracy,
+            averageSpeedWpm: averageSpeedWpm,
+            timeSpent: timeSpent,
+        }
+        const response = await apiClient.post(`/add-lesson/${userId}`, requestBody)
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    }
+}
+
 export const fetchStatisticData = async () => {
     try {
         const userId= await fetchData(token);
         const response = await apiClient.get(`/${userId.userId}`);
-        console.log('Error fetching data:', response);
         return response.data;
     } catch (error) {
         console.error('Error fetching data:', error);

@@ -116,7 +116,6 @@
   background-color: #dad8ce;
   padding: 30px;
   width: 40%;
-  height: 20%;
   min-width: 630px;
 }
 .user-logout {
@@ -181,4 +180,36 @@
     background-color: #736f61;
   }
 
+}
+
+.statistics-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  .data-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: auto;
+    background-color: rgba(13,2,2,.73);
+    height: 85px;
+    width: 150px;
+    // padding: 0 35px;
+    color: white;
+    border-radius: 5px;
+    font-size: 20px;
+    transition: transform 300ms ease-in;
+    &:hover {
+      transform: rotate(360deg);
+      background: url("/src/assets/avatar.png");
+    }
+    span {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      font-size: 14px;
+    }
+  }
 }

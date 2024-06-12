@@ -5,7 +5,7 @@ import Footer from "./Footer";
 import {deleteUser, fetchData, updateUser} from "../api/UserAPI";
 import {logoutUser} from "../api/AuthAPI.jsx";
 import CryptoJS from "crypto-js";
-
+import { fetchStatisticData } from "../api/StatisticAPI.jsx";
 export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggleSound }) {
     const [error, setError] = useState(null);
     const [userData, setUserData] = useState(() => {
@@ -17,6 +17,7 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
         }
         return {};
     });
+    const [isLoaded, setIsLoaded] = useState(false);
     const [username, setUsername] = useState(userData.nickname || "nickname");
     const [email, setEmail] = useState(userData.email || "email");
     const [userIdLocal, setUserId] = useState(userData.userId || null);
@@ -27,11 +28,28 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
     const [avatarPreview, setAvatarPreview] = useState(null);
     const storedToken = localStorage.getItem('token');
 
+    const [statistics, setStatistics] = useState()
+
+
     const toggleEditMode = () => {
         setEditedUsername(username);
         setEditedEmail(email);
         setEditMode(!editMode);
     };
+
+    useEffect(() => {
+        setIsLoaded(true);
+
+        const fetchData = async () => {
+            if (!isLoaded) {
+                const statisticData = await fetchStatisticData();
+                setStatistics(statisticData);
+            }
+        }
+
+        fetchData();
+        
+    }, [isLoaded])
 
     const handleUsernameChange = (event) => {
         setEditedUsername(event.target.value);
@@ -69,19 +87,6 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
             setError("Failed to fetch user data.");
         }
     };
-    const fetchUserData = async () => {
-        try {
-            const userData = await fetchData(storedToken);
-            const encryptedUserData = CryptoJS.AES.encrypt(
-                JSON.stringify(userData),
-                'secret_key'
-            ).toString();
-
-            localStorage.setItem('userData', encryptedUserData);
-        } catch (error) {
-            console.error('Error fetching user data:', error);
-        }
-    };
     const handleApply = async () => {
         setUsername(editedUsername);
         setEmail(editedEmail);
@@ -91,7 +96,6 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
             // setAvatarFile(null);
             // setAvatarPreview(null);
         }
-        fetchUserData();
         setTimeout(() => {
             window.location.reload();
         }, 100);
@@ -108,6 +112,17 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
             reader.readAsDataURL(file);
         }
     };
+    const formatTime = (totalSeconds) => {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+      
+        const paddedHours = String(hours).padStart(2, '0');
+        const paddedMinutes = String(minutes).padStart(2, '0');
+        const paddedSeconds = String(seconds).padStart(2, '0');
+      
+        return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
+      };
 
     return (
         <div className={`account ${isDarkTheme ? 'dark' : ''}`}>
@@ -179,6 +194,32 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
                 </div>
                 <div className="user-statistic">
                     <h2>Statistic</h2>
+                    <div className="statistics-container">
+                        <div className="data-block">
+                            <span>Total lessons:</span>
+                            {statistics?.totalLessons || 0}
+                        </div>
+                        <div className="data-block">
+                            <span>Total time waste:</span>
+                            {statistics?.totalTimeSpent ? formatTime(statistics.totalTimeSpent) : "00:00:00"}
+                        </div>
+                        <div className="data-block">
+                            <span>Best speed wpm:</span>
+                            {statistics?.bestSpeedWpm ? statistics.bestSpeedWpm.toFixed(2) : "N/A"}
+                        </div>
+                        <div className="data-block">
+                            <span>Best accuracy:</span>
+                            {statistics?.bestAccuracy ? Math.ceil(statistics.bestAccuracy) + "%" : "N/A"}
+                        </div>
+                        <div className="data-block">
+                            <span>Average speed wpm:</span>
+                            {statistics?.averageSpeedWpm ? statistics.averageSpeedWpm.toFixed(2) : "N/A"}
+                        </div>
+                        <div className="data-block">
+                            <span>Average accuracy:</span>
+                            {statistics?.averageAccuracy ? Math.ceil(statistics.averageAccuracy) + "%" : "N/A"}
+                        </div>
+                    </div>
                 </div>
                 <div className="user-logout">
                     <h2>Another options</h2>
