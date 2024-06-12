@@ -47,11 +47,12 @@ const LeaderboardModal = ({ isDarkTheme }) => {
             {isModalVisible && (
                 <div className={`modal ${isModalOpen ? 'open' : ''} ${isDarkTheme ? 'dark' : ''}`} onClick={handleBackgroundClick}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <h2 className="title">Leaderboard</h2>
+                        <h2 className="title">Leaderboard (Top for all time)</h2>
                         <div className="table-container">
                             <table className="custom-table">
                                 <thead>
                                 <tr>
+                                    <th>№</th>
                                     <th>User</th>
                                     <th>Speed</th>
                                     <th>Accuracy</th>
@@ -60,6 +61,9 @@ const LeaderboardModal = ({ isDarkTheme }) => {
                                 <tbody>
                                 {data.map((user, index) => (
                                     <tr key={index}>
+                                        <td className={index === 0 ? 'gold' : (index === 1 ? 'silver' : (index === 2 ? 'bronze' : ''))}>
+                                            {index + 1}
+                                        </td>
                                         <td>{user.nickname}</td>
                                         <td>{user.averageSpeedWpm.toFixed(1) + ' wpm'}</td>
                                         <td>{user.averageAccuracy.toFixed(1) + ' %'}</td>
