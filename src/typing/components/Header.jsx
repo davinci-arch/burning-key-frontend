@@ -27,9 +27,8 @@ export default function Header({ isDarkTheme }) {
     }, [localStorage.getItem('userData')]);
 
     useEffect(() => {
-        if(localStorage.getItem('userImage') !== img)
         setImg(localStorage.getItem('userImage'))
-    }, [localStorage.getItem('userImage')]);
+    }, [img]);
 
     const linkName = userData.nickname || "Sign In";
 
