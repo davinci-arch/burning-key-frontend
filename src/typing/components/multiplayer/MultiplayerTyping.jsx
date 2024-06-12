@@ -44,7 +44,7 @@ export default function MultiplayerTyping({
             const timeWaste = (endTime - startTime) / 1000;
             const accuracy = (correctKeys / countKeys) * 100
             sendMessage(message);
-            setDurationOfMatch(Math.ceil(duration));
+            setDurationOfMatch(Math.ceil(timeWaste));
             setMistakes(countKeys - correctKeys);
             setNewSpeed((correctKeys / 5) / (speed / 60));
             setNewAccuracy(accuracy);

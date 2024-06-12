@@ -63,7 +63,7 @@ export default function RoomItem({ idRoom, title, timeToStart, activeUsers, time
                     activeUsers.map((user, index) => (
                         <div className={activeUsers.length > 9 ? "profile-overflow" : "profile"} key={index}>
                             <div>
-                                <img src="/src/assets/user.png" alt="avatar" />
+                                <img src={user.userImage ? `data:image/jpeg;charset=utf-8;base64,${user.userImage}` : "/src/assets/user.png"} alt="avatar" />
                             </div>
                             <div>
                                 <span>{user.username}</span>

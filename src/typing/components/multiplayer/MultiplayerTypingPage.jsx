@@ -5,7 +5,7 @@ import "../../styles/multiplayer.scss"
 import Result from "./Result";
 import Header from "../Header";
 import Footer from "../Footer";
-
+import CryptoJS from "crypto-js";
 export default function MultiplayerTypingPage({
     isDarkTheme, toggleTheme, isSoundOn, toggleSound,
     selectedFont, handleFontClick, selectedSize, handleSizeClick
@@ -97,13 +97,28 @@ export default function MultiplayerTypingPage({
         socket.current.onopen = () => {
             // console.log("Room connected")
             setConnected(true);
-            const user = "Visitor " + Math.floor(Math.random() * (1000 + 1));
+            const encryptedUserData = localStorage.getItem('userData');
+            let user;
+            if (encryptedUserData) {
+                const bytes = CryptoJS.AES.decrypt(encryptedUserData, 'secret_key');
+                const decryptedUserData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+                user = decryptedUserData.nickname
+            } else {
+                user = "Visitor " + Math.floor(Math.random() * (1000 + 1));
+            }
+            let userImage;
+            if (localStorage.getItem("userImage")) {
+                userImage = localStorage.getItem("userImage");
+            }
             setUsername(user);
+
             const message = {
                 type: "CONNECT",
                 username: user,
                 uid: uuid,
+                userImage: userImage
             }
+
             sendMessage(message);
         }
         socket.current.onmessage = (event) => {
@@ -163,7 +178,7 @@ export default function MultiplayerTypingPage({
                 const userPosition = playersPosition.length - 1;
                 setPositions(prevPositions => [
                     ...prevPositions,
-                    { username: user.username, position: userPosition }
+                    { username: user.username, position: userPosition, userImage: user.userImage }
                 ]);
             }
         }
@@ -321,7 +336,7 @@ export default function MultiplayerTypingPage({
                             {users.map((user, index) => (
                                 <div className={user.username == username ? "players-row current-user" : "players-row"} key={index}>
                                     <div className="data">
-                                        <img src="/src/assets/user.png" className="user-avatar" alt="user" />
+                                        <img src={user.userImage ? `data:image/jpeg;charset=utf-8;base64,${user.userImage}` : "/src/assets/user.png"} className="user-avatar" alt="user" />
                                         <p>{user.username}</p>
                                     </div>
                                     <div className="data">

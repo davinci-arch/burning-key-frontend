@@ -2,8 +2,8 @@ import "../styles/accountpage.scss";
 import React, { useState, useEffect } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import {deleteUser, fetchData, updateUser} from "../api/UserAPI";
-import {logoutUser} from "../api/AuthAPI.jsx";
+import { deleteUser, fetchData, fetchImage, updateUser, uploadImage } from "../api/UserAPI";
+import { logoutUser } from "../api/AuthAPI.jsx";
 import CryptoJS from "crypto-js";
 import { fetchStatisticData } from "../api/StatisticAPI.jsx";
 export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggleSound }) {
@@ -27,15 +27,23 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
     const [avatarFile, setAvatarFile] = useState(null);
     const [avatarPreview, setAvatarPreview] = useState(null);
     const storedToken = localStorage.getItem('token');
-
+    const [image, setImage] = useState(localStorage.getItem('userData') || null);
     const [statistics, setStatistics] = useState()
-
 
     const toggleEditMode = () => {
         setEditedUsername(username);
         setEditedEmail(email);
         setEditMode(!editMode);
     };
+    useEffect(() => {
+        const encryptedUserData = localStorage.getItem('userData');
+        if (encryptedUserData) {
+            const bytes = CryptoJS.AES.decrypt(encryptedUserData, 'secret_key');
+            const decryptedUserData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+            setUserData(decryptedUserData);
+            console.log(JSON.stringify(decryptedUserData));
+        }
+    }, [localStorage.getItem('userData')]);
 
     useEffect(() => {
         setIsLoaded(true);
@@ -48,7 +56,7 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
         }
 
         fetchData();
-        
+
     }, [isLoaded])
 
     const handleUsernameChange = (event) => {
@@ -67,8 +75,9 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
     const handleLogout = async () => {
         try {
             const response = await logoutUser();
-            localStorage.removeItem('token')
-            localStorage.removeItem('userData')
+            localStorage.removeItem('token');
+            localStorage.removeItem('userData');
+            localStorage.removeItem('userImage');;
             window.location.replace('/');
         } catch (error) {
             console.error('Error logging out user:', error);
@@ -78,29 +87,30 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
 
     const handleDeleteAccount = async () => {
         try {
-        const userData =   await deleteUser(userIdLocal);
-        localStorage.removeItem('token');
-        localStorage.removeItem('userData')
-        window.location.replace('/');
+            const userData = await deleteUser(userIdLocal);
+            localStorage.removeItem('token');
+            localStorage.removeItem('userData');
+            localStorage.removeItem('userImage');
+            window.location.replace('/');
         } catch (error) {
             console.error('Error fetching user data:', error);
             setError("Failed to fetch user data.");
         }
     };
-    const handleApply = async () => {
-        setUsername(editedUsername);
-        setEmail(editedEmail);
-        const userUpdate = await updateUser(userIdLocal, {nickname: editedUsername});
-        setEditMode(false);
-        if (avatarFile) {
-            // setAvatarFile(null);
-            // setAvatarPreview(null);
-        }
-        setTimeout(() => {
-            window.location.reload();
-        }, 100);
-    };
 
+    const fetchUserData = async () => {
+        try {
+            const userData = await fetchData(storedToken);
+            const encryptedUserData = CryptoJS.AES.encrypt(
+                JSON.stringify(userData),
+                'secret_key'
+            ).toString();
+
+            localStorage.setItem('userData', encryptedUserData);
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    };
     const handleAvatarChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -111,19 +121,35 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
             };
             reader.readAsDataURL(file);
         }
+
     };
+    const handleApply = async () => {
+        setUsername(editedUsername);
+        setEmail(editedEmail);
+        const userUpdate = await updateUser(userIdLocal, { nickname: editedUsername });
+        setEditMode(false);
+        if (avatarFile) {
+            const success = await uploadImage(userIdLocal, avatarFile);
+            const userImage = await fetchImage(userData.userId);
+            localStorage.setItem('userImage', userImage);
+        }
+        fetchUserData();
+        setTimeout(() => {
+            window.location.reload();
+        }, 500);
+    };
+
     const formatTime = (totalSeconds) => {
         const hours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
-      
+
         const paddedHours = String(hours).padStart(2, '0');
         const paddedMinutes = String(minutes).padStart(2, '0');
         const paddedSeconds = String(seconds).padStart(2, '0');
-      
-        return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
-      };
 
+        return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
+    };
     return (
         <div className={`account ${isDarkTheme ? 'dark' : ''}`}>
             <Header isDarkTheme={isDarkTheme} />
@@ -132,8 +158,8 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
                 <div className="user-details">
                     <div className="user-details-full">
                         {!editMode ? (
-                            <img src={avatarPreview || "/src/assets/avatar.png"} alt="User Avatar"
-                                 className="account-avatar-image"/>
+                            <img src={`data:image/jpeg;charset=utf-8;base64,${localStorage.getItem('userImage')}`} alt="User Avatar"
+                                className="account-avatar-image" />
                         ) : (
                             <label htmlFor="avatar-upload" className="account-avatar-image-editable">
                                 <input
@@ -141,11 +167,11 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
                                     id="avatar-upload"
                                     onChange={handleAvatarChange}
                                     accept="image/*"
-                                    style={{display: "none"}}
+                                    style={{ display: "none" }}
                                 />
                                 <div className="avatar-wrapper">
                                     <img
-                                        src={avatarPreview || "/src/assets/avatar.png"}
+                                        src={avatarPreview || `data:image/jpeg;charset=utf-8;base64,${localStorage.getItem('userImage')}`}
                                         alt="User Avatar"
                                         className="account-avatar-image"
                                     />
@@ -161,30 +187,30 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
                             {!editMode ? (
                                 <div>
                                     <div>
-                                        <p style={{marginBottom: "20px"}}>Name: {username}</p>
+                                        <p style={{ marginBottom: "20px" }}>Name: {username}</p>
                                         <p>Email: {email}</p>
                                     </div>
                                     <button className="custom-button-user" onClick={toggleEditMode}>Edit</button>
                                 </div>
                             ) : (
                                 <div>
-                                    <div style={{marginBottom: "0px"}}>
+                                    <div style={{ marginBottom: "0px" }}>
                                         <p style={{
                                             display: "flex",
                                             alignItems: "center"
                                         }}>Name: <input
-                                            className="custom-input-user" type="text" value={editedUsername}
-                                            onChange={handleUsernameChange}/></p>
+                                                className="custom-input-user" type="text" value={editedUsername}
+                                                onChange={handleUsernameChange} /></p>
                                         <p style={{
                                             marginTop: "10px",
                                             display: "flex",
                                             alignItems: "center"
                                         }}>Email: <input disabled
                                             className="custom-input-user" type="email" value={editedEmail}
-                                            onChange={handleEmailChange}/></p>
+                                            onChange={handleEmailChange} /></p>
                                     </div>
                                     <div className="modal-grid">
-                                        <button className="custom-button-user"  onClick={handleCancel}>Cancel</button>
+                                        <button className="custom-button-user" onClick={handleCancel}>Cancel</button>
                                         <button className="custom-button-user" onClick={handleApply}>Apply</button>
                                     </div>
                                 </div>

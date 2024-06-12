@@ -51,6 +51,7 @@
             .user-avatar {
                 width: 21px;
                 height: 21px;
+                border-radius: 50%;
             }
 
             .fire {
@@ -222,6 +223,10 @@
                             }
                         }
 
+                        img {
+                            border-radius: 50%;
+                        }
+
                         span {
                             position: absolute;
                             bottom: 0;
@@ -244,6 +249,10 @@
                             span {
                                 animation: animationText 2s both;
                             }
+                        }
+
+                        img {
+                            border-radius: 50%;
                         }
 
                         span {
@@ -276,6 +285,10 @@
                             span {
                                 animation: animationText 2s both;
                             }
+                        }
+
+                        img {
+                            border-radius: 50%;
                         }
 
                         span {

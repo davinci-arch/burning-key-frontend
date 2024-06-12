@@ -109,7 +109,7 @@ export default function Result({ wordsPerMinute, accuracy, elapsedTime, mistakes
                                 <div className={secondPlace && secondPlace.username == username ? "second-place animate" : "second-place"}>
                                     {secondPlace && (
                                         <>
-                                            <img src="/src/assets/user.png" alt="avatar" className="avatar" />
+                                            <img src={secondPlace.userImage ? `data:image/jpeg;charset=utf-8;base64,${secondPlace.userImage}` : "/src/assets/user.png"} alt="avatar" className="avatar" />
                                             <span>{secondPlace.username}</span>
                                         </>
                                     )}
@@ -117,7 +117,7 @@ export default function Result({ wordsPerMinute, accuracy, elapsedTime, mistakes
                                 <div className={firstPlace && firstPlace.username == username ? "first-place animate" : "first-place"}>
                                     {firstPlace && (
                                         <>
-                                            <img src="/src/assets/user.png" alt="avatar" className="avatar" />
+                                            <img src={firstPlace.userImage ? `data:image/jpeg;charset=utf-8;base64,${firstPlace.userImage}` : "/src/assets/user.png"} alt="avatar" className="avatar" />
                                             <span>{firstPlace.username}</span>
                                         </>
                                     )}
@@ -125,7 +125,7 @@ export default function Result({ wordsPerMinute, accuracy, elapsedTime, mistakes
                                 <div className={thirdPlace && thirdPlace.username == username ? "third-place animate" : "third-place"}>
                                     {thirdPlace && (
                                         <>
-                                            <img src="/src/assets/user.png" alt="avatar" className="avatar" />
+                                            <img src={thirdPlace.userImage ? `data:image/jpeg;charset=utf-8;base64,${thirdPlace.userImage}` : "/src/assets/user.png"} alt="avatar" className="avatar" />
                                             <span>{thirdPlace.username}</span>
                                         </>
                                     )}

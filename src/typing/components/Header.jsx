@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import Leaderboard from './Leaderboard';
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import CryptoJS from "crypto-js";
 
 export default function Header({ isDarkTheme }) {
@@ -13,6 +13,23 @@ export default function Header({ isDarkTheme }) {
         }
         return {};
     });
+    const [img, setImg] = useState(() => {
+        localStorage.getItem('userImage') || null
+    });
+
+    useEffect(() => {
+        const encryptedUserData = localStorage.getItem('userData');
+        if (encryptedUserData) {
+            const bytes = CryptoJS.AES.decrypt(encryptedUserData, 'secret_key');
+            const decryptedUserData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+            setUserData(decryptedUserData);
+        }
+    }, [localStorage.getItem('userData')]);
+
+    useEffect(() => {
+        if(localStorage.getItem('userImage') !== img)
+        setImg(localStorage.getItem('userImage'))
+    }, [localStorage.getItem('userImage')]);
 
     const linkName = userData.nickname || "Sign In";
 
@@ -25,10 +42,10 @@ export default function Header({ isDarkTheme }) {
                 <Leaderboard />
             </div>
             <div className="user-panel" style={{ display: 'flex' }}>
-                {userData.nickname ? (
+                {localStorage.getItem('token') ? (
                     <span className={`nav-link ${isDarkTheme ? 'dark' : ''}`}>
                         <Link to="/account" className={`user-avatar ${isDarkTheme ? 'dark' : ''}`}>
-                            <img src="/src/assets/avatar.png" alt="User Avatar" className="avatar-image" />
+                            <img src={`data:image/jpeg;charset=utf-8;base64,${img}`} alt="User Avatar" className="avatar-image" />
                             {linkName}
                         </Link>
                     </span>
