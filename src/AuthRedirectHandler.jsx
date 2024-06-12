@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { fetchData } from './typing/api/UserAPI.jsx';
+import {fetchData, fetchImage} from './typing/api/UserAPI.jsx';
 import CryptoJS from 'crypto-js';
 
 const AuthRedirectHandler = () => {
@@ -11,8 +11,9 @@ const AuthRedirectHandler = () => {
                     JSON.stringify(userData),
                     'secret_key'
                 ).toString();
-
                 localStorage.setItem('userData', encryptedUserData);
+                const userImage = await fetchImage(userData.userId);
+                localStorage.setItem('userImage', userImage);
             } catch (error) {
                 console.error('Error fetching user data:', error);
             }

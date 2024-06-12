@@ -2,9 +2,10 @@ import "../styles/accountpage.scss";
 import React, { useState, useEffect } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
-import {deleteUser, fetchData, updateUser} from "../api/UserAPI";
+import {deleteUser, fetchData, fetchImage, updateUser, uploadImage} from "../api/UserAPI";
 import {logoutUser} from "../api/AuthAPI.jsx";
 import CryptoJS from "crypto-js";
+import {fetchLeaderboard} from "../api/StatisticAPI.jsx";
 
 export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggleSound }) {
     const [error, setError] = useState(null);
@@ -26,6 +27,17 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
     const [avatarFile, setAvatarFile] = useState(null);
     const [avatarPreview, setAvatarPreview] = useState(null);
     const storedToken = localStorage.getItem('token');
+    const [image, setImage] = useState(localStorage.getItem('userData') || null);
+
+    useEffect(() => {
+        const encryptedUserData = localStorage.getItem('userData');
+        if (encryptedUserData) {
+            const bytes = CryptoJS.AES.decrypt(encryptedUserData, 'secret_key');
+            const decryptedUserData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+            setUserData(decryptedUserData);
+        }
+    }, [localStorage.getItem('userData')]);
+
 
     const toggleEditMode = () => {
         setEditedUsername(username);
@@ -49,8 +61,9 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
     const handleLogout = async () => {
         try {
             const response = await logoutUser();
-            localStorage.removeItem('token')
-            localStorage.removeItem('userData')
+            localStorage.removeItem('token');
+            localStorage.removeItem('userData');
+            localStorage.removeItem('userImage');;
             window.location.replace('/');
         } catch (error) {
             console.error('Error logging out user:', error);
@@ -62,7 +75,8 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
         try {
         const userData =   await deleteUser(userIdLocal);
         localStorage.removeItem('token');
-        localStorage.removeItem('userData')
+        localStorage.removeItem('userData');
+            localStorage.removeItem('userImage');
         window.location.replace('/');
         } catch (error) {
             console.error('Error fetching user data:', error);
@@ -88,14 +102,16 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
         const userUpdate = await updateUser(userIdLocal, {nickname: editedUsername});
         setEditMode(false);
         if (avatarFile) {
-            // setAvatarFile(null);
-            // setAvatarPreview(null);
+            const success = await uploadImage(userIdLocal, avatarFile);
+            const userImage = await fetchImage(userData.userId);
+            localStorage.setItem('userImage', userImage);
         }
         fetchUserData();
         setTimeout(() => {
             window.location.reload();
-        }, 100);
+        }, 500);
     };
+
 
     const handleAvatarChange = (event) => {
         const file = event.target.files[0];
@@ -107,7 +123,10 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
             };
             reader.readAsDataURL(file);
         }
+
     };
+
+
 
     return (
         <div className={`account ${isDarkTheme ? 'dark' : ''}`}>
@@ -117,7 +136,7 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
                 <div className="user-details">
                     <div className="user-details-full">
                         {!editMode ? (
-                            <img src={avatarPreview || "/src/assets/avatar.png"} alt="User Avatar"
+                            <img src={`data:image/jpeg;charset=utf-8;base64,${localStorage.getItem('userImage')}`} alt="User Avatar"
                                  className="account-avatar-image"/>
                         ) : (
                             <label htmlFor="avatar-upload" className="account-avatar-image-editable">
@@ -130,7 +149,7 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
                                 />
                                 <div className="avatar-wrapper">
                                     <img
-                                        src={avatarPreview || "/src/assets/avatar.png"}
+                                        src={avatarPreview || `data:image/jpeg;charset=utf-8;base64,${localStorage.getItem('userImage')}`}
                                         alt="User Avatar"
                                         className="account-avatar-image"
                                     />
