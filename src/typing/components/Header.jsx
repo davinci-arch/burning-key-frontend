@@ -13,6 +13,9 @@ export default function Header({ isDarkTheme }) {
         }
         return {};
     });
+    const [img, setImg] = useState(() => {
+        localStorage.getItem('userImage') || null
+    });
 
     useEffect(() => {
         const encryptedUserData = localStorage.getItem('userData');
@@ -22,6 +25,11 @@ export default function Header({ isDarkTheme }) {
             setUserData(decryptedUserData);
         }
     }, [localStorage.getItem('userData')]);
+
+    useEffect(() => {
+        if(localStorage.getItem('userImage') !== img)
+        setImg(localStorage.getItem('userImage'))
+    }, [localStorage.getItem('userImage')]);
 
     const linkName = userData.nickname || "Sign In";
 
@@ -37,7 +45,7 @@ export default function Header({ isDarkTheme }) {
                 {localStorage.getItem('token') ? (
                     <span className={`nav-link ${isDarkTheme ? 'dark' : ''}`}>
                         <Link to="/account" className={`user-avatar ${isDarkTheme ? 'dark' : ''}`}>
-                            <img src={`data:image/jpeg;charset=utf-8;base64,${localStorage.getItem('userImage')}`} alt="User Avatar" className="avatar-image" />
+                            <img src={`data:image/jpeg;charset=utf-8;base64,${img}`} alt="User Avatar" className="avatar-image" />
                             {linkName}
                         </Link>
                     </span>
