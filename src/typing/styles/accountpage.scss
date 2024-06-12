@@ -6,6 +6,7 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
+  min-height: 900px;
 
 }
 
@@ -185,19 +186,20 @@
 
 .statistics-container {
   display: flex;
+  margin-top: 10px;
   gap: 20px;
   justify-content: center;
   flex-wrap: wrap;
   .data-block {
     display: flex;
     justify-content: center;
+    flex-direction: column;
     align-items: center;
     position: relative;
     width: auto;
     background-color: rgba(13,2,2,.73);
     height: 85px;
-    width: 150px;
-    // padding: 0 35px;
+    width: 180px;
     color: white;
     border-radius: 5px;
     font-size: 20px;
@@ -207,7 +209,6 @@
       background: url("/src/assets/avatar.png");
     }
     span {
-      position: absolute;
       top: 2px;
       left: 2px;
       font-size: 14px;

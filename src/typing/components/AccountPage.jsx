@@ -5,7 +5,7 @@ import Footer from "./Footer";
 import { deleteUser, fetchData, fetchImage, updateUser, uploadImage } from "../api/UserAPI";
 import { logoutUser } from "../api/AuthAPI.jsx";
 import CryptoJS from "crypto-js";
-import {fetchLeaderboard} from "../api/StatisticAPI.jsx";
+import { fetchStatisticData} from "../api/StatisticAPI.jsx";
 
 export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggleSound }) {
     const [error, setError] = useState(null);
@@ -29,6 +29,7 @@ export default function AccountPage({ isDarkTheme, toggleTheme, isSoundOn, toggl
     const [avatarPreview, setAvatarPreview] = useState(null);
     const storedToken = localStorage.getItem('token');
     const [image, setImage] = useState(localStorage.getItem('userData') || null);
+    const [statistics, setStatistics] = useState()
 
     const toggleEditMode = () => {
         setEditedUsername(username);
